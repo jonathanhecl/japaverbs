@@ -1,0 +1,937 @@
+[
+  {
+    "kanji": "行く",
+    "kana": "いく",
+    "romaji": "iku",
+    "type": "godan",
+    "meaning": "ir",
+    "examples": [
+      {
+        "ja": "学校に行きます。",
+        "es": "Voy a la escuela."
+      },
+      {
+        "ja": "明日東京へ行く。",
+        "es": "Mañana iré a Tokio."
+      }
+    ]
+  },
+  {
+    "kanji": "来る",
+    "kana": "くる",
+    "romaji": "kuru",
+    "type": "irregular",
+    "meaning": "venir",
+    "examples": [
+      {
+        "ja": "友達が来ます。",
+        "es": "Viene un amigo."
+      },
+      {
+        "ja": "彼は昨日来た。",
+        "es": "Él vino ayer."
+      }
+    ]
+  },
+  {
+    "kanji": "する",
+    "kana": "する",
+    "romaji": "suru",
+    "type": "irregular",
+    "meaning": "hacer",
+    "examples": [
+      {
+        "ja": "宿題をします。",
+        "es": "Hago la tarea."
+      },
+      {
+        "ja": "運動をした。",
+        "es": "Hice ejercicio."
+      }
+    ]
+  },
+  {
+    "kanji": "食べる",
+    "kana": "たべる",
+    "romaji": "taberu",
+    "type": "ichidan",
+    "meaning": "comer",
+    "examples": [
+      {
+        "ja": "パンを食べます。",
+        "es": "Como pan."
+      },
+      {
+        "ja": "昨日寿司を食べた。",
+        "es": "Ayer comí sushi."
+      }
+    ]
+  },
+  {
+    "kanji": "飲む",
+    "kana": "のむ",
+    "romaji": "nomu",
+    "type": "godan",
+    "meaning": "beber",
+    "examples": [
+      {
+        "ja": "水を飲みます。",
+        "es": "Bebo agua."
+      },
+      {
+        "ja": "コーヒーを飲んだ。",
+        "es": "Tomé café."
+      }
+    ]
+  },
+  {
+    "kanji": "見る",
+    "kana": "みる",
+    "romaji": "miru",
+    "type": "ichidan",
+    "meaning": "ver, mirar",
+    "examples": [
+      {
+        "ja": "映画を見ます。",
+        "es": "Veo una película."
+      },
+      {
+        "ja": "空を見た。",
+        "es": "Miré el cielo."
+      }
+    ]
+  },
+  {
+    "kanji": "聞く",
+    "kana": "きく",
+    "romaji": "kiku",
+    "type": "godan",
+    "meaning": "escuchar, preguntar",
+    "examples": [
+      {
+        "ja": "音楽を聞きます。",
+        "es": "Escucho música."
+      },
+      {
+        "ja": "先生に聞いた。",
+        "es": "Le pregunté al profesor."
+      }
+    ]
+  },
+  {
+    "kanji": "言う",
+    "kana": "いう",
+    "romaji": "iu",
+    "type": "godan",
+    "meaning": "decir",
+    "examples": [
+      {
+        "ja": "何と言いましたか。",
+        "es": "¿Qué dijo?"
+      },
+      {
+        "ja": "彼は本当のことを言った。",
+        "es": "Él dijo la verdad."
+      }
+    ]
+  },
+  {
+    "kanji": "買う",
+    "kana": "かう",
+    "romaji": "kau",
+    "type": "godan",
+    "meaning": "comprar",
+    "examples": [
+      {
+        "ja": "本を買います。",
+        "es": "Compro un libro."
+      },
+      {
+        "ja": "昨日花を買った。",
+        "es": "Ayer compré flores."
+      }
+    ]
+  },
+  {
+    "kanji": "書く",
+    "kana": "かく",
+    "romaji": "kaku",
+    "type": "godan",
+    "meaning": "escribir",
+    "examples": [
+      {
+        "ja": "手紙を書きます。",
+        "es": "Escribo una carta."
+      },
+      {
+        "ja": "ノートに書いた。",
+        "es": "Lo escribí en el cuaderno."
+      }
+    ]
+  },
+  {
+    "kanji": "読む",
+    "kana": "よむ",
+    "romaji": "yomu",
+    "type": "godan",
+    "meaning": "leer",
+    "examples": [
+      {
+        "ja": "新聞を読みます。",
+        "es": "Leo el diario."
+      },
+      {
+        "ja": "昨日本を読んだ。",
+        "es": "Ayer leí un libro."
+      }
+    ]
+  },
+  {
+    "kanji": "会う",
+    "kana": "あう",
+    "romaji": "au",
+    "type": "godan",
+    "meaning": "encontrarse, reunirse",
+    "examples": [
+      {
+        "ja": "友達に会います。",
+        "es": "Me encuentro con un amigo."
+      },
+      {
+        "ja": "駅で先生に会った。",
+        "es": "Me encontré con el profesor en la estación."
+      }
+    ]
+  },
+  {
+    "kanji": "分かる",
+    "kana": "わかる",
+    "romaji": "wakaru",
+    "type": "godan",
+    "meaning": "entender",
+    "examples": [
+      {
+        "ja": "日本語が分かります。",
+        "es": "Entiendo japonés."
+      },
+      {
+        "ja": "分かった！",
+        "es": "¡Entendí!"
+      }
+    ]
+  },
+  {
+    "kanji": "使う",
+    "kana": "つかう",
+    "romaji": "tsukau",
+    "type": "godan",
+    "meaning": "usar",
+    "examples": [
+      {
+        "ja": "ペンを使います。",
+        "es": "Uso una lapicera."
+      },
+      {
+        "ja": "このアプリを使った。",
+        "es": "Usé esta aplicación."
+      }
+    ]
+  },
+  {
+    "kanji": "作る",
+    "kana": "つくる",
+    "romaji": "tsukuru",
+    "type": "godan",
+    "meaning": "hacer, crear",
+    "examples": [
+      {
+        "ja": "料理を作ります。",
+        "es": "Cocino comida."
+      },
+      {
+        "ja": "新しいゲームを作った。",
+        "es": "Hice un nuevo juego."
+      }
+    ]
+  },
+  {
+    "kanji": "立つ",
+    "kana": "たつ",
+    "romaji": "tatsu",
+    "type": "godan",
+    "meaning": "levantarse",
+    "examples": [
+      {
+        "ja": "立ってください。",
+        "es": "Por favor, párate."
+      },
+      {
+        "ja": "早く立った。",
+        "es": "Se levantó rápido."
+      }
+    ]
+  },
+  {
+    "kanji": "座る",
+    "kana": "すわる",
+    "romaji": "suwaru",
+    "type": "godan",
+    "meaning": "sentarse",
+    "examples": [
+      {
+        "ja": "椅子に座ります。",
+        "es": "Me siento en la silla."
+      },
+      {
+        "ja": "ここに座った。",
+        "es": "Me senté aquí."
+      }
+    ]
+  },
+  {
+    "kanji": "寝る",
+    "kana": "ねる",
+    "romaji": "neru",
+    "type": "ichidan",
+    "meaning": "dormir",
+    "examples": [
+      {
+        "ja": "早く寝ます。",
+        "es": "Me acuesto temprano."
+      },
+      {
+        "ja": "昨日はよく寝た。",
+        "es": "Dormí bien anoche."
+      }
+    ]
+  },
+  {
+    "kanji": "起きる",
+    "kana": "おきる",
+    "romaji": "okiru",
+    "type": "ichidan",
+    "meaning": "levantarse, despertarse",
+    "examples": [
+      {
+        "ja": "毎日7時に起きます。",
+        "es": "Me levanto a las 7 todos los días."
+      },
+      {
+        "ja": "遅く起きた。",
+        "es": "Me levanté tarde."
+      }
+    ]
+  },
+  {
+    "kanji": "ある",
+    "kana": "ある",
+    "romaji": "aru",
+    "type": "godan",
+    "meaning": "haber (cosas)",
+    "examples": [
+      {
+        "ja": "机の上に本があります。",
+        "es": "Hay un libro sobre la mesa."
+      },
+      {
+        "ja": "問題があった。",
+        "es": "Hubo un problema."
+      }
+    ]
+  },
+  {
+    "kanji": "いる",
+    "kana": "いる",
+    "romaji": "iru",
+    "type": "ichidan",
+    "meaning": "haber (personas, animales)",
+    "examples": [
+      {
+        "ja": "猫がいます。",
+        "es": "Hay un gato."
+      },
+      {
+        "ja": "友達がいた。",
+        "es": "Había un amigo."
+      }
+    ]
+  },
+  {
+    "kanji": "入る",
+    "kana": "はいる",
+    "romaji": "hairu",
+    "type": "godan",
+    "meaning": "entrar",
+    "examples": [
+      {
+        "ja": "部屋に入ります。",
+        "es": "Entro a la habitación."
+      },
+      {
+        "ja": "店に入った。",
+        "es": "Entré a la tienda."
+      }
+    ]
+  },
+  {
+    "kanji": "出る",
+    "kana": "でる",
+    "romaji": "deru",
+    "type": "ichidan",
+    "meaning": "salir",
+    "examples": [
+      {
+        "ja": "家を出ます。",
+        "es": "Salgo de casa."
+      },
+      {
+        "ja": "8時に出た。",
+        "es": "Salí a las 8."
+      }
+    ]
+  },
+  {
+    "kanji": "開ける",
+    "kana": "あける",
+    "romaji": "akeru",
+    "type": "ichidan",
+    "meaning": "abrir (algo)",
+    "examples": [
+      {
+        "ja": "ドアを開けます。",
+        "es": "Abro la puerta."
+      },
+      {
+        "ja": "窓を開けた。",
+        "es": "Abrí la ventana."
+      }
+    ]
+  },
+  {
+    "kanji": "閉める",
+    "kana": "しめる",
+    "romaji": "shimeru",
+    "type": "ichidan",
+    "meaning": "cerrar (algo)",
+    "examples": [
+      {
+        "ja": "窓を閉めます。",
+        "es": "Cierro la ventana."
+      },
+      {
+        "ja": "ドアを閉めた。",
+        "es": "Cerré la puerta."
+      }
+    ]
+  },
+  {
+    "kanji": "使える",
+    "kana": "つかえる",
+    "romaji": "tsukaeru",
+    "type": "ichidan",
+    "meaning": "poder usar",
+    "examples": [
+      {
+        "ja": "このカードが使えます。",
+        "es": "Esta tarjeta se puede usar."
+      },
+      {
+        "ja": "アプリが使えた。",
+        "es": "Pude usar la app."
+      }
+    ]
+  },
+  {
+    "kanji": "住む",
+    "kana": "すむ",
+    "romaji": "sumu",
+    "type": "godan",
+    "meaning": "vivir (residir)",
+    "examples": [
+      {
+        "ja": "東京に住んでいます。",
+        "es": "Vivo en Tokio."
+      },
+      {
+        "ja": "昔大阪に住んだ。",
+        "es": "Viví en Osaka hace tiempo."
+      }
+    ]
+  },
+  {
+    "kanji": "知る",
+    "kana": "しる",
+    "romaji": "shiru",
+    "type": "godan",
+    "meaning": "saber, conocer",
+    "examples": [
+      {
+        "ja": "名前を知っていますか。",
+        "es": "¿Sabes su nombre?"
+      },
+      {
+        "ja": "その人を知っていた。",
+        "es": "Conocía a esa persona."
+      }
+    ]
+  },
+  {
+    "kanji": "思う",
+    "kana": "おもう",
+    "romaji": "omou",
+    "type": "godan",
+    "meaning": "pensar, creer",
+    "examples": [
+      {
+        "ja": "そう思います。",
+        "es": "Pienso así."
+      },
+      {
+        "ja": "彼は来ると思った。",
+        "es": "Pensé que él vendría."
+      }
+    ]
+  },
+  {
+    "kanji": "待つ",
+    "kana": "まつ",
+    "romaji": "matsu",
+    "type": "godan",
+    "meaning": "esperar",
+    "examples": [
+      {
+        "ja": "ここで待ちます。",
+        "es": "Espero aquí."
+      },
+      {
+        "ja": "友達を待った。",
+        "es": "Esperé a un amigo."
+      }
+    ]
+  },
+  {
+    "kanji": "遊ぶ",
+    "kana": "あそぶ",
+    "romaji": "asobu",
+    "type": "godan",
+    "meaning": "jugar, divertirse",
+    "examples": [
+      {
+        "ja": "公園で遊びます。",
+        "es": "Juego en el parque."
+      },
+      {
+        "ja": "子供たちは外で遊んだ。",
+        "es": "Los niños jugaron afuera."
+      }
+    ]
+  },
+  {
+    "kanji": "働く",
+    "kana": "はたらく",
+    "romaji": "hataraku",
+    "type": "godan",
+    "meaning": "trabajar",
+    "examples": [
+      {
+        "ja": "会社で働きます。",
+        "es": "Trabajo en una empresa."
+      },
+      {
+        "ja": "父は銀行で働いた。",
+        "es": "Mi padre trabajó en un banco."
+      }
+    ]
+  },
+  {
+    "kanji": "走る",
+    "kana": "はしる",
+    "romaji": "hashiru",
+    "type": "godan",
+    "meaning": "correr",
+    "examples": [
+      {
+        "ja": "公園を走ります。",
+        "es": "Corro en el parque."
+      },
+      {
+        "ja": "昨日たくさん走った。",
+        "es": "Corrí mucho ayer."
+      }
+    ]
+  },
+  {
+    "kanji": "歩く",
+    "kana": "あるく",
+    "romaji": "aruku",
+    "type": "godan",
+    "meaning": "caminar",
+    "examples": [
+      {
+        "ja": "駅まで歩きます。",
+        "es": "Camino hasta la estación."
+      },
+      {
+        "ja": "友達と歩いた。",
+        "es": "Caminé con un amigo."
+      }
+    ]
+  },
+  {
+    "kanji": "泣く",
+    "kana": "なく",
+    "romaji": "naku",
+    "type": "godan",
+    "meaning": "llorar",
+    "examples": [
+      {
+        "ja": "赤ちゃんが泣いています。",
+        "es": "El bebé está llorando."
+      },
+      {
+        "ja": "子供が泣いた。",
+        "es": "El niño lloró."
+      }
+    ]
+  },
+  {
+    "kanji": "笑う",
+    "kana": "わらう",
+    "romaji": "warau",
+    "type": "godan",
+    "meaning": "reír",
+    "examples": [
+      {
+        "ja": "みんな笑います。",
+        "es": "Todos ríen."
+      },
+      {
+        "ja": "彼はよく笑った。",
+        "es": "Él se rió mucho."
+      }
+    ]
+  },
+  {
+    "kanji": "教える",
+    "kana": "おしえる",
+    "romaji": "oshieru",
+    "type": "ichidan",
+    "meaning": "enseñar",
+    "examples": [
+      {
+        "ja": "日本語を教えます。",
+        "es": "Enseño japonés."
+      },
+      {
+        "ja": "先生が漢字を教えた。",
+        "es": "El profesor enseñó kanji."
+      }
+    ]
+  },
+  {
+    "kanji": "習う",
+    "kana": "ならう",
+    "romaji": "narau",
+    "type": "godan",
+    "meaning": "aprender (de alguien)",
+    "examples": [
+      {
+        "ja": "ピアノを習います。",
+        "es": "Aprendo piano."
+      },
+      {
+        "ja": "彼に英語を習った。",
+        "es": "Aprendí inglés de él."
+      }
+    ]
+  },
+  {
+    "kanji": "勉強する",
+    "kana": "べんきょうする",
+    "romaji": "benkyou suru",
+    "type": "irregular",
+    "meaning": "estudiar",
+    "examples": [
+      {
+        "ja": "日本語を勉強します。",
+        "es": "Estudio japonés."
+      },
+      {
+        "ja": "昨日たくさん勉強した。",
+        "es": "Estudié mucho ayer."
+      }
+    ]
+  },
+  {
+    "kanji": "洗う",
+    "kana": "あらう",
+    "romaji": "arau",
+    "type": "godan",
+    "meaning": "lavar",
+    "examples": [
+      {
+        "ja": "手を洗います。",
+        "es": "Me lavo las manos."
+      },
+      {
+        "ja": "皿を洗った。",
+        "es": "Lavé los platos."
+      }
+    ]
+  },
+  {
+    "kanji": "出かける",
+    "kana": "でかける",
+    "romaji": "dekakeru",
+    "type": "ichidan",
+    "meaning": "salir (a algún lugar)",
+    "examples": [
+      {
+        "ja": "出かけますか。",
+        "es": "¿Vas a salir?"
+      },
+      {
+        "ja": "友達と出かけた。",
+        "es": "Salí con un amigo."
+      }
+    ]
+  },
+  {
+    "kanji": "帰る",
+    "kana": "かえる",
+    "romaji": "kaeru",
+    "type": "godan",
+    "meaning": "volver, regresar",
+    "examples": [
+      {
+        "ja": "家に帰ります。",
+        "es": "Vuelvo a casa."
+      },
+      {
+        "ja": "夜遅く帰った。",
+        "es": "Volví tarde en la noche."
+      }
+    ]
+  },
+  {
+    "kanji": "持つ",
+    "kana": "もつ",
+    "romaji": "motsu",
+    "type": "godan",
+    "meaning": "tener, sostener",
+    "examples": [
+      {
+        "ja": "かばんを持ちます。",
+        "es": "Llevo una bolsa."
+      },
+      {
+        "ja": "彼は傘を持っていた。",
+        "es": "Él tenía un paraguas."
+      }
+    ]
+  },
+  {
+    "kanji": "送る",
+    "kana": "おくる",
+    "romaji": "okuru",
+    "type": "godan",
+    "meaning": "enviar",
+    "examples": [
+      {
+        "ja": "手紙を送ります。",
+        "es": "Envió una carta."
+      },
+      {
+        "ja": "メールを送った。",
+        "es": "Mandé un correo."
+      }
+    ]
+  },
+  {
+    "kanji": "立てる",
+    "kana": "たてる",
+    "romaji": "tateru",
+    "type": "ichidan",
+    "meaning": "levantar, erigir",
+    "examples": [
+      {
+        "ja": "旗を立てます。",
+        "es": "Levanto la bandera."
+      },
+      {
+        "ja": "計画を立てた。",
+        "es": "Hice un plan."
+      }
+    ]
+  },
+  {
+    "kanji": "始める",
+    "kana": "はじめる",
+    "romaji": "hajimeru",
+    "type": "ichidan",
+    "meaning": "empezar (algo)",
+    "examples": [
+      {
+        "ja": "勉強を始めます。",
+        "es": "Empiezo a estudiar."
+      },
+      {
+        "ja": "仕事を始めた。",
+        "es": "Comencé el trabajo."
+      }
+    ]
+  },
+  {
+    "kanji": "終わる",
+    "kana": "おわる",
+    "romaji": "owaru",
+    "type": "godan",
+    "meaning": "terminar",
+    "examples": [
+      {
+        "ja": "授業が終わります。",
+        "es": "La clase termina."
+      },
+      {
+        "ja": "映画が終わった。",
+        "es": "La película terminó."
+      }
+    ]
+  },
+  {
+    "kanji": "開く",
+    "kana": "ひらく",
+    "romaji": "hiraku",
+    "type": "godan",
+    "meaning": "abrirse, abrirse solo",
+    "examples": [
+      {
+        "ja": "ドアが開きます。",
+        "es": "La puerta se abre."
+      },
+      {
+        "ja": "店が開いた。",
+        "es": "La tienda abrió."
+      }
+    ]
+  },
+  {
+    "kanji": "閉まる",
+    "kana": "しまる",
+    "romaji": "shimaru",
+    "type": "godan",
+    "meaning": "cerrarse",
+    "examples": [
+      {
+        "ja": "ドアが閉まります。",
+        "es": "La puerta se cierra."
+      },
+      {
+        "ja": "店が閉まった。",
+        "es": "La tienda cerró."
+      }
+    ]
+  },
+  {
+    "kanji": "降る",
+    "kana": "ふる",
+    "romaji": "furu",
+    "type": "godan",
+    "meaning": "caer (lluvia, nieve)",
+    "examples": [
+      {
+        "ja": "雨が降ります。",
+        "es": "Llueve."
+      },
+      {
+        "ja": "昨日雪が降った。",
+        "es": "Ayer nevó."
+      }
+    ]
+  },
+  {
+    "kanji": "着る",
+    "kana": "きる",
+    "romaji": "kiru",
+    "type": "ichidan",
+    "meaning": "ponerse (ropa)",
+    "examples": [
+      {
+        "ja": "シャツを着ます。",
+        "es": "Me pongo una camisa."
+      },
+      {
+        "ja": "新しい服を着た。",
+        "es": "Me puse ropa nueva."
+      }
+    ]
+  },
+  {
+    "kanji": "洗濯する",
+    "kana": "せんたくする",
+    "romaji": "sentaku suru",
+    "type": "irregular",
+    "meaning": "lavar ropa",
+    "examples": [
+      {
+        "ja": "毎日洗濯します。",
+        "es": "Lavo la ropa todos los días."
+      },
+      {
+        "ja": "昨日洗濯した。",
+        "es": "Lavé la ropa ayer."
+      }
+    ]
+  },
+  {
+    "kanji": "掃除する",
+    "kana": "そうじする",
+    "romaji": "souji suru",
+    "type": "irregular",
+    "meaning": "limpiar",
+    "examples": [
+      {
+        "ja": "部屋を掃除します。",
+        "es": "Limpio la habitación."
+      },
+      {
+        "ja": "家を掃除した。",
+        "es": "Limpié la casa."
+      }
+    ]
+  },
+  {
+    "kanji": "電話する",
+    "kana": "でんわする",
+    "romaji": "denwa suru",
+    "type": "irregular",
+    "meaning": "llamar por teléfono",
+    "examples": [
+      {
+        "ja": "母に電話します。",
+        "es": "Llamo a mi madre."
+      },
+      {
+        "ja": "友達に電話した。",
+        "es": "Llamé a un amigo."
+      }
+    ]
+  },
+  {
+    "kanji": "結婚する",
+    "kana": "けっこんする",
+    "romaji": "kekkon suru",
+    "type": "irregular",
+    "meaning": "casarse",
+    "examples": [
+      {
+        "ja": "来年結婚します。",
+        "es": "Me casaré el próximo año."
+      },
+      {
+        "ja": "彼は結婚した。",
+        "es": "Él se casó."
+      }
+    ]
+  }
+]
