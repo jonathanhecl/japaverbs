@@ -31,10 +31,14 @@
 	}
 
 	function handleSpeak() {
-		speak(verb.kanji || verb.kana, {
+		const status = speak(verb.kanji || verb.kana, {
 			fallbackText: verb.meaning,
 			fallbackLang: 'es-ES'
 		});
+
+		if (status === 'fallback') {
+			window.open('/tts', '_blank');
+		}
 	}
 </script>
 
@@ -83,7 +87,17 @@
 							<p class="text-slate-400 text-sm">{example.es}</p>
 						</div>
 						<button
-							onclick={() => speak(example.ja, { fallbackText: example.es, fallbackLang: 'es-ES' })}
+							onclick={() => {
+								const status = speak(example.ja, {
+									fallbackText: example.es,
+									fallbackLang: 'es-ES'
+								});
+								if (status === 'fallback') {
+									alert(
+										'No se detectó una voz japonesa en tu navegador. Instala una voz 日本語 en la configuración de voz del sistema para escuchar la pronunciación nativa.'
+									);
+								}
+							}}
 							class="p-1 rounded hover:bg-slate-700 transition-colors text-sm"
 							aria-label="Reproducir ejemplo"
 						>

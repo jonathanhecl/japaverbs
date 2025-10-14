@@ -4,38 +4,42 @@ type SpeakOptions = {
   fallbackLang?: string;
 };
 
-const cachedVoices = new Map<string, SpeechSynthesisVoice>();
+export type SpeakStatus = 'native' | 'fallback' | 'pending' | 'unsupported';
 
-function selectVoice(synth: SpeechSynthesis, lang: string) {
+const cachedVoices = new Map<string, string>();
+
+function selectVoiceFromList(voices: SpeechSynthesisVoice[], lang: string) {
   const key = lang.toLowerCase().slice(0, 2);
-  const voices = synth.getVoices();
   if (!voices.length) {
     return null;
   }
 
-  const cached = cachedVoices.get(key);
-  if (cached && voices.some((voice) => voice.name === cached.name)) {
-    return cached;
+  const cachedName = cachedVoices.get(key);
+  if (cachedName) {
+    const cached = voices.find((voice) => voice.name === cachedName);
+    if (cached) {
+      return cached;
+    }
   }
 
   const found = voices.find((voice) => voice.lang?.toLowerCase().startsWith(key));
   if (found) {
-    cachedVoices.set(key, found);
+    cachedVoices.set(key, found.name);
     return found;
   }
 
   return null;
 }
 
-export function speak(text: string, options: SpeakOptions = {}) {
+export function speak(text: string, options: SpeakOptions = {}): SpeakStatus {
   if (typeof window === 'undefined') {
-    return;
+    return 'unsupported';
   }
 
   const synth = window.speechSynthesis;
   if (!synth) {
     console.warn('Speech synthesis is not supported in this browser.');
-    return;
+    return 'unsupported';
   }
 
   const {
@@ -46,12 +50,22 @@ export function speak(text: string, options: SpeakOptions = {}) {
 
   let utterText = text;
   let utterLang = lang;
-  let voice = selectVoice(synth, lang);
+
+  const initialVoices = synth.getVoices();
+  const voicesLoaded = initialVoices.length > 0;
+
+  let voice = selectVoiceFromList(initialVoices, lang);
+  let usingFallback = false;
 
   if (!voice && fallbackText) {
     utterText = fallbackText;
     utterLang = fallbackLang;
-    voice = selectVoice(synth, fallbackLang);
+    voice = selectVoiceFromList(initialVoices, fallbackLang);
+    if (voicesLoaded) {
+      usingFallback = true;
+    }
+  } else if (!voice && voicesLoaded) {
+    usingFallback = true;
   }
 
   const utter = new SpeechSynthesisUtterance(utterText);
@@ -68,30 +82,38 @@ export function speak(text: string, options: SpeakOptions = {}) {
   if (voice) {
     utter.voice = voice;
     speakUtterance();
-    return;
+  } else {
+    const speakWhenReady = () => {
+      const updatedVoices = synth.getVoices();
+      let readyVoice = selectVoiceFromList(updatedVoices, lang);
+
+      if (!readyVoice && fallbackText) {
+        readyVoice = selectVoiceFromList(updatedVoices, fallbackLang);
+        if (readyVoice) {
+          utter.voice = readyVoice;
+          utter.lang = fallbackLang;
+          utter.text = fallbackText;
+          usingFallback = true;
+        }
+      } else if (readyVoice) {
+        utter.voice = readyVoice;
+        usingFallback = false;
+      }
+
+      synth.removeEventListener('voiceschanged', speakWhenReady);
+      speakUtterance();
+    };
+
+    synth.addEventListener('voiceschanged', speakWhenReady, { once: true });
+    synth.getVoices();
+
+    // Fallback inmediato usando la voz por defecto del navegador
+    speakUtterance();
   }
 
-  const speakWhenReady = () => {
-    let readyVoice = selectVoice(synth, utterLang);
+  if (!voicesLoaded) {
+    return 'pending';
+  }
 
-    if (!readyVoice && fallbackText) {
-      readyVoice = selectVoice(synth, fallbackLang);
-      if (readyVoice) {
-        utter.voice = readyVoice;
-        utter.lang = fallbackLang;
-        utter.text = fallbackText;
-      }
-    } else if (readyVoice) {
-      utter.voice = readyVoice;
-    }
-
-    synth.removeEventListener('voiceschanged', speakWhenReady);
-    speakUtterance();
-  };
-
-  synth.addEventListener('voiceschanged', speakWhenReady, { once: true });
-  synth.getVoices();
-
-  // Fallback inmediato usando la voz por defecto del navegador
-  speakUtterance();
+  return usingFallback ? 'fallback' : 'native';
 }
