@@ -9,6 +9,7 @@
 		{ href: '/', label: 'Inicio', icon: '🏠' },
 		{ href: '/por-que', label: '¿Por qué?', icon: '💡' },
 		{ href: '/diccionario', label: 'Diccionario', icon: '📚' },
+		{ href: '/conjugaciones', label: 'Conjugaciones', icon: '🈂️' },
 		{ href: '/practica', label: 'Práctica', icon: '🎮' }
 	];
 </script>

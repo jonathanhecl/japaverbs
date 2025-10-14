@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { speak } from '$lib/utils/tts';
 	import type { Verb } from '$lib/types/verb';
+	import { conjugateVerb } from '$lib/utils/conjugation';
 
 	let { verb }: { verb: Verb } = $props();
 
@@ -29,6 +30,8 @@
 				return 'bg-slate-500/20 text-slate-400 border-slate-500/50';
 		}
 	}
+
+	const conjugations = conjugateVerb(verb);
 
 	function handleSpeak() {
 		const status = speak(verb.kanji || verb.kana, {
@@ -62,6 +65,20 @@
 
 	<div class="mb-4">
 		<p class="text-xl text-indigo-300 font-semibold">{verb.meaning}</p>
+	</div>
+
+	<!-- Conjugations -->
+	<div class="mb-5 space-y-2">
+		<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Conjugaciones clave</h3>
+		<div class="grid gap-2 sm:grid-cols-2">
+			{#each conjugations as form (form.key)}
+				<div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-3">
+					<p class="text-xs font-semibold text-indigo-300">{form.label}</p>
+					<p class="mt-1 text-lg font-medium text-white">{form.kana}</p>
+					<p class="mt-1 text-xs text-slate-400">{form.description}</p>
+				</div>
+			{/each}
+		</div>
 	</div>
 
 	<div class="flex gap-2 mb-4">
