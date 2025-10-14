@@ -1,11 +1,10 @@
 import adapter from '@sveltejs/adapter-cloudflare';
-import { vitePreprocess } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
     adapter: adapter({
-      // Configuración específica de Cloudflare
       routes: {
         include: ['/*'],
         exclude: ['/build/*', '/_app/immutable/*']
@@ -15,12 +14,11 @@ const config = {
       $components: 'src/components',
       $lib: 'src/lib'
     },
-    // Importante para el manejo de rutas en Cloudflare
     paths: {
       base: process.env.NODE_ENV === 'production' ? '' : ''
     }
   },
-  preprocess: vitePreprocess()
+  preprocess: [vitePreprocess()]
 };
 
 export default config;
