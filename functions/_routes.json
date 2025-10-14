@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/_app/immutable/*",
+    "/favicon.png",
+    "/favicon.svg",
+    "/robots.txt",
+    "/sitemap.xml"
+  ]
+}

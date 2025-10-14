@@ -1,17 +1,23 @@
-import adapter from '@sveltejs/adapter-static';
-import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-cloudflare';
+import { vitePreprocess } from '@sveltejs/kit/vite';
 
+/** @type {import('@sveltejs/kit').Config} */
 const config = {
   kit: {
     adapter: adapter({
-      pages: 'build',
-      assets: 'build',
-      fallback: 'index.html',
-      precompress: false
+      // Configuración específica de Cloudflare
+      routes: {
+        include: ['/*'],
+        exclude: ['/build/*', '/_app/immutable/*']
+      }
     }),
     alias: {
       $components: 'src/components',
       $lib: 'src/lib'
+    },
+    // Importante para el manejo de rutas en Cloudflare
+    paths: {
+      base: process.env.NODE_ENV === 'production' ? '' : ''
     }
   },
   preprocess: vitePreprocess()
