@@ -1,0 +1,16 @@
+{
+  "name": "Japaverbs",
+  "short_name": "Japaverbs",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "description": "Aprende verbos japoneses con juegos interactivos",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
