@@ -11,19 +11,19 @@
 ### 🌐 Versión en Línea
 Puedes acceder a la versión más reciente de JapaVerbs N5 en:
 
-[![Abrir JapaVerbs N5](https://img.shields.io/badge/🌐_Abrir_JapaVerbs_N5-4F46E5?style=for-the-badge&logo=googlechrome&logoColor=white)](https://japaverbs.gshaxor.workers.dev/)
+[![Abrir JapaVerbs N5](https://img.shields.io/badge/🌐_Abrir_JapaVerbs_N5-4F46E5?style=for-the-badge&logo=googlechrome&logoColor=white)](https://japaverbs.pages.dev/)
 
 ### 📥 Instalar como Aplicación
 JapaVerbs es una PWA (Aplicación Web Progresiva) que puedes instalar en tu dispositivo:
 
 #### 📱 En Móvil (Android/iOS)
-1. Abre [japaverbs.gshaxor.workers.dev](https://japaverbs.gshaxor.workers.dev/) en Chrome o Safari
+1. Abre [japaverbs.pages.dev](https://japaverbs.pages.dev/) en Chrome o Safari
 2. Toca el menú (⋮ o ⋯) y selecciona "Instalar" o "Añadir a pantalla de inicio"
 3. Confirma la instalación
 4. ¡Listo! La aplicación tendrá su propio ícono
 
 #### 💻 En Escritorio (Windows/macOS/Linux)
-1. Abre [japaverbs.gshaxor.workers.dev](https://japaverbs.gshaxor.workers.dev/) en Chrome o Edge
+1. Abre [japaverbs.pages.dev](https://japaverbs.pages.dev/) en Chrome o Edge
 2. Haz clic en el botón de instalación en la barra de direcciones (⤴️ o ➕)
 3. Sigue las instrucciones para completar la instalación
 4. La aplicación se abrirá en su propia ventana

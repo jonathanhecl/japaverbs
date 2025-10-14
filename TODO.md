@@ -1,5 +1,24 @@
 # 📝 TODO - Tareas Pendientes
 
+## ✅ Cambios Recientes (Octubre 2024)
+
+### Rediseño UI Completo
+- [x] Tema oscuro moderno con gradientes
+- [x] Nueva página de inicio (Home) con estadísticas
+- [x] Página "¿Por qué aprender verbos?" informativa
+- [x] Página de diccionario separada con búsqueda y filtros
+- [x] Navegación con tabs entre secciones
+- [x] VerbCard rediseñado con estilo oscuro
+- [x] Layout responsive con navegación sticky
+- [x] Actualización de colores del manifest.json
+
+### Estructura de Navegación
+- [x] `/` - Home con bienvenida y estadísticas
+- [x] `/por-que` - Página informativa sobre la importancia de los verbos
+- [x] `/diccionario` - Diccionario completo con búsqueda y filtros
+
+---
+
 ## 🚀 Fase 2: Sistema de Práctica (PRÓXIMA)
 
 ### Quiz Básico
