@@ -8,6 +8,12 @@
 	let searchQuery = $state('');
 	let selectedType = $state<string>('all');
 
+	const TYPE_ORDER: Record<string, number> = {
+	ichidan: 0,
+	godan: 1,
+	irregular: 2
+};
+
 	const filteredVerbs = $derived(() => {
 		let result = verbs;
 
@@ -28,7 +34,16 @@
 			result = result.filter((verb) => verb.type === selectedType);
 		}
 
-		return result;
+		const sortedResult = [...result].sort((a, b) => {
+			const orderDifference = (TYPE_ORDER[a.type] ?? Number.POSITIVE_INFINITY) - (TYPE_ORDER[b.type] ?? Number.POSITIVE_INFINITY);
+			if (orderDifference !== 0) {
+				return orderDifference;
+			}
+
+			return a.romaji.localeCompare(b.romaji);
+		});
+
+		return sortedResult;
 	});
 
 	const stats = $derived({
@@ -81,20 +96,20 @@
 				Todos ({stats.total})
 			</button>
 			<button
-				onclick={() => (selectedType = 'godan')}
-				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
-					? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-blue-500'}"
-			>
-				Godan ({stats.godan})
-			</button>
-			<button
 				onclick={() => (selectedType = 'ichidan')}
 				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
 					? 'bg-green-600 text-white shadow-lg shadow-green-500/50'
 					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-green-500'}"
 			>
 				Ichidan ({stats.ichidan})
+			</button>
+			<button
+				onclick={() => (selectedType = 'godan')}
+				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
+					? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
+					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-blue-500'}"
+			>
+				Godan ({stats.godan})
 			</button>
 			<button
 				onclick={() => (selectedType = 'irregular')}
