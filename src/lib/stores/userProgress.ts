@@ -84,11 +84,15 @@ function createUserStore() {
 				studiedVerb.incorrectCount++;
 			}
 
-			const newStreak = profile.lastStudyDate === today || 
-				new Date(profile.lastStudyDate).toISOString().split('T')[0] === 
-				new Date(Date.now() - 86400000).toISOString().split('T')[0]
-				? profile.streak + (profile.lastStudyDate !== today ? 1 : 0)
-				: 1;
+			let newStreak = 1;
+			if (profile.lastStudyDate) {
+				const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+				if (profile.lastStudyDate === today) {
+					newStreak = profile.streak;
+				} else if (profile.lastStudyDate === yesterday) {
+					newStreak = profile.streak + 1;
+				}
+			}
 
 			let dailyProgress = profile.dailyHistory.find(d => d.date === today);
 			if (!dailyProgress) {

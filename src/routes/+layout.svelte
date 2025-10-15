@@ -15,8 +15,8 @@
 </script>
 
 <svelte:head>
-	<title>JapaVerbs N5 - Aprende verbos japoneses</title>
-	<meta name="description" content="Diccionario interactivo de verbos japoneses JLPT N5. Aprende, practica y domina los verbos básicos del japonés." />
+	<title>JapaVerbs - Aprende verbos japoneses</title>
+	<meta name="description" content="Diccionario interactivo de verbos japoneses. Aprende, practica y domina verbos del japonés con múltiples modos de juego." />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<meta name="theme-color" content="#0f172a" />
 	<link rel="icon" href={favicon} />

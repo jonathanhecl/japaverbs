@@ -46,7 +46,7 @@
 			📚 Diccionario de Verbos
 		</h1>
 		<p class="text-slate-400">
-			Explora los {stats.total} verbos esenciales del JLPT N5
+			Explora {stats.total} verbos japoneses (JLPT N5)
 		</p>
 	</div>
 

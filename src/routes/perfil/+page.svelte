@@ -67,7 +67,7 @@
 </script>
 
 <svelte:head>
-	<title>Mi Perfil · JapaVerbs N5</title>
+	<title>Mi Perfil · JapaVerbs</title>
 </svelte:head>
 
 <div class="space-y-6 pb-6">

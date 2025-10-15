@@ -32,7 +32,8 @@
 			description: 'Repasa verbos con tarjetas interactivas',
 			icon: '🎴',
 			color: 'from-blue-500 to-cyan-500',
-			difficulty: 'Fácil'
+			difficulty: 'Fácil',
+			order: 1
 		},
 		{
 			id: 'multiple-choice',
@@ -40,15 +41,8 @@
 			description: 'Elige la traducción correcta',
 			icon: '✅',
 			color: 'from-green-500 to-emerald-500',
-			difficulty: 'Medio'
-		},
-		{
-			id: 'conjugation-quiz',
-			title: 'Quiz de conjugación',
-			description: 'Elige la conjugación correcta',
-			icon: '🎯',
-			color: 'from-indigo-500 to-purple-500',
-			difficulty: 'Difícil'
+			difficulty: 'Medio',
+			order: 2
 		},
 		{
 			id: 'conjugation',
@@ -56,7 +50,8 @@
 			description: 'Aprende formas verbales',
 			icon: '📝',
 			color: 'from-purple-500 to-pink-500',
-			difficulty: 'Medio'
+			difficulty: 'Medio',
+			order: 3
 		},
 		{
 			id: 'listening',
@@ -64,17 +59,22 @@
 			description: 'Identifica el verbo que escuchas',
 			icon: '🔊',
 			color: 'from-orange-500 to-red-500',
-			difficulty: 'Medio'
+			difficulty: 'Medio',
+			order: 4
+		},
+		{
+			id: 'conjugation-quiz',
+			title: 'Quiz de conjugación',
+			description: 'Elige la conjugación correcta',
+			icon: '🎯',
+			color: 'from-indigo-500 to-purple-500',
+			difficulty: 'Difícil',
+			order: 5
 		}
-	];
+	].sort((a, b) => a.order - b.order);
 
-	function selectGame(game: GameMode) {
-		selectedGame = game;
-		currentMode = 'config';
-	}
-
-	function startGame() {
-		currentMode = selectedGame;
+	function startGame(mode: GameMode) {
+		currentMode = mode;
 		gameVerbs = shuffleArray([...verbs]).slice(0, questionsPerSession);
 		currentIndex = 0;
 		questionCount = 0;
@@ -256,7 +256,7 @@
 </script>
 
 <svelte:head>
-	<title>Práctica · JapaVerbs N5</title>
+	<title>Práctica · JapaVerbs</title>
 </svelte:head>
 
 <div class="pb-6">
@@ -268,13 +268,32 @@
 					🎮
 				</div>
 				<h1 class="text-3xl font-bold text-white mb-2">Modo Práctica</h1>
-				<p class="text-slate-400">Elige un juego para empezar a practicar</p>
+				<p class="text-slate-400">Elige cuántas preguntas y un modo de juego</p>
+			</div>
+
+			<!-- Questions Selector -->
+			<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
+				<h2 class="text-base font-semibold text-white mb-3">Cantidad de preguntas</h2>
+				<div class="grid grid-cols-4 gap-2">
+					{#each [10, 20, 30, 40] as amount}
+						<button
+							onclick={() => questionsPerSession = amount}
+							class="rounded-xl border-2 p-3 text-center font-semibold transition-all active:scale-95 {
+								questionsPerSession === amount
+									? 'border-indigo-500 bg-indigo-500/20 text-white'
+									: 'border-slate-800 bg-slate-900 text-slate-400'
+							}"
+						>
+							<div class="text-2xl font-bold">{amount}</div>
+						</button>
+					{/each}
+				</div>
 			</div>
 
 			<div class="grid gap-4">
 				{#each games as game}
 					<button
-						onclick={() => selectGame(game.id as GameMode)}
+						onclick={() => startGame(game.id as GameMode)}
 						class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br {game.color} text-left p-[1px] transition-all active:scale-95"
 					>
 						<div class="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-slate-950/90 p-5">
@@ -315,57 +334,6 @@
 					<p class="text-xs text-slate-400">Precisión global</p>
 				</div>
 			</div>
-		</section>
-
-	{:else if currentMode === 'config'}
-		<!-- Configuration Screen -->
-		<section class="space-y-6">
-			<div class="flex items-center justify-between">
-				<button
-					onclick={() => currentMode = 'menu'}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
-					← Volver
-				</button>
-			</div>
-
-			<div class="text-center">
-				<div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl mb-4">
-					{games.find(g => g.id === selectedGame)?.icon || '🎮'}
-				</div>
-				<h1 class="text-2xl font-bold text-white mb-2">
-					{games.find(g => g.id === selectedGame)?.title}
-				</h1>
-				<p class="text-slate-400">Configura tu sesión de práctica</p>
-			</div>
-
-			<!-- Questions Selector -->
-			<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-6">
-				<h2 class="text-lg font-semibold text-white mb-4">Cantidad de preguntas</h2>
-				<div class="grid grid-cols-2 gap-3">
-					{#each [10, 20, 30, 40] as amount}
-						<button
-							onclick={() => questionsPerSession = amount}
-							class="rounded-xl border-2 p-4 text-center font-semibold transition-all active:scale-95 {
-								questionsPerSession === amount
-									? 'border-indigo-500 bg-indigo-500/20 text-white'
-									: 'border-slate-800 bg-slate-900 text-slate-400 hover:border-indigo-500/50'
-							}"
-						>
-							<div class="text-3xl font-bold mb-1">{amount}</div>
-							<div class="text-xs">preguntas</div>
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Start Button -->
-			<button
-				onclick={startGame}
-				class="w-full rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4 text-lg font-semibold text-white transition-all active:scale-95"
-			>
-				Comenzar práctica
-			</button>
 		</section>
 
 	{:else if currentMode === 'flashcards'}

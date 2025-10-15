@@ -82,10 +82,10 @@
 		<div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(129,140,248,0.25),transparent_45%)]"></div>
 		<div class="relative mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12 text-center">
 			<div class="space-y-3">
-				<p class="text-sm uppercase tracking-[0.35em] text-indigo-300">JapaVerbs N5</p>
+				<p class="text-sm uppercase tracking-[0.35em] text-indigo-300">JapaVerbs</p>
 				<h1 class="text-4xl font-bold leading-tight text-white sm:text-5xl">こんにちは, aprende verbos japoneses</h1>
 				<p class="text-base text-slate-300 sm:text-lg">
-					Tu hub interactivo para dominar los verbos esenciales del JLPT N5 desde el móvil o escritorio
+					Tu hub interactivo para dominar verbos japoneses desde el móvil o escritorio
 				</p>
 			</div>
 

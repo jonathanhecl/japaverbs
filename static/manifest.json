@@ -1,11 +1,11 @@
 {
-  "name": "JapaVerbs N5 - Aprende verbos japoneses",
-  "short_name": "JapaVerbs N5",
+  "name": "JapaVerbs - Aprende verbos japoneses",
+  "short_name": "JapaVerbs",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#0f172a",
-  "description": "Diccionario interactivo de verbos japoneses JLPT N5. Aprende, practica y domina los verbos básicos del japonés.",
+  "description": "Diccionario interactivo de verbos japoneses. Aprende, practica y domina verbos del japonés con múltiples modos de juego.",
   "icons": [
     {
       "src": "/favicon.png",

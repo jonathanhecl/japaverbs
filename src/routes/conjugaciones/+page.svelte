@@ -232,8 +232,8 @@
 </script>
 
 <svelte:head>
-  <title>Guía de conjugación de verbos · JapaVerbs N5</title>
-  <meta name="description" content="Aprende a conjugar verbos godan, ichidan e irregulares con ejemplos prácticos para JLPT N5." />
+  <title>Guía de conjugación de verbos · JapaVerbs</title>
+  <meta name="description" content="Aprende a conjugar verbos godan, ichidan e irregulares con ejemplos prácticos." />
 </svelte:head>
 
 <section class="space-y-6 pb-6">
