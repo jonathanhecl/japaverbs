@@ -1,4 +1,4 @@
-# 🇯🇵 JapaVerbs N5
+# 🇯🇵 JapaVerbs
 
 > PWA moderna para aprender verbos japoneses del nivel JLPT N5
 
@@ -9,9 +9,9 @@
 ## 🌍 Acceso a la Aplicación
 
 ### 🌐 Versión en Línea
-Puedes acceder a la versión más reciente de JapaVerbs N5 en:
+Puedes acceder a la versión más reciente de JapaVerbs en:
 
-[![Abrir JapaVerbs N5](https://img.shields.io/badge/🌐_Abrir_JapaVerbs_N5-4F46E5?style=for-the-badge&logo=googlechrome&logoColor=white)](https://japaverbs.pages.dev/)
+[![Abrir JapaVerbs](https://img.shields.io/badge/🌐_Abrir_JapaVerbs-4F46E5?style=for-the-badge&logo=googlechrome&logoColor=white)](https://japaverbs.pages.dev/)
 
 ### 📥 Instalar como Aplicación
 JapaVerbs es una PWA (Aplicación Web Progresiva) que puedes instalar en tu dispositivo:

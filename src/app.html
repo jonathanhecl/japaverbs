@@ -9,6 +9,17 @@
 		<div style="display: contents">%sveltekit.body%</div>
 		<script>
 			if ('serviceWorker' in navigator) {
+				let updatePromptShown = false;
+				const promptReload = () => {
+					if (updatePromptShown) {
+						return;
+					}
+					updatePromptShown = true;
+					if (confirm('Nueva versión disponible. ¿Actualizar ahora?')) {
+						window.location.reload();
+					}
+				};
+
 				window.addEventListener('load', () => {
 					navigator.serviceWorker.register('/sw.js')
 						.then((registration) => {
@@ -20,10 +31,7 @@
 								newWorker.addEventListener('statechange', () => {
 									if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
 										// New service worker available, show update notification
-										if (confirm('Nueva versión disponible. ¿Actualizar ahora?')) {
-											newWorker.postMessage({ type: 'SKIP_WAITING' });
-											window.location.reload();
-										}
+										promptReload();
 									}
 								});
 							});
@@ -31,6 +39,12 @@
 						.catch((error) => {
 							console.log('Service Worker registration failed:', error);
 						});
+				});
+
+				navigator.serviceWorker.addEventListener('message', (event) => {
+					if (event.data && event.data.type === 'PWA_UPDATE_READY') {
+						promptReload();
+					}
 				});
 			}
 		</script>

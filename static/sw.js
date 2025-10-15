@@ -9,8 +9,11 @@ const ASSETS_TO_CACHE = [
   '/favicon.png'
 ];
 
+let isUpdate = false;
+
 // Install event - cache assets
 self.addEventListener('install', (event) => {
+  isUpdate = !!self.registration?.active;
   console.log('[Service Worker] Installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -27,18 +30,24 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('[Service Worker] Activating...');
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
+    (async () => {
+      const cacheNames = await caches.keys();
+      const cachesToDelete = cacheNames.filter((cacheName) => cacheName !== CACHE_NAME);
+      await Promise.all(
+        cachesToDelete.map((cacheName) => {
+          console.log('[Service Worker] Deleting old cache:', cacheName);
+          return caches.delete(cacheName);
         })
       );
-    })
+      await self.clients.claim();
+      if (isUpdate) {
+        const clientList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        clientList.forEach((client) => {
+          client.postMessage({ type: 'PWA_UPDATE_READY' });
+        });
+      }
+    })()
   );
-  return self.clients.claim();
 });
 
 // Fetch event - serve from cache, fallback to network
