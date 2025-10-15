@@ -8,9 +8,9 @@
   "description": "Diccionario interactivo de verbos japoneses. Aprende, practica y domina verbos del japonés con múltiples modos de juego.",
   "icons": [
     {
-      "src": "/favicon.png",
+      "src": "/favicon.svg",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any maskable"
     }
   ],
