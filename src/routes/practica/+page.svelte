@@ -8,7 +8,14 @@
 
 	const verbs: Verb[] = verbsData as Verb[];
 
-	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz';
+	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'results';
+
+	interface VerbResult {
+		verb: Verb;
+		correct: boolean;
+		previousMastery: number;
+		newMastery: number;
+	}
 
 	let currentMode = $state<GameMode>('menu');
 	let selectedGame = $state<GameMode>('flashcards');
@@ -24,6 +31,8 @@
 	let feedback = $state('');
 	let conjugationForm = $state('');
 	let autoPlayedExample = $state(false);
+	let sessionResults = $state<VerbResult[]>([]);
+	let completedGameMode = $state<GameMode>('flashcards');
 
 	const games = [
 		{
@@ -75,6 +84,8 @@
 
 	function startGame(mode: GameMode) {
 		currentMode = mode;
+		completedGameMode = mode;
+		sessionResults = []; // Reiniciar resultados de la sesión
 		
 		// Implementar algoritmo de repetición espaciada
 		const today = new Date().toISOString().split('T')[0];
@@ -216,12 +227,25 @@
 	function handleFlashcardAnswer(knew: boolean) {
 		if (!currentVerb) return;
 		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
 		if (knew) {
 			correctCount++;
 			userProfile.addXP(5);
 		}
 		
 		userProfile.recordPractice(currentVerb.kanji, knew);
+		
+		// Guardar resultado
+		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		sessionResults.push({
+			verb: currentVerb,
+			correct: knew,
+			previousMastery,
+			newMastery
+		});
+		
 		currentIndex++;
 		loadNextQuestion();
 	}
@@ -232,6 +256,9 @@
 		selectedAnswer = answer;
 		const correct = answer === currentVerb.meaning;
 		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
 		if (correct) {
 			correctCount++;
 			feedback = '¡Correcto! 🎉';
@@ -241,6 +268,15 @@
 		}
 		
 		userProfile.recordPractice(currentVerb.kanji, correct);
+		
+		// Guardar resultado
+		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		sessionResults.push({
+			verb: currentVerb,
+			correct,
+			previousMastery,
+			newMastery
+		});
 		
 		// Reproducir audio del verbo antes de avanzar
 		speak(currentVerb.kanji || currentVerb.kana);
@@ -259,6 +295,9 @@
 		const correctAnswer = conjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
 		const correct = answer === correctAnswer;
 		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
 		if (correct) {
 			correctCount++;
 			feedback = '¡Correcto! 🎉';
@@ -268,6 +307,15 @@
 		}
 		
 		userProfile.recordPractice(currentVerb.kanji, correct);
+		
+		// Guardar resultado
+		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		sessionResults.push({
+			verb: currentVerb,
+			correct,
+			previousMastery,
+			newMastery
+		});
 		
 		// Reproducir audio de la conjugación
 		speak(answer);
@@ -286,24 +334,43 @@
 	function handleConjugationAnswer(knew: boolean) {
 		if (!currentVerb) return;
 		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
 		if (knew) {
 			correctCount++;
 			userProfile.addXP(15);
 		}
 		
 		userProfile.recordPractice(currentVerb.kanji, knew);
+		
+		// Guardar resultado
+		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		sessionResults.push({
+			verb: currentVerb,
+			correct: knew,
+			previousMastery,
+			newMastery
+		});
+		
 		currentIndex++;
 		loadNextQuestion();
 	}
 
 	function finishGame() {
-		currentMode = 'menu';
 		const accuracy = Math.round((correctCount / questionCount) * 100);
 		
 		// Check for achievements
 		if (questionCount >= 10 && accuracy === 100) {
 			userProfile.addAchievement('perfect_game');
 		}
+		
+		// Ir a la pantalla de resultados
+		currentMode = 'results';
+	}
+	
+	function retryGame() {
+		startGame(completedGameMode);
 	}
 
 	function exitGame() {
@@ -857,6 +924,122 @@
 					</button>
 				</div>
 			{/if}
+		</section>
+
+	{:else if currentMode === 'results'}
+		<!-- Results Screen -->
+		<section class="space-y-6">
+			<!-- Header con estadísticas generales -->
+			<div class="text-center">
+				<div class="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-green-500 to-emerald-500 text-4xl mb-4">
+					🎉
+				</div>
+				<h1 class="text-3xl font-bold text-white mb-2">¡Sesión completada!</h1>
+				<p class="text-slate-400 mb-4">
+					{games.find(g => g.id === completedGameMode)?.title || 'Práctica'}
+				</p>
+			</div>
+
+			<!-- Estadísticas principales -->
+			<div class="grid grid-cols-2 gap-3">
+				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
+					<div class="text-3xl font-bold text-white mb-1">{correctCount}/{questionCount}</div>
+					<p class="text-xs text-slate-400 uppercase tracking-wide">Correctas</p>
+				</div>
+				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
+					<div class="text-3xl font-bold text-indigo-400 mb-1">
+						{Math.round((correctCount / questionCount) * 100)}%
+					</div>
+					<p class="text-xs text-slate-400 uppercase tracking-wide">Precisión</p>
+				</div>
+			</div>
+
+			<!-- Resumen por verbo -->
+			<div>
+				<h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+					<span>📊</span>
+					<span>Detalle por verbo</span>
+				</h2>
+				<div class="space-y-2">
+					{#each sessionResults as result}
+						<div class="rounded-xl border border-slate-800 bg-slate-900/50 p-4">
+							<div class="flex items-start justify-between gap-3 mb-3">
+								<div class="flex-1">
+									<div class="flex items-center gap-2 mb-1">
+										<span class="text-xl font-bold text-white">{result.verb.kanji}</span>
+										<span class="text-base text-slate-400">{result.verb.kana}</span>
+										{#if result.correct}
+											<span class="text-green-400 text-xl">✓</span>
+										{:else}
+											<span class="text-red-400 text-xl">✗</span>
+										{/if}
+									</div>
+									<p class="text-sm text-indigo-300">{result.verb.meaning}</p>
+								</div>
+								<button
+									onclick={() => speak(result.verb.kanji || result.verb.kana)}
+									class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg flex-shrink-0"
+									aria-label="Reproducir"
+								>
+									🔊
+								</button>
+							</div>
+							
+							<!-- Progreso de mastery -->
+							<div class="flex items-center gap-3">
+								<div class="flex-1">
+									<div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+										<span>Progreso</span>
+										<span class="{result.correct ? 'text-green-400' : 'text-red-400'}">
+											{result.previousMastery > result.newMastery ? '↓' : result.previousMastery < result.newMastery ? '↑' : '→'}
+											{result.newMastery > 0 ? '+' : ''}{result.newMastery}
+										</span>
+									</div>
+									<div class="h-2 bg-slate-800 rounded-full overflow-hidden">
+										<div 
+											class="h-full transition-all duration-500 {
+												result.newMastery <= -3 ? 'bg-red-500' :
+												result.newMastery <= -1 ? 'bg-orange-500' :
+												result.newMastery === 0 ? 'bg-slate-500' :
+												result.newMastery <= 2 ? 'bg-yellow-500' :
+												result.newMastery <= 4 ? 'bg-blue-500' :
+												'bg-green-500'
+											}"
+											style="width: {((result.newMastery + 5) / 10) * 100}%"
+										></div>
+									</div>
+								</div>
+								<div class="text-xs font-medium px-2 py-1 rounded {
+									result.newMastery <= -3 ? 'bg-red-500/20 text-red-400' :
+									result.newMastery <= -1 ? 'bg-orange-500/20 text-orange-400' :
+									result.newMastery === 0 ? 'bg-slate-500/20 text-slate-400' :
+									result.newMastery <= 2 ? 'bg-yellow-500/20 text-yellow-400' :
+									result.newMastery <= 4 ? 'bg-blue-500/20 text-blue-400' :
+									'bg-green-500/20 text-green-400'
+								}">
+									{Math.round(((result.newMastery + 5) / 10) * 100)}%
+								</div>
+							</div>
+						</div>
+					{/each}
+				</div>
+			</div>
+
+			<!-- Botones de acción -->
+			<div class="grid grid-cols-2 gap-3 pt-4">
+				<button
+					onclick={() => currentMode = 'menu'}
+					class="rounded-2xl border-2 border-slate-800 bg-slate-900 px-6 py-3 font-semibold text-white hover:border-indigo-500 transition-colors"
+				>
+					← Menú
+				</button>
+				<button
+					onclick={retryGame}
+					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
+				>
+					🔄 Reintentar
+				</button>
+			</div>
 		</section>
 	{/if}
 </div>
