@@ -192,11 +192,11 @@
 		const conjugations = conjugateVerb(currentVerb);
 		const correctConjugation = conjugations.find(c => c.label.includes(selectedForm))?.kana || currentVerb.kana;
 		
-		// Generar opciones incorrectas usando otros verbos
-		const otherVerbs = shuffleArray(verbs.filter(v => v.kanji !== currentVerb!.kanji)).slice(0, 3);
-		const wrongAnswers = otherVerbs.map(v => {
-			const conj = conjugateVerb(v);
-			return conj.find(c => c.label.includes(selectedForm))?.kana || v.kana;
+		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
+		// Esto hace el ejercicio más desafiante
+		const otherForms = forms.filter(f => f !== selectedForm);
+		const wrongAnswers = otherForms.map(form => {
+			return conjugations.find(c => c.label.includes(form))?.kana || currentVerb.kana;
 		});
 		
 		options = shuffleArray([correctConjugation, ...wrongAnswers]);
@@ -940,6 +940,22 @@
 				</p>
 			</div>
 
+			<!-- Botones de acción -->
+			<div class="grid grid-cols-2 gap-3">
+				<button
+					onclick={() => currentMode = 'menu'}
+					class="rounded-2xl border-2 border-slate-800 bg-slate-900 px-6 py-3 font-semibold text-white hover:border-indigo-500 transition-colors"
+				>
+					← Menú
+				</button>
+				<button
+					onclick={retryGame}
+					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
+				>
+					🔄 Reintentar
+				</button>
+			</div>
+
 			<!-- Estadísticas principales -->
 			<div class="grid grid-cols-2 gap-3">
 				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
@@ -1023,22 +1039,6 @@
 						</div>
 					{/each}
 				</div>
-			</div>
-
-			<!-- Botones de acción -->
-			<div class="grid grid-cols-2 gap-3 pt-4">
-				<button
-					onclick={() => currentMode = 'menu'}
-					class="rounded-2xl border-2 border-slate-800 bg-slate-900 px-6 py-3 font-semibold text-white hover:border-indigo-500 transition-colors"
-				>
-					← Menú
-				</button>
-				<button
-					onclick={retryGame}
-					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
-				>
-					🔄 Reintentar
-				</button>
 			</div>
 		</section>
 	{/if}

@@ -40,24 +40,6 @@
 	const xpForNextLevel = $derived(profile.level * 100);
 	const xpProgress = $derived((profile.xp % 100) / 100);
 
-	const last7Days = $derived(() => {
-		const days = [];
-		for (let i = 6; i >= 0; i--) {
-			const date = new Date();
-			date.setDate(date.getDate() - i);
-			const dateStr = date.toISOString().split('T')[0];
-			const dayProgress = profile.dailyHistory.find(d => d.date === dateStr);
-			days.push({
-				date: dateStr,
-				day: date.toLocaleDateString('es-ES', { weekday: 'short' }),
-				count: dayProgress?.totalQuestions || 0
-			});
-		}
-		return days;
-	});
-
-	const maxDayCount = $derived(Math.max(...last7Days().map(d => d.count), 1));
-
 	// Calcular verbos masterizados (mastery score = 5) vs pendientes
 	const verbStats = $derived(() => {
 		const totalVerbs = verbs.length;
@@ -187,25 +169,6 @@
 			<div class="text-3xl mb-1">📚</div>
 			<p class="text-2xl font-bold text-white">{Object.keys(profile.studiedVerbs).length}</p>
 			<p class="text-xs text-slate-400">Verbos estudiados</p>
-		</div>
-	</section>
-
-	<!-- Activity Chart -->
-	<section class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-		<h2 class="text-lg font-semibold text-white mb-4">Actividad esta semana</h2>
-		<div class="flex items-end justify-between gap-2 h-32">
-			{#each last7Days() as day}
-				<div class="flex-1 flex flex-col items-center gap-2">
-					<div class="flex-1 flex items-end w-full">
-						<div 
-							class="w-full rounded-t-lg transition-all {day.count > 0 ? 'bg-gradient-to-t from-indigo-600 to-purple-500' : 'bg-slate-800'}"
-							style="height: {day.count > 0 ? (day.count / maxDayCount * 100) : 10}%"
-							title="{day.count} preguntas"
-						></div>
-					</div>
-					<span class="text-[10px] text-slate-400 uppercase">{day.day}</span>
-				</div>
-			{/each}
 		</div>
 	</section>
 
