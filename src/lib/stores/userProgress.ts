@@ -25,6 +25,8 @@ export interface UserProfile {
 		timesReviewed: number; 
 		correctCount: number;
 		incorrectCount: number;
+		masteryScore: number; // -5 (muy difícil) a +5 (dominado)
+		nextReviewDate: string; // Fecha para próxima revisión espaciada
 	}>;
 	dailyHistory: DailyProgress[];
 	achievements: string[];
@@ -73,16 +75,46 @@ function createUserStore() {
 				lastStudied: today,
 				timesReviewed: 0,
 				correctCount: 0,
-				incorrectCount: 0
+				incorrectCount: 0,
+				masteryScore: 0,
+				nextReviewDate: today
 			};
 
 			studiedVerb.timesReviewed++;
 			studiedVerb.lastStudied = today;
+			
+			// Sistema de puntuación: +1 por correcto, -2 por incorrecto
+			// Rango: -5 (muy difícil) a +5 (dominado)
 			if (correct) {
 				studiedVerb.correctCount++;
+				studiedVerb.masteryScore = Math.min(5, studiedVerb.masteryScore + 1);
 			} else {
 				studiedVerb.incorrectCount++;
+				studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 2);
 			}
+
+			// Calcular próxima fecha de revisión usando repetición espaciada
+			// Intervalos basados en mastery score:
+			// -5 a -3: 0 días (revisar inmediatamente)
+			// -2 a -1: 1 día
+			// 0: 2 días
+			// 1: 3 días
+			// 2: 5 días
+			// 3: 8 días
+			// 4: 13 días
+			// 5: 21 días
+			const intervalDays = studiedVerb.masteryScore <= -3 ? 0 :
+				studiedVerb.masteryScore === -2 ? 1 :
+				studiedVerb.masteryScore === -1 ? 1 :
+				studiedVerb.masteryScore === 0 ? 2 :
+				studiedVerb.masteryScore === 1 ? 3 :
+				studiedVerb.masteryScore === 2 ? 5 :
+				studiedVerb.masteryScore === 3 ? 8 :
+				studiedVerb.masteryScore === 4 ? 13 : 21;
+			
+			const nextDate = new Date();
+			nextDate.setDate(nextDate.getDate() + intervalDays);
+			studiedVerb.nextReviewDate = nextDate.toISOString().split('T')[0];
 
 			let newStreak = 1;
 			if (profile.lastStudyDate) {
@@ -135,3 +167,19 @@ function createUserStore() {
 }
 
 export const userProfile = createUserStore();
+
+// Helper para calcular porcentaje de dominio de un verbo
+// masteryScore va de -5 a +5, lo convertimos a 0-100%
+export function getMasteryPercentage(masteryScore: number): number {
+	return Math.round(((masteryScore + 5) / 10) * 100);
+}
+
+// Helper para obtener el nivel de dominio
+export function getMasteryLevel(masteryScore: number): { label: string; color: string } {
+	if (masteryScore <= -3) return { label: 'Muy difícil', color: 'text-red-400' };
+	if (masteryScore <= -1) return { label: 'Difícil', color: 'text-orange-400' };
+	if (masteryScore === 0) return { label: 'Nuevo', color: 'text-slate-400' };
+	if (masteryScore <= 2) return { label: 'Aprendiendo', color: 'text-yellow-400' };
+	if (masteryScore <= 4) return { label: 'Bueno', color: 'text-blue-400' };
+	return { label: 'Dominado', color: 'text-green-400' };
+}

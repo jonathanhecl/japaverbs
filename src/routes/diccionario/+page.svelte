@@ -101,7 +101,7 @@
 					? 'bg-green-600 text-white shadow-lg shadow-green-500/50'
 					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-green-500'}"
 			>
-				Ichidan ({stats.ichidan})
+				Ichidan · 一段 ({stats.ichidan})
 			</button>
 			<button
 				onclick={() => (selectedType = 'godan')}
@@ -109,7 +109,7 @@
 					? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
 					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-blue-500'}"
 			>
-				Godan ({stats.godan})
+				Godan · 五段 ({stats.godan})
 			</button>
 			<button
 				onclick={() => (selectedType = 'irregular')}

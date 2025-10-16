@@ -75,7 +75,55 @@
 
 	function startGame(mode: GameMode) {
 		currentMode = mode;
-		gameVerbs = shuffleArray([...verbs]).slice(0, questionsPerSession);
+		
+		// Implementar algoritmo de repetición espaciada
+		const today = new Date().toISOString().split('T')[0];
+		
+		// Calcular prioridad de cada verbo
+		const verbsWithPriority = verbs.map(verb => {
+			const progress = $userProfile.studiedVerbs[verb.kanji];
+			
+			if (!progress) {
+				// Verbos nuevos tienen prioridad alta
+				return { verb, priority: 1000 };
+			}
+			
+			const masteryScore = progress.masteryScore;
+			const nextReviewDate = progress.nextReviewDate;
+			const isReady = nextReviewDate <= today;
+			
+			// Calcular prioridad:
+			// - Verbos listos para revisión: prioridad alta
+			// - Verbos difíciles (masteryScore bajo): prioridad más alta
+			// - Verbos dominados (masteryScore alto): prioridad más baja
+			let priority = 0;
+			
+			if (isReady) {
+				// Listo para revisión: base de 500
+				priority = 500;
+				// Agregar bonus según dificultad (más difícil = más prioridad)
+				priority += (5 - masteryScore) * 50; // -5 score = +500, +5 score = +0
+			} else {
+				// No es momento de revisión, pero verbos difíciles aún tienen prioridad
+				priority = Math.max(0, (5 - masteryScore) * 20); // -5 score = +200, +5 score = +0
+			}
+			
+			return { verb, priority };
+		});
+		
+		// Ordenar por prioridad (mayor primero) y agregar algo de aleatoriedad
+		verbsWithPriority.sort((a, b) => {
+			// Agregar factor aleatorio pequeño para no ser completamente determinista
+			const randomFactor = (Math.random() - 0.5) * 50;
+			return (b.priority - a.priority) + randomFactor;
+		});
+		
+		// Seleccionar los primeros N verbos según prioridad
+		gameVerbs = verbsWithPriority.slice(0, questionsPerSession).map(v => v.verb);
+		
+		// Mezclar el orden de los verbos seleccionados
+		gameVerbs = shuffleArray(gameVerbs);
+		
 		currentIndex = 0;
 		questionCount = 0;
 		correctCount = 0;
@@ -143,7 +191,7 @@
 		options = shuffleArray([correctConjugation, ...wrongAnswers]);
 	}
 
-	// Auto-reproducir ejemplo cuando se voltea la tarjeta
+	// Auto-reproducir ejemplo cuando se voltea la tarjeta en flashcards
 	$effect(() => {
 		if (showAnswer && currentVerb && !autoPlayedExample && currentMode === 'flashcards') {
 			if (currentVerb.examples && currentVerb.examples.length > 0) {
@@ -152,6 +200,16 @@
 					autoPlayedExample = true;
 				}, 500);
 			}
+		}
+	});
+
+	// Auto-reproducir audio en modo listening al cargar nueva pregunta
+	$effect(() => {
+		if (currentMode === 'listening' && currentVerb && !autoPlayedExample) {
+			setTimeout(() => {
+				speak(currentVerb!.kanji || currentVerb!.kana);
+				autoPlayedExample = true;
+			}, 500);
 		}
 	});
 
@@ -425,13 +483,13 @@
 					<div class="grid grid-cols-2 gap-3">
 						<button
 							onclick={() => handleFlashcardAnswer(false)}
-							class="rounded-2xl border-2 border-red-500/50 bg-red-500/10 px-6 py-4 text-lg font-semibold text-red-400 transition-all active:scale-95"
+							class="rounded-2xl border-2 border-red-500/50 bg-red-500/10 px-6 py-3 text-lg font-semibold text-red-400 transition-all active:scale-95"
 						>
 							❌ No sabía
 						</button>
 						<button
 							onclick={() => handleFlashcardAnswer(true)}
-							class="rounded-2xl border-2 border-green-500/50 bg-green-500/10 px-6 py-4 text-lg font-semibold text-green-400 transition-all active:scale-95"
+							class="rounded-2xl border-2 border-green-500/50 bg-green-500/10 px-6 py-3 text-lg font-semibold text-green-400 transition-all active:scale-95"
 						>
 							✅ Sí sabía
 						</button>
@@ -493,7 +551,7 @@
 						<button
 							onclick={() => handleMultipleChoiceAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-4 text-lg font-medium transition-all active:scale-95 {
+							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
 								selectedAnswer === null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 									: selectedAnswer === option
@@ -570,7 +628,7 @@
 						<button
 							onclick={() => handleMultipleChoiceAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-4 text-lg font-medium transition-all active:scale-95 {
+							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
 								selectedAnswer === null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
 									: selectedAnswer === option
@@ -654,7 +712,7 @@
 						<button
 							onclick={() => handleConjugationQuizAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-4 text-lg font-medium transition-all active:scale-95 {
+							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
 								selectedAnswer === null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 									: selectedAnswer === option
@@ -771,13 +829,13 @@
 						<div class="grid grid-cols-2 gap-3 pt-4">
 							<button
 								onclick={() => handleConjugationAnswer(false)}
-								class="rounded-2xl border-2 border-red-500/50 bg-red-500/10 px-6 py-4 text-lg font-semibold text-red-400 transition-all active:scale-95"
+								class="rounded-2xl border-2 border-red-500/50 bg-red-500/10 px-6 py-3 text-lg font-semibold text-red-400 transition-all active:scale-95"
 							>
 								❌ No sabía
 							</button>
 							<button
 								onclick={() => handleConjugationAnswer(true)}
-								class="rounded-2xl border-2 border-green-500/50 bg-green-500/10 px-6 py-4 text-lg font-semibold text-green-400 transition-all active:scale-95"
+								class="rounded-2xl border-2 border-green-500/50 bg-green-500/10 px-6 py-3 text-lg font-semibold text-green-400 transition-all active:scale-95"
 							>
 								✅ Sí sabía
 							</button>
