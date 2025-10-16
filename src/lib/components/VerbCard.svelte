@@ -140,6 +140,7 @@
 						<div class="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
 							<p class="text-xs font-semibold text-indigo-300">{form.label}</p>
 							<p class="mt-1 text-base font-medium text-white">{form.kana}</p>
+							<p class="mt-1 text-sm text-emerald-400">→ {form.translation}</p>
 							<p class="mt-1 text-xs text-slate-400">{form.description}</p>
 						</div>
 					{/each}
