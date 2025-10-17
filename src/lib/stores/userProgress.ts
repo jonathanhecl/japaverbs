@@ -1,5 +1,14 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
+import {
+	initGoogleDrive,
+	requestGoogleAuth,
+	revokeGoogleAuth,
+	isAuthenticated,
+	saveProgressToDrive,
+	loadProgressFromDrive,
+	deleteProgressFromDrive
+} from '$lib/utils/googleDrive';
 
 export interface DailyProgress {
 	date: string;
@@ -162,9 +171,106 @@ function createUserStore() {
 			}
 			return profile;
 		}),
-		reset: () => set(defaultProfile)
+		reset: () => set(defaultProfile),
+		
+		// Google Drive Sync Methods
+		syncWithDrive: async () => {
+			if (!browser) return { success: false, message: 'Not in browser' };
+			
+			try {
+				const currentProfile = await new Promise<UserProfile>((resolve) => {
+					const unsubscribe = subscribe((val) => {
+						unsubscribe();
+						resolve(val);
+					});
+				});
+				
+				if (!currentProfile) {
+					return { success: false, message: 'No profile data' };
+				}
+				
+				await saveProgressToDrive(currentProfile);
+				return { success: true, message: 'Progreso sincronizado con Google Drive' };
+			} catch (error) {
+				console.error('Sync error:', error);
+				return { success: false, message: error instanceof Error ? error.message : 'Error al sincronizar' };
+			}
+		},
+		
+		loadFromDrive: async () => {
+			if (!browser) return { success: false, message: 'Not in browser' };
+			
+			try {
+				const driveProfile = await loadProgressFromDrive();
+				
+				if (!driveProfile) {
+					return { success: false, message: 'No se encontró progreso en Google Drive' };
+				}
+				
+				// Merge with current profile (keep the most recent data)
+				const currentProfile = await new Promise<UserProfile>((resolve) => {
+					const unsubscribe = subscribe((val) => {
+						unsubscribe();
+						resolve(val);
+					});
+				});
+				
+				if (currentProfile && currentProfile.lastStudyDate > driveProfile.lastStudyDate) {
+					// Local is more recent, ask user before overwriting
+					return { 
+						success: false, 
+						message: 'El progreso local es más reciente. ¿Deseas sobrescribirlo?',
+						data: driveProfile 
+					};
+				}
+				
+				set(driveProfile);
+				return { success: true, message: 'Progreso cargado desde Google Drive' };
+			} catch (error) {
+				console.error('Load error:', error);
+				return { success: false, message: error instanceof Error ? error.message : 'Error al cargar' };
+			}
+		},
+		
+		forceLoadFromDrive: async () => {
+			if (!browser) return { success: false, message: 'Not in browser' };
+			
+			try {
+				const driveProfile = await loadProgressFromDrive();
+				
+				if (!driveProfile) {
+					return { success: false, message: 'No se encontró progreso en Google Drive' };
+				}
+				
+				set(driveProfile);
+				return { success: true, message: 'Progreso cargado desde Google Drive' };
+			} catch (error) {
+				console.error('Load error:', error);
+				return { success: false, message: error instanceof Error ? error.message : 'Error al cargar' };
+			}
+		},
+		
+		deleteFromDrive: async () => {
+			if (!browser) return { success: false, message: 'Not in browser' };
+			
+			try {
+				await deleteProgressFromDrive();
+				return { success: true, message: 'Progreso eliminado de Google Drive' };
+			} catch (error) {
+				console.error('Delete error:', error);
+				return { success: false, message: error instanceof Error ? error.message : 'Error al eliminar' };
+			}
+		}
 	};
 }
+
+// Google Drive Auth helpers
+export const googleDriveAuth = {
+	init: initGoogleDrive,
+	login: requestGoogleAuth,
+	logout: revokeGoogleAuth,
+	isAuthenticated
+};
 
 export const userProfile = createUserStore();
 
