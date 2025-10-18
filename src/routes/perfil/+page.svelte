@@ -2,10 +2,8 @@
 	import { userProfile } from '$lib/stores/userProgress';
 	import { onMount } from 'svelte';
 	import type { Verb } from '$lib/types/verb';
-	import verbsData from '$lib/data/verbs_n5_old.json';
+	import verbs from '$lib/data/verbs';
 	import BackupManager from '$lib/components/BackupManager.svelte';
-
-	const verbs: Verb[] = verbsData as Verb[];
 
 	let profile = $state($userProfile);
 	let editingName = $state(false);

@@ -296,7 +296,7 @@
                         <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-800">
                           <div class="flex-1">
                             <p class="text-white font-medium">{example.kanji} ({example.kana})</p>
-                            <p class="text-sm text-slate-400">{example.meaning}</p>
+                            <p class="text-sm text-slate-400">{example['meaning-es']}</p>
                           </div>
                           <button
                             onclick={() => speak(example.kanji)}

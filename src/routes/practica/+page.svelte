@@ -683,6 +683,37 @@
 						class="inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-5xl hover:scale-110 transition-transform active:scale-95 shadow-lg shadow-orange-500/30"
 					>
 						🔊
+					</button>
+					<p class="text-xs text-slate-500 mt-6">Toca para reproducir</p>
+				</div>
+
+				<!-- Options -->
+				<div class="grid gap-3">
+					{#each options as option}
+						<button
+							onclick={() => handleMultipleChoiceAnswer(option)}
+							disabled={selectedAnswer !== null}
+							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
+								selectedAnswer === null
+									? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
+									: selectedAnswer === option
+										? option === currentVerb['meaning-es']
+											? 'border-green-500 bg-green-500/20 text-green-400'
+											: 'border-red-500 bg-red-500/20 text-red-400'
+										: option === currentVerb['meaning-es']
+											? 'border-green-500 bg-green-500/20 text-green-400'
+											: 'border-slate-800 bg-slate-900/50 text-slate-500'
+							}"
+						>
+							{option}
+						</button>
+					{/each}
+				</div>
+
+				<!-- Feedback -->
+				{#if feedback}
+					<div class="text-center">
+						<p class="text-lg font-medium {feedback.includes('Correcto') ? 'text-green-400' : 'text-red-400'}">
 							{feedback}
 						</p>
 					</div>

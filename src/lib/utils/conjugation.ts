@@ -225,7 +225,7 @@ export function conjugateVerb(verb: Verb): ConjugationForm[] {
     forms = conjugateIrregular(verb);
   }
 
-  const meaning = verb.meaning;
+  const meaning = verb['meaning-es'];
 
   const entries: ConjugationForm[] = [
     {
