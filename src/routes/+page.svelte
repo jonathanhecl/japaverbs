@@ -1,9 +1,7 @@
 <script lang="ts">
-	import verbsData from '$lib/data/verbs_n5.json';
+	import verbs from '$lib/data/verbs';
 	import type { Verb } from '$lib/types/verb';
 	import { userProfile } from '$lib/stores/userProgress';
-
-	const verbs: Verb[] = verbsData as Verb[];
 
 	const stats = {
 		total: verbs.length,

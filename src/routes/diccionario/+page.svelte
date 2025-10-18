@@ -1,9 +1,7 @@
 <script lang="ts">
 	import VerbCard from '$lib/components/VerbCard.svelte';
 	import type { Verb } from '$lib/types/verb';
-	import verbsData from '$lib/data/verbs_n5.json';
-
-	const verbs: Verb[] = verbsData as Verb[];
+	import verbs from '$lib/data/verbs';
 
 	let searchQuery = $state('');
 	let selectedType = $state<string>('all');
@@ -25,7 +23,7 @@
 					verb.kanji.includes(query) ||
 					verb.kana.includes(query) ||
 					verb.romaji.toLowerCase().includes(query) ||
-					verb.meaning.toLowerCase().includes(query)
+					verb['meaning-es'].toLowerCase().includes(query)
 			);
 		}
 

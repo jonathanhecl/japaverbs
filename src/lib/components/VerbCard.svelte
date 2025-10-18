@@ -47,7 +47,7 @@
 		if (isExpanded && !hasAutoPlayed) {
 			setTimeout(() => {
 				speak(verb.kanji || verb.kana, {
-					fallbackText: verb.meaning,
+					fallbackText: verb['meaning-es'],
 					fallbackLang: 'es-ES'
 				});
 				hasAutoPlayed = true;
@@ -62,7 +62,7 @@
 
 	function handleSpeak() {
 		const status = speak(verb.kanji || verb.kana, {
-			fallbackText: verb.meaning,
+			fallbackText: verb['meaning-es'],
 			fallbackLang: 'es-ES'
 		});
 
@@ -88,7 +88,7 @@
 				</div>
 				
 				<!-- Significado -->
-				<p class="text-base text-indigo-300 font-medium mb-2">{verb.meaning}</p>
+				<p class="text-base text-indigo-300 font-medium mb-2">{verb['meaning-es']}</p>
 				
 				<!-- Tags y Progreso -->
 				<div class="flex flex-wrap items-center gap-2">

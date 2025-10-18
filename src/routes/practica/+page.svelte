@@ -3,10 +3,8 @@
 	import { speak } from '$lib/utils/tts';
 	import { conjugateVerb } from '$lib/utils/conjugation';
 	import type { Verb } from '$lib/types/verb';
-	import verbsData from '$lib/data/verbs_n5.json';
+	import verbs from '$lib/data/verbs';
 	import { onMount } from 'svelte';
-
-	const verbs: Verb[] = verbsData as Verb[];
 
 	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'results';
 
@@ -173,11 +171,11 @@
 	function generateOptions() {
 		if (!currentVerb) return;
 		
-		const correctAnswer = currentVerb.meaning;
+		const correctAnswer = currentVerb['meaning-es'];
 		const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
 		const wrongAnswers = shuffleArray(otherVerbs)
 			.slice(0, 3)
-			.map(v => v.meaning);
+			.map(v => v['meaning-es']);
 		
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
@@ -254,7 +252,7 @@
 		if (!currentVerb || selectedAnswer) return;
 		
 		selectedAnswer = answer;
-		const correct = answer === currentVerb.meaning;
+		const correct = answer === currentVerb['meaning-es'];
 		
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -264,7 +262,7 @@
 			feedback = '¡Correcto! 🎉';
 			userProfile.addXP(10);
 		} else {
-			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb.meaning}`;
+			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb['meaning-es']}`;
 		}
 		
 		userProfile.recordPractice(currentVerb.kanji, correct);
@@ -520,7 +518,7 @@
 						<!-- Back -->
 						<div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl border-2 border-green-500 bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-8 flex flex-col items-center justify-center text-center">
 							<div class="text-4xl font-bold text-white mb-8">
-								{currentVerb.meaning}
+								{currentVerb['meaning-es']}
 							</div>
 							{#if currentVerb.examples.length > 0}
 								<div class="space-y-3 w-full">
@@ -620,14 +618,14 @@
 							disabled={selectedAnswer !== null}
 							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
 								selectedAnswer === null
-									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
-									: selectedAnswer === option
-										? option === currentVerb.meaning
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-red-500 bg-red-500/20 text-red-400'
-										: option === currentVerb.meaning
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-slate-800 bg-slate-900/50 text-slate-500'
+								? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
+								: selectedAnswer === option
+									? option === currentVerb['meaning-es']
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-red-500 bg-red-500/20 text-red-400'
+									: option === currentVerb['meaning-es']
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'
 							}"
 						>
 							{option}
@@ -685,37 +683,6 @@
 						class="inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-5xl hover:scale-110 transition-transform active:scale-95 shadow-lg shadow-orange-500/30"
 					>
 						🔊
-					</button>
-					<p class="text-xs text-slate-500 mt-6">Toca para reproducir</p>
-				</div>
-
-				<!-- Options -->
-				<div class="grid gap-3">
-					{#each options as option}
-						<button
-							onclick={() => handleMultipleChoiceAnswer(option)}
-							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
-								selectedAnswer === null
-									? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
-									: selectedAnswer === option
-										? option === currentVerb.meaning
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-red-500 bg-red-500/20 text-red-400'
-										: option === currentVerb.meaning
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-slate-800 bg-slate-900/50 text-slate-500'
-							}"
-						>
-							{option}
-						</button>
-					{/each}
-				</div>
-
-				<!-- Feedback -->
-				{#if feedback}
-					<div class="text-center">
-						<p class="text-lg font-medium {feedback.includes('Correcto') ? 'text-green-400' : 'text-red-400'}">
 							{feedback}
 						</p>
 					</div>
@@ -761,7 +728,7 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-4">{currentVerb.meaning}</div>
+					<div class="text-lg text-indigo-400 mb-4">{currentVerb['meaning-es']}</div>
 					<div class="inline-flex flex-col items-center gap-1 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50">
 						<span class="text-sm font-medium text-purple-300">Forma {conjugationForm}</span>
 					</div>
@@ -856,7 +823,7 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-2">{currentVerb.meaning}</div>
+					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}</div>
 					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-purple-500/20 text-purple-400 border-purple-500/50">
 						{currentVerb.type === 'godan' ? 'Godan' : currentVerb.type === 'ichidan' ? 'Ichidan' : 'Irregular'}
 					</span>
@@ -997,7 +964,7 @@
 											<span class="text-red-400 text-xl">✗</span>
 										{/if}
 									</div>
-									<p class="text-sm text-indigo-300">{result.verb.meaning}</p>
+									<p class="text-sm text-indigo-300">{result.verb['meaning-es']}</p>
 								</div>
 								<button
 									onclick={() => speak(result.verb.kanji || result.verb.kana)}

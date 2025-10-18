@@ -8,10 +8,10 @@ export interface Verb {
 	kana: string;
 	romaji: string;
 	type: 'godan' | 'ichidan' | 'irregular';
-	meaning: string;
+	'meaning-es': string;
+	freq?: 'high' | 'medium' | 'low';
 	examples: VerbExample[];
 	transitivity?: 'transitive' | 'intransitive' | 'both';
-	frequency?: 'high' | 'medium' | 'low';
 	tags?: string[];
 }
 
