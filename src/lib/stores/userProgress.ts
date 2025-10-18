@@ -53,6 +53,15 @@ function createUserStore() {
 	
 	const { subscribe, set, update } = writable<UserProfile>(initial);
 
+	const getSnapshot = () => {
+		let currentValue = initial;
+		const unsubscribe = subscribe((val) => {
+			currentValue = val;
+		});
+		unsubscribe();
+		return currentValue;
+	};
+
 	if (browser) {
 		subscribe((val) => {
 			localStorage.setItem('userProfile', JSON.stringify(val));
@@ -63,13 +72,7 @@ function createUserStore() {
 		subscribe,
 		set,
 		update,
-		getCurrentProfile: () =>
-			new Promise<UserProfile>((resolve) => {
-				const unsubscribe = subscribe((val) => {
-					unsubscribe();
-					resolve(val);
-				});
-			}),
+		getCurrentProfile: () => Promise.resolve(getSnapshot()),
 		importFromJson: (data: Partial<UserProfile>) => {
 			if (!data || typeof data !== 'object') {
 				throw new Error('Invalid profile data');
@@ -192,12 +195,7 @@ function createUserStore() {
 		
 		// Export/Import Methods
 		exportToJson: async (): Promise<string> => {
-			const currentProfile = await new Promise<UserProfile>((resolve) => {
-				const unsubscribe = subscribe((val) => {
-					unsubscribe();
-					resolve(val);
-				});
-			});
+			const currentProfile = getSnapshot();
 			return JSON.stringify(currentProfile, null, 2);
 		},
 		
@@ -205,12 +203,7 @@ function createUserStore() {
 			if (!browser) return;
 			
 			try {
-				const currentProfile = await new Promise<UserProfile>((resolve) => {
-					const unsubscribe = subscribe((val) => {
-						unsubscribe();
-						resolve(val);
-					});
-				});
+				const currentProfile = getSnapshot();
 				
 				const json = JSON.stringify(currentProfile, null, 2);
 				const blob = new Blob([json], { type: 'application/json' });
