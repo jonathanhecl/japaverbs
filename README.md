@@ -43,7 +43,7 @@ JapaVerbs es una PWA (Aplicación Web Progresiva) que puedes instalar en tu disp
 - **🎯 Filtros por Tipo**: Godan, Ichidan, Irregular
 - **🔊 Text-to-Speech**: Pronunciación nativa japonesa
 - **📱 PWA**: Instalable en móvil y desktop
-- **☁️ Sincronización en la nube**: Guarda tu progreso en Google Drive
+- **💾 Sistema de Backup**: Exporta e importa tu progreso como archivo JSON
 - **🎨 UI Moderna**: Diseño limpio con TailwindCSS
 - **⚡ Rápida**: Construida con Vite y SvelteKit
 
@@ -52,10 +52,6 @@ JapaVerbs es una PWA (Aplicación Web Progresiva) que puedes instalar en tu disp
 ```bash
 # Instalar dependencias
 npm install
-
-# Configurar variables de entorno (opcional para Google Drive)
-cp .env.example .env
-# Edita .env y agrega tu VITE_GOOGLE_CLIENT_ID
 
 # Modo desarrollo
 npm run dev
@@ -69,15 +65,16 @@ npm run preview
 
 La aplicación estará disponible en `http://localhost:5173`
 
-### ☁️ Configurar Google Drive Sync (Opcional)
+### 💾 Sistema de Backup
 
-Para habilitar la sincronización con Google Drive:
+Tu progreso se guarda automáticamente en el navegador (localStorage). Para transferir tu progreso entre dispositivos:
 
-1. Sigue la guía completa en [GOOGLE_DRIVE_SETUP.md](./GOOGLE_DRIVE_SETUP.md)
-2. Obtén tu Client ID desde [Google Cloud Console](https://console.cloud.google.com/)
-3. Configura la variable de entorno `VITE_GOOGLE_CLIENT_ID`
+1. Ve a tu **Perfil** en la aplicación
+2. Haz clic en **"Descargar backup"** para exportar tu progreso como archivo JSON
+3. Guarda el archivo en tu nube personal, email, o USB
+4. En otro dispositivo, usa **"Cargar backup"** para importar tu progreso
 
-Sin esta configuración, la app funcionará normalmente pero el progreso solo se guardará localmente.
+Para más detalles, consulta la [Guía de Backup](./BACKUP_GUIDE.md).
 
 ## 📖 Contenido
 
@@ -176,6 +173,7 @@ japaverbs/
 ## 📚 Recursos
 
 - [Notas Completas del Proyecto](./PROJECT_NOTES.md) - Documentación exhaustiva
+- [Guía de Backup](./BACKUP_GUIDE.md) - Cómo guardar y transferir tu progreso
 - [JLPT N5 Vocabulary List](https://jlptsensei.com/jlpt-n5-vocabulary-list/)
 - [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
 

@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import type { Verb } from '$lib/types/verb';
 	import verbsData from '$lib/data/verbs_n5.json';
-	import GoogleDriveSync from '$lib/components/GoogleDriveSync.svelte';
+	import BackupManager from '$lib/components/BackupManager.svelte';
 
 	const verbs: Verb[] = verbsData as Verb[];
 
@@ -224,8 +224,8 @@
 		</a>
 	</section>
 
-	<!-- Google Drive Sync -->
-	<GoogleDriveSync />
+	<!-- Backup Manager -->
+	<BackupManager />
 
 	<!-- Achievements -->
 	<section class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">

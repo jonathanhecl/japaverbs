@@ -1,14 +1,5 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
-import {
-	initGoogleDrive,
-	requestGoogleAuth,
-	revokeGoogleAuth,
-	isAuthenticated,
-	saveProgressToDrive,
-	loadProgressFromDrive,
-	deleteProgressFromDrive
-} from '$lib/utils/googleDrive';
 
 export interface DailyProgress {
 	date: string;
@@ -72,6 +63,32 @@ function createUserStore() {
 		subscribe,
 		set,
 		update,
+		getCurrentProfile: () =>
+			new Promise<UserProfile>((resolve) => {
+				const unsubscribe = subscribe((val) => {
+					unsubscribe();
+					resolve(val);
+				});
+			}),
+		importFromJson: (data: Partial<UserProfile>) => {
+			if (!data || typeof data !== 'object') {
+				throw new Error('Invalid profile data');
+			}
+
+			const sanitized: UserProfile = {
+				...defaultProfile,
+				...data,
+				studiedVerbs: {
+					...defaultProfile.studiedVerbs,
+					...(data.studiedVerbs ?? {})
+				},
+				dailyHistory: Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
+				achievements: Array.isArray(data.achievements) ? data.achievements : []
+			};
+
+			set(sanitized);
+			return sanitized;
+		},
 		updateName: (name: string) => update(profile => ({ ...profile, name })),
 		addXP: (amount: number) => update(profile => {
 			const newXP = profile.xp + amount;
@@ -173,9 +190,19 @@ function createUserStore() {
 		}),
 		reset: () => set(defaultProfile),
 		
-		// Google Drive Sync Methods
-		syncWithDrive: async () => {
-			if (!browser) return { success: false, message: 'Not in browser' };
+		// Export/Import Methods
+		exportToJson: async (): Promise<string> => {
+			const currentProfile = await new Promise<UserProfile>((resolve) => {
+				const unsubscribe = subscribe((val) => {
+					unsubscribe();
+					resolve(val);
+				});
+			});
+			return JSON.stringify(currentProfile, null, 2);
+		},
+		
+		downloadBackup: async () => {
+			if (!browser) return;
 			
 			try {
 				const currentProfile = await new Promise<UserProfile>((resolve) => {
@@ -185,92 +212,24 @@ function createUserStore() {
 					});
 				});
 				
-				if (!currentProfile) {
-					return { success: false, message: 'No profile data' };
-				}
-				
-				await saveProgressToDrive(currentProfile);
-				return { success: true, message: 'Progreso sincronizado con Google Drive' };
+				const json = JSON.stringify(currentProfile, null, 2);
+				const blob = new Blob([json], { type: 'application/json' });
+				const url = URL.createObjectURL(blob);
+				const a = document.createElement('a');
+				const timestamp = new Date().toISOString().split('T')[0];
+				a.href = url;
+				a.download = `japaverbs-backup-${timestamp}.json`;
+				document.body.appendChild(a);
+				a.click();
+				document.body.removeChild(a);
+				URL.revokeObjectURL(url);
 			} catch (error) {
-				console.error('Sync error:', error);
-				return { success: false, message: error instanceof Error ? error.message : 'Error al sincronizar' };
-			}
-		},
-		
-		loadFromDrive: async () => {
-			if (!browser) return { success: false, message: 'Not in browser' };
-			
-			try {
-				const driveProfile = await loadProgressFromDrive();
-				
-				if (!driveProfile) {
-					return { success: false, message: 'No se encontró progreso en Google Drive' };
-				}
-				
-				// Merge with current profile (keep the most recent data)
-				const currentProfile = await new Promise<UserProfile>((resolve) => {
-					const unsubscribe = subscribe((val) => {
-						unsubscribe();
-						resolve(val);
-					});
-				});
-				
-				if (currentProfile && currentProfile.lastStudyDate > driveProfile.lastStudyDate) {
-					// Local is more recent, ask user before overwriting
-					return { 
-						success: false, 
-						message: 'El progreso local es más reciente. ¿Deseas sobrescribirlo?',
-						data: driveProfile 
-					};
-				}
-				
-				set(driveProfile);
-				return { success: true, message: 'Progreso cargado desde Google Drive' };
-			} catch (error) {
-				console.error('Load error:', error);
-				return { success: false, message: error instanceof Error ? error.message : 'Error al cargar' };
-			}
-		},
-		
-		forceLoadFromDrive: async () => {
-			if (!browser) return { success: false, message: 'Not in browser' };
-			
-			try {
-				const driveProfile = await loadProgressFromDrive();
-				
-				if (!driveProfile) {
-					return { success: false, message: 'No se encontró progreso en Google Drive' };
-				}
-				
-				set(driveProfile);
-				return { success: true, message: 'Progreso cargado desde Google Drive' };
-			} catch (error) {
-				console.error('Load error:', error);
-				return { success: false, message: error instanceof Error ? error.message : 'Error al cargar' };
-			}
-		},
-		
-		deleteFromDrive: async () => {
-			if (!browser) return { success: false, message: 'Not in browser' };
-			
-			try {
-				await deleteProgressFromDrive();
-				return { success: true, message: 'Progreso eliminado de Google Drive' };
-			} catch (error) {
-				console.error('Delete error:', error);
-				return { success: false, message: error instanceof Error ? error.message : 'Error al eliminar' };
+				console.error('Export error:', error);
+				throw error;
 			}
 		}
 	};
 }
-
-// Google Drive Auth helpers
-export const googleDriveAuth = {
-	init: initGoogleDrive,
-	login: requestGoogleAuth,
-	logout: revokeGoogleAuth,
-	isAuthenticated
-};
 
 export const userProfile = createUserStore();
 
