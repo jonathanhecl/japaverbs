@@ -1,4 +1,7 @@
-const CACHE_NAME = 'japaverbs-v1';
+const CACHE_VERSION = 'v20251019';
+const CACHE_NAME = `japaverbs-static-${CACHE_VERSION}`;
+const DATA_CACHE_NAME = `japaverbs-data-${CACHE_VERSION}`;
+const DATA_PATHS = ['/verbs_n5_0.json', '/verbs_n5_1.json'];
 const ASSETS_TO_CACHE = [
   '/',
   '/diccionario',
@@ -32,7 +35,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
       const cacheNames = await caches.keys();
-      const cachesToDelete = cacheNames.filter((cacheName) => cacheName !== CACHE_NAME);
+      const cachesToDelete = cacheNames.filter((cacheName) => cacheName !== CACHE_NAME && cacheName !== DATA_CACHE_NAME);
       await Promise.all(
         cachesToDelete.map((cacheName) => {
           console.log('[Service Worker] Deleting old cache:', cacheName);
@@ -57,38 +60,65 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Cache hit - return response
+  event.respondWith((async () => {
+    try {
+      if (event.request.mode === 'navigate') {
+        const cache = await caches.open(CACHE_NAME);
+        try {
+          const networkResponse = await fetch(event.request);
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        } catch (error) {
+          console.error('[Service Worker] Navigation fetch failed:', error);
+          const cachedResponse = await cache.match(event.request);
+          if (cachedResponse) {
+            // Cache hit - return response
+            return cachedResponse;
+          }
+          return cache.match('/');
+        }
+      }
+
+      const requestUrl = new URL(event.request.url);
+      if (DATA_PATHS.some((path) => requestUrl.pathname.endsWith(path))) {
+        const cache = await caches.open(DATA_CACHE_NAME);
+        try {
+          const networkResponse = await fetch(event.request);
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        } catch (error) {
+          console.error('[Service Worker] Data fetch failed:', error);
+          const cachedResponse = await cache.match(event.request);
+          if (cachedResponse) {
+            // Cache hit - return response
+            return cachedResponse;
+          }
+          throw error;
+        }
+      }
+
+      const response = await caches.match(event.request);
       if (response) {
+        // Cache hit - return response
         return response;
       }
 
-      // Clone the request
-      const fetchRequest = event.request.clone();
+      const fetchResponse = await fetch(event.request);
+      if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
+        return fetchResponse;
+      }
 
-      return fetch(fetchRequest).then((response) => {
-        // Check if valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
+      const responseToCache = fetchResponse.clone();
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(event.request, responseToCache);
 
-        // Clone the response
-        const responseToCache = response.clone();
-
-        // Cache the fetched response
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return response;
-      }).catch((error) => {
-        console.error('[Service Worker] Fetch failed:', error);
-        // Return offline page or fallback
-        return caches.match('/');
-      });
-    })
-  );
+      return fetchResponse;
+    } catch (error) {
+      console.error('[Service Worker] Fetch handler error:', error);
+      // Return offline page or fallback
+      return caches.match('/');
+    }
+  })());
 });
 
 // Listen for messages from clients
