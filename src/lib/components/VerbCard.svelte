@@ -35,6 +35,26 @@
 	}
 
 	const conjugations = conjugateVerb(verb);
+	
+	// Agrupar conjugaciones por categoría
+	const basicForm = conjugations.filter((form) => form.key === 'dictionary');
+	const formalForms = conjugations.filter((form) => form.key === 'masu' || form.key === 'masuPast');
+	const informalForms = conjugations.filter((form) => 
+		form.key === 'plainPast' || form.key === 'te' || form.key === 'plainNegative'
+	);
+	
+	// Función para obtener color según el tipo de forma
+	function getFormColor(key: string) {
+		switch(key) {
+			case 'dictionary': return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: 'Diccionario' };
+			case 'masu': return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Formal' };
+			case 'masuPast': return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Pasado Formal' };
+			case 'plainPast': return { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-200', label: 'Pasado' };
+			case 'te': return { bg: 'bg-purple-500/10', border: 'border-purple-500/40', text: 'text-purple-200', label: 'Versátil' };
+			case 'plainNegative': return { bg: 'bg-red-500/10', border: 'border-red-500/40', text: 'text-red-200', label: 'Negativa' };
+			default: return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: '' };
+		}
+	}
 
 	// Obtener progreso del verbo
 	const verbProgress = $derived($userProfile.studiedVerbs[verb.kanji] || null);
@@ -128,16 +148,61 @@
 
 			<!-- Conjugaciones -->
 			<div>
-				<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-2">Conjugaciones clave</h3>
-				<div class="grid gap-2 sm:grid-cols-2">
-					{#each conjugations as form (form.key)}
-						<div class="rounded-lg border border-slate-800 bg-slate-900/60 p-3">
-							<p class="text-xs font-semibold text-indigo-300">{form.label}</p>
-							<p class="mt-1 text-base font-medium text-white">{form.kana}</p>
-							<p class="mt-1 text-sm text-emerald-400">→ {form.translation}</p>
-							<p class="mt-1 text-xs text-slate-400">{form.description}</p>
+				<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-3">Conjugaciones clave</h3>
+				
+				<!-- Forma Básica -->
+				{#if basicForm.length}
+					<div class="mb-3">
+						{#each basicForm as form (form.key)}
+							{@const colors = getFormColor(form.key)}
+							<div class="rounded-xl border {colors.border} {colors.bg} p-4">
+								<div class="flex items-center justify-between mb-2">
+									<p class="text-xs font-semibold uppercase tracking-wide {colors.text}">{colors.label}</p>
+								</div>
+								<p class="text-lg font-medium text-white mb-1">{form.kana}</p>
+								<p class="text-sm text-emerald-400 mb-2">→ {form.translation}</p>
+								<p class="text-xs text-slate-400">{form.description}</p>
+							</div>
+						{/each}
+					</div>
+				{/if}
+
+				<div class="grid gap-4 lg:grid-cols-2">
+					<!-- Formas Formales -->
+					{#if formalForms.length}
+						<div class="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4">
+							<h4 class="text-sm font-semibold uppercase tracking-wide text-blue-200 mb-3">Formales</h4>
+							<div class="space-y-3">
+								{#each formalForms as form (form.key)}
+									{@const colors = getFormColor(form.key)}
+									<div class="rounded-xl border {colors.border} bg-slate-900/80 p-3">
+										<p class="text-xs font-semibold uppercase tracking-wide {colors.text}">{colors.label}</p>
+										<p class="mt-1 text-base font-medium text-white">{form.kana}</p>
+										<p class="mt-1 text-sm text-emerald-400">→ {form.translation}</p>
+										<p class="mt-1 text-xs text-slate-400">{form.description}</p>
+									</div>
+								{/each}
+							</div>
 						</div>
-					{/each}
+					{/if}
+
+					<!-- Formas Informales -->
+					{#if informalForms.length}
+						<div class="rounded-2xl border border-slate-600/40 bg-slate-700/10 p-4">
+							<h4 class="text-sm font-semibold uppercase tracking-wide text-slate-200 mb-3">Informales</h4>
+							<div class="space-y-3">
+								{#each informalForms as form (form.key)}
+									{@const colors = getFormColor(form.key)}
+									<div class="rounded-xl border {colors.border} bg-slate-900/80 p-3">
+										<p class="text-xs font-semibold uppercase tracking-wide {colors.text}">{colors.label}</p>
+										<p class="mt-1 text-base font-medium text-white">{form.kana}</p>
+										<p class="mt-1 text-sm text-emerald-400">→ {form.translation}</p>
+										<p class="mt-1 text-xs text-slate-400">{form.description}</p>
+									</div>
+								{/each}
+							</div>
+						</div>
+					{/if}
 				</div>
 			</div>
 

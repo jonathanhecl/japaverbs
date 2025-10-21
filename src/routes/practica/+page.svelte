@@ -35,6 +35,19 @@
 	let sessionResults = $state<VerbResult[]>([]);
 	let completedGameMode = $state<GameMode>('flashcards');
 
+	// Función para obtener colores según el tipo de forma
+	function getFormColor(key: string) {
+		switch(key) {
+			case 'dictionary': return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: 'Diccionario' };
+			case 'masu': return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Formal' };
+			case 'masuPast': return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Pasado Formal' };
+			case 'plainPast': return { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-200', label: 'Pasado' };
+			case 'te': return { bg: 'bg-purple-500/10', border: 'border-purple-500/40', text: 'text-purple-200', label: 'Versátil' };
+			case 'plainNegative': return { bg: 'bg-red-500/10', border: 'border-red-500/40', text: 'text-red-200', label: 'Negativa' };
+			default: return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: '' };
+		}
+	}
+
 	const games = [
 		{
 			id: 'flashcards',
@@ -208,10 +221,16 @@
 		
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
 		// Esto hace el ejercicio más desafiante
-		const otherForms = formsWithFormality.filter(f => f.form !== selected.form).map(f => f.form);
-		const wrongAnswers = otherForms.slice(0, 3).map(form => {
-			return conjugations.find(c => c.label.includes(form))?.kana || currentVerb.kana;
-		});
+		const otherForms = formsWithFormality.filter(f => f.form !== selected.form);
+		const wrongAnswers: string[] = [];
+		
+		for (const formObj of otherForms) {
+			const conj = conjugations.find(c => c.label.includes(formObj.form));
+			if (conj && conj.kana !== correctConjugation && !wrongAnswers.includes(conj.kana)) {
+				wrongAnswers.push(conj.kana);
+			}
+			if (wrongAnswers.length >= 3) break;
+		}
 		
 		options = shuffleArray([correctConjugation, ...wrongAnswers]);
 	}
@@ -883,10 +902,11 @@
 					<div class="space-y-3">
 						<div class="grid gap-2">
 							{#each conjugations.slice(1) as form}
-								<div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4">
+								{@const colors = getFormColor(form.key)}
+								<div class="rounded-xl border {colors.border} {colors.bg} p-4">
 									<div class="flex items-start justify-between mb-2">
 										<div class="flex-1">
-											<p class="text-xs font-semibold text-indigo-300 mb-1">{form.label}</p>
+											<p class="text-xs font-semibold uppercase tracking-wide {colors.text} mb-1">{colors.label}</p>
 											<p class="text-xl font-medium text-white mb-1">{form.kana}</p>
 											<p class="text-sm text-emerald-400">→ {form.translation}</p>
 										</div>

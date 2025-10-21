@@ -3,6 +3,26 @@
 
   let expandedSection = $state<number | null>(null);
 
+  // Función para obtener colores según el tipo de forma
+  function getBadgeColors(badge: string) {
+    switch(badge) {
+      case 'Básica':
+        return { bg: 'bg-slate-500/20', text: 'text-slate-200', border: 'border-slate-500/50' };
+      case 'Formal':
+        return { bg: 'bg-blue-500/20', text: 'text-blue-200', border: 'border-blue-500/50' };
+      case 'Pasado Formal':
+        return { bg: 'bg-blue-500/20', text: 'text-blue-200', border: 'border-blue-500/50' };
+      case 'Pasado':
+        return { bg: 'bg-orange-500/20', text: 'text-orange-200', border: 'border-orange-500/50' };
+      case 'Versátil':
+        return { bg: 'bg-purple-500/20', text: 'text-purple-200', border: 'border-purple-500/50' };
+      case 'Negativa':
+        return { bg: 'bg-red-500/20', text: 'text-red-200', border: 'border-red-500/50' };
+      default:
+        return { bg: 'bg-slate-500/20', text: 'text-slate-300', border: 'border-slate-500/50' };
+    }
+  }
+
   const sections = [
     {
       title: 'Tipos de verbos japoneses',
@@ -280,10 +300,11 @@
           <div class="p-5 pt-0 space-y-6">
             {#if section.subsections}
               {#each section.subsections as subsection}
+                {@const badgeColors = getBadgeColors(subsection.badge)}
                 <div class="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
                   <div class="flex items-start justify-between mb-3">
                     <h3 class="text-lg font-semibold text-white">{subsection.title}</h3>
-                    <span class="text-xs px-2 py-1 rounded-full bg-{section.color}-500/20 text-{section.color}-300 border border-{section.color}-500/50">
+                    <span class="text-xs px-2 py-1 rounded-full {badgeColors.bg} {badgeColors.text} border {badgeColors.border}">
                       {subsection.badge}
                     </span>
                   </div>
