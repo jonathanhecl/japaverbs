@@ -28,6 +28,7 @@
 	let options = $state<string[]>([]);
 	let feedback = $state('');
 	let conjugationForm = $state('');
+	let conjugationTranslation = $state('');
 	let autoPlayedExample = $state(false);
 	let sessionResults = $state<VerbResult[]>([]);
 	let completedGameMode = $state<GameMode>('flashcards');
@@ -188,7 +189,11 @@
 		conjugationForm = selectedForm;
 		
 		const conjugations = conjugateVerb(currentVerb);
-		const correctConjugation = conjugations.find(c => c.label.includes(selectedForm))?.kana || currentVerb.kana;
+		const selectedConjugation = conjugations.find(c => c.label.includes(selectedForm));
+		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
+		
+		// Guardar la traducción de la forma seleccionada
+		conjugationTranslation = selectedConjugation?.translation || currentVerb['meaning-es'];
 		
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
 		// Esto hace el ejercicio más desafiante
@@ -759,10 +764,7 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-4">{currentVerb['meaning-es']}</div>
-					<div class="inline-flex flex-col items-center gap-1 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50">
-						<span class="text-sm font-medium text-purple-300">Forma {conjugationForm}</span>
-					</div>
+					<div class="text-lg text-indigo-400 mb-4">{currentVerb['meaning-es']}, {conjugationTranslation}</div>
 					<button
 						onclick={() => speak(currentVerb!.kanji || currentVerb!.kana)}
 						class="mt-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
@@ -775,11 +777,10 @@
 				{@const conjugations = conjugateVerb(currentVerb)}
 				<div class="grid gap-3">
 					{#each options as option}
-						{@const optionForm = conjugations.find(c => c.kana === option)}
 						<button
 							onclick={() => handleConjugationQuizAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-3 transition-all active:scale-95 {
+							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
 								selectedAnswer === null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 									: selectedAnswer === option
@@ -797,10 +798,7 @@
 										})()
 							}"
 						>
-							<div class="text-lg font-medium">{option}</div>
-							{#if optionForm}
-								<div class="text-sm text-emerald-400 mt-1">→ {optionForm.translation}</div>
-							{/if}
+							<div class="text-2xl font-medium">{option}</div>
 						</button>
 					{/each}
 				</div>
