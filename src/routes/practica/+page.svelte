@@ -277,9 +277,11 @@
 				newMastery
 			});
 			
-			// Pasar directamente al siguiente
-			currentIndex++;
-			loadNextQuestion();
+			// Mostrar botón verde por 1 segundo antes de pasar al siguiente
+			setTimeout(() => {
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
 		} else {
 			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb['meaning-es']}`;
 			showErrorOverlay = true;
@@ -329,9 +331,11 @@
 				newMastery
 			});
 			
-			// Pasar directamente al siguiente
-			currentIndex++;
-			loadNextQuestion();
+			// Mostrar botón verde por 1 segundo antes de pasar al siguiente
+			setTimeout(() => {
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
 		} else {
 			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
 			showErrorOverlay = true;
