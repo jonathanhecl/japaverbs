@@ -1041,32 +1041,32 @@
 
 <!-- Error Overlay -->
 {#if showErrorOverlay}
-		<div 
-			class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
-			onclick={() => {
+	<div 
+		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 cursor-pointer"
+		onclick={() => {
+			showErrorOverlay = false;
+			currentIndex++;
+			loadNextQuestion();
+		}}
+		role="button"
+		tabindex="0"
+		onkeydown={(e) => {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
 				showErrorOverlay = false;
 				currentIndex++;
 				loadNextQuestion();
-			}}
-			role="button"
-			tabindex="0"
-			onkeydown={(e) => {
-				if (e.key === 'Enter' || e.key === ' ') {
-					e.preventDefault();
-					showErrorOverlay = false;
-					currentIndex++;
-					loadNextQuestion();
-				}
-			}}
-		>
-			<div class="rounded-3xl border-2 border-red-500 bg-slate-900 p-8 text-center shadow-2xl shadow-red-500/50 max-w-md mx-4">
-				<div class="text-5xl mb-4">❌</div>
-				<p class="text-xl font-bold text-red-400 mb-2">Incorrecto</p>
-				<p class="text-base text-slate-300 mb-4">{feedback}</p>
-				<p class="text-xs text-slate-500">Toca para continuar</p>
-			</div>
+			}
+		}}
+	>
+		<div class="rounded-3xl border-2 border-red-500 bg-slate-900/95 backdrop-blur-md p-8 text-center shadow-2xl shadow-red-500/50 max-w-md mx-4">
+			<div class="text-5xl mb-4">❌</div>
+			<p class="text-xl font-bold text-red-400 mb-2">Incorrecto</p>
+			<p class="text-lg font-medium text-white mb-4">{feedback}</p>
+			<p class="text-sm text-slate-400">Toca para continuar</p>
 		</div>
-	{/if}
+	</div>
+{/if}
 
 <style>
 	.font-japanese {
