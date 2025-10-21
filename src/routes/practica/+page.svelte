@@ -27,6 +27,7 @@
 	let currentIndex = $state(0);
 	let options = $state<string[]>([]);
 	let feedback = $state('');
+	let showErrorOverlay = $state(false);
 	let conjugationForm = $state('');
 	let conjugationTranslation = $state('');
 	let autoPlayedExample = $state(false);
@@ -264,30 +265,43 @@
 		
 		if (correct) {
 			correctCount++;
-			feedback = '¡Correcto! 🎉';
 			userProfile.addXP(10);
-		} else {
-			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb['meaning-es']}`;
-		}
-		
-		userProfile.recordPractice(currentVerb.kanji, correct);
-		
-		// Guardar resultado
-		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		sessionResults.push({
-			verb: currentVerb,
-			correct,
-			previousMastery,
-			newMastery
-		});
-		
-		// Reproducir audio del verbo antes de avanzar
-		speak(currentVerb.kanji || currentVerb.kana);
-		
-		setTimeout(() => {
+			userProfile.recordPractice(currentVerb.kanji, true);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: true,
+				previousMastery,
+				newMastery
+			});
+			
+			// Pasar directamente al siguiente
 			currentIndex++;
 			loadNextQuestion();
-		}, 2500);
+		} else {
+			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb['meaning-es']}`;
+			showErrorOverlay = true;
+			
+			userProfile.recordPractice(currentVerb.kanji, false);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: false,
+				previousMastery,
+				newMastery
+			});
+			
+			// Mostrar overlay por 1 segundo y pasar al siguiente
+			setTimeout(() => {
+				showErrorOverlay = false;
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
+		}
 	}
 
 	function handleConjugationQuizAnswer(answer: string) {
@@ -303,30 +317,43 @@
 		
 		if (correct) {
 			correctCount++;
-			feedback = '¡Correcto! 🎉';
 			userProfile.addXP(15);
-		} else {
-			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
-		}
-		
-		userProfile.recordPractice(currentVerb.kanji, correct);
-		
-		// Guardar resultado
-		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		sessionResults.push({
-			verb: currentVerb,
-			correct,
-			previousMastery,
-			newMastery
-		});
-		
-		// Reproducir audio de la conjugación
-		speak(answer);
-		
-		setTimeout(() => {
+			userProfile.recordPractice(currentVerb.kanji, true);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: true,
+				previousMastery,
+				newMastery
+			});
+			
+			// Pasar directamente al siguiente
 			currentIndex++;
 			loadNextQuestion();
-		}, 2500);
+		} else {
+			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
+			showErrorOverlay = true;
+			
+			userProfile.recordPractice(currentVerb.kanji, false);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: false,
+				previousMastery,
+				newMastery
+			});
+			
+			// Mostrar overlay por 1 segundo y pasar al siguiente
+			setTimeout(() => {
+				showErrorOverlay = false;
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
+		}
 	}
 
 	function handleListeningPlay() {
@@ -637,15 +664,6 @@
 						</button>
 					{/each}
 				</div>
-
-				<!-- Feedback -->
-				{#if feedback}
-					<div class="text-center">
-						<p class="text-lg font-medium {feedback.includes('Correcto') ? 'text-green-400' : 'text-red-400'}">
-							{feedback}
-						</p>
-					</div>
-				{/if}
 			{:else}
 				<div class="text-center py-20">
 					<div class="text-6xl mb-4">🎉</div>
@@ -714,15 +732,6 @@
 						</button>
 					{/each}
 				</div>
-
-				<!-- Feedback -->
-				{#if feedback}
-					<div class="text-center">
-						<p class="text-lg font-medium {feedback.includes('Correcto') ? 'text-green-400' : 'text-red-400'}">
-							{feedback}
-						</p>
-					</div>
-				{/if}
 			{:else}
 				<div class="text-center py-20">
 					<div class="text-6xl mb-4">🎉</div>
@@ -802,15 +811,6 @@
 						</button>
 					{/each}
 				</div>
-
-				<!-- Feedback -->
-				{#if feedback}
-					<div class="text-center">
-						<p class="text-lg font-medium {feedback.includes('Correcto') ? 'text-green-400' : 'text-red-400'}">
-							{feedback}
-						</p>
-					</div>
-				{/if}
 			{:else}
 				<div class="text-center py-20">
 					<div class="text-6xl mb-4">🎉</div>
@@ -1046,6 +1046,17 @@
 		</section>
 	{/if}
 </div>
+
+<!-- Error Overlay -->
+{#if showErrorOverlay}
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+		<div class="rounded-3xl border-2 border-red-500 bg-slate-900 p-8 text-center shadow-2xl shadow-red-500/50 max-w-md mx-4">
+			<div class="text-5xl mb-4">❌</div>
+			<p class="text-xl font-bold text-red-400 mb-2">Incorrecto</p>
+			<p class="text-base text-slate-300">{feedback}</p>
+		</div>
+	</div>
+{/if}
 
 <style>
 	.font-japanese {
