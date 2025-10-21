@@ -46,10 +46,7 @@
 	$effect(() => {
 		if (isExpanded && !hasAutoPlayed) {
 			setTimeout(() => {
-				speak(verb.kanji || verb.kana, {
-					fallbackText: verb['meaning-es'],
-					fallbackLang: 'es-ES'
-				});
+				speak(verb.kanji || verb.kana);
 				hasAutoPlayed = true;
 			}, 300);
 		}
@@ -61,10 +58,7 @@
 	});
 
 	function handleSpeak() {
-		const status = speak(verb.kanji || verb.kana, {
-			fallbackText: verb['meaning-es'],
-			fallbackLang: 'es-ES'
-		});
+		const status = speak(verb.kanji || verb.kana);
 
 		if (status === 'fallback') {
 			window.open('/tts', '_blank');
