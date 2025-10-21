@@ -63,6 +63,7 @@
 			inProgress: inProgressCount,
 			notStarted: notStartedCount,
 			masteredPercent: Math.round((masteredCount / totalVerbs) * 100),
+			inProgressPercent: Math.round((inProgressCount / totalVerbs) * 100),
 			studiedPercent: Math.round(((masteredCount + inProgressCount) / totalVerbs) * 100)
 		};
 	});
@@ -197,18 +198,27 @@
 		<!-- Barra de progreso general -->
 		<div class="space-y-2">
 			<div class="flex items-center justify-between text-sm">
-				<span class="text-slate-300">Verbos dominados</span>
-				<span class="text-indigo-400 font-semibold">{verbStats().masteredPercent}%</span>
+				<span class="text-slate-300">Progreso de verbos</span>
+				<span class="text-indigo-400 font-semibold">{verbStats().masteredPercent + verbStats().inProgressPercent}% completado</span>
 			</div>
-			<div class="h-3 bg-slate-800 rounded-full overflow-hidden">
+			<div class="h-3 bg-slate-800 rounded-full overflow-hidden flex">
+				<!-- Dominados (verde) -->
 				<div 
 					class="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
 					style="width: {verbStats().masteredPercent}%"
 				></div>
+				<!-- En progreso (amarillo) -->
+				<div 
+					class="h-full bg-gradient-to-r from-yellow-500 to-amber-500 transition-all duration-500"
+					style="width: {verbStats().inProgressPercent}%"
+				></div>
+				<!-- Pendientes (gris - se muestra automáticamente por el fondo) -->
 			</div>
-			<p class="text-xs text-slate-400 text-center">
-				{verbStats().mastered} de {verbStats().total} verbos con dominio completo
-			</p>
+			<div class="flex items-center justify-between text-xs text-slate-400">
+				<span class="text-green-400">{verbStats().mastered} dominados</span>
+				<span class="text-yellow-400">{verbStats().inProgress} en progreso</span>
+				<span class="text-slate-400">{verbStats().notStarted} pendientes</span>
+			</div>
 		</div>
 
 		<!-- Link al diccionario -->
