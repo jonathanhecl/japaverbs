@@ -1,4 +1,5 @@
 import type { Verb } from '$lib/types/verb';
+import { getSpanishConjugation } from '$lib/data/spanish_conjugations';
 
 export type ConjugationFormKey =
   | 'dictionary'
@@ -122,96 +123,38 @@ function conjugateIrregular(verb: Verb) {
 }
 
 /**
- * Genera la traducción en español de una forma verbal conjugada
- * Intenta conjugar el verbo español según la forma japonesa
+ * Obtiene la traducción en español de una forma verbal conjugada desde los JSONs
  */
-function getTranslation(meaning: string, key: ConjugationFormKey): string {
-  // Limpiar el significado (ej: "comer (algo)" -> "comer")
-  const cleanMeaning = meaning.split('(')[0].trim().toLowerCase();
+function getTranslation(kanji: string, key: ConjugationFormKey, fallbackMeaning: string): string {
+  const spanishConj = getSpanishConjugation(kanji);
+  
+  if (!spanishConj) {
+    // Fallback al significado básico si no hay conjugación en el JSON
+    return fallbackMeaning.split('(')[0].trim().toLowerCase();
+  }
   
   switch (key) {
     case 'dictionary':
-      return cleanMeaning; // "comer"
+      return spanishConj.base;
     
     case 'masu':
-      // Presente formal - intentar conjugar en presente
-      return conjugateToPresent(cleanMeaning); // "como/come"
+      return spanishConj.masu;
     
     case 'masuPast':
-      // Pasado formal
-      return conjugateToPast(cleanMeaning); // "comí/comió"
+      return spanishConj.mashita;
     
     case 'plainPast':
-      // Pasado informal
-      return conjugateToPast(cleanMeaning); // "comí/comió"
+      return spanishConj.ta;
     
     case 'plainNegative':
-      // Negativo
-      return `no ${conjugateToPresent(cleanMeaning)}`; // "no como/come"
+      return spanishConj.nai;
     
     case 'te':
-      // Forma て - gerundio o imperativo suave
-      return conjugateToGerund(cleanMeaning); // "comiendo"
+      return spanishConj.te;
     
     default:
-      return cleanMeaning;
+      return spanishConj.base;
   }
-}
-
-/**
- * Intenta conjugar un verbo español al presente
- */
-function conjugateToPresent(verb: string): string {
-  // Verbos en -ar
-  if (verb.endsWith('ar')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}o / ${stem}a`; // "como / come"
-  }
-  // Verbos en -er
-  if (verb.endsWith('er')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}o / ${stem}e`; // "bebo / bebe"
-  }
-  // Verbos en -ir
-  if (verb.endsWith('ir')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}o / ${stem}e`; // "vivo / vive"
-  }
-  return verb;
-}
-
-/**
- * Intenta conjugar un verbo español al pasado
- */
-function conjugateToPast(verb: string): string {
-  // Verbos en -ar
-  if (verb.endsWith('ar')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}é / ${stem}ó`; // "comí / comió"
-  }
-  // Verbos en -er o -ir
-  if (verb.endsWith('er') || verb.endsWith('ir')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}í / ${stem}ió`; // "bebí / bebió"
-  }
-  return verb;
-}
-
-/**
- * Intenta conjugar un verbo español al gerundio
- */
-function conjugateToGerund(verb: string): string {
-  // Verbos en -ar
-  if (verb.endsWith('ar')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}ando`; // "comiendo"
-  }
-  // Verbos en -er o -ir
-  if (verb.endsWith('er') || verb.endsWith('ir')) {
-    const stem = verb.slice(0, -2);
-    return `${stem}iendo`; // "bebiendo", "viviendo"
-  }
-  return verb;
 }
 
 export function conjugateVerb(verb: Verb): ConjugationForm[] {
@@ -226,6 +169,7 @@ export function conjugateVerb(verb: Verb): ConjugationForm[] {
   }
 
   const meaning = verb['meaning-es'];
+  const kanji = verb.kanji;
 
   const entries: ConjugationForm[] = [
     {
@@ -233,42 +177,42 @@ export function conjugateVerb(verb: Verb): ConjugationForm[] {
       label: 'Forma diccionario (辞書形)',
       kana: forms.dictionary,
       description: `Uso neutro. Se traduce como "${meaning}".`,
-      translation: getTranslation(meaning, 'dictionary')
+      translation: getTranslation(kanji, 'dictionary', meaning)
     },
     {
       key: 'masu',
       label: 'Forma formal presente (ます形)',
       kana: forms.masu,
       description: `Modo formal en presente. Equivale a "${meaning}" con trato respetuoso.`,
-      translation: getTranslation(meaning, 'masu')
+      translation: getTranslation(kanji, 'masu', meaning)
     },
     {
       key: 'masuPast',
       label: 'Forma formal pasada (ました形)',
       kana: forms.masuPast,
       description: `Pasado formal: "${meaning}" en pasado con trato respetuoso.`,
-      translation: getTranslation(meaning, 'masuPast')
+      translation: getTranslation(kanji, 'masuPast', meaning)
     },
     {
       key: 'plainPast',
       label: 'Forma pasada informal (た形)',
       kana: forms.plainPast,
       description: `Pasado casual. Aproximadamente "${meaning}" en pasado.`,
-      translation: getTranslation(meaning, 'plainPast')
+      translation: getTranslation(kanji, 'plainPast', meaning)
     },
     {
       key: 'plainNegative',
       label: 'Forma negativa informal (ない形)',
       kana: forms.plainNegative,
       description: `Negación casual. Se entiende como "no ${meaning}".`,
-      translation: getTranslation(meaning, 'plainNegative')
+      translation: getTranslation(kanji, 'plainNegative', meaning)
     },
     {
       key: 'te',
       label: 'Forma て (て形)',
       kana: forms.te,
       description: 'Usada para conectar acciones, solicitudes o progresivo.',
-      translation: getTranslation(meaning, 'te')
+      translation: getTranslation(kanji, 'te', meaning)
     }
   ];
 

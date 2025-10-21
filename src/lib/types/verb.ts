@@ -16,3 +16,13 @@ export interface Verb {
 }
 
 export type VerbType = 'godan' | 'ichidan' | 'irregular';
+
+export interface SpanishConjugation {
+	kanji: string;
+	base: string;      // forma diccionario
+	masu: string;      // forma ます (presente formal)
+	ta: string;        // forma た (pasado)
+	te: string;        // forma て (gerundio)
+	nai: string;       // forma ない (negativo)
+	mashita: string;   // forma ました (pasado formal)
+}
