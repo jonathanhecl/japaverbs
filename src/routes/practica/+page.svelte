@@ -30,6 +30,7 @@
 	let showErrorOverlay = $state(false);
 	let conjugationForm = $state('');
 	let conjugationTranslation = $state('');
+	let conjugationFormality = $state(''); // 'formal' o 'informal'
 	let autoPlayedExample = $state(false);
 	let sessionResults = $state<VerbResult[]>([]);
 	let completedGameMode = $state<GameMode>('flashcards');
@@ -185,12 +186,21 @@
 	function generateConjugationQuiz() {
 		if (!currentVerb) return;
 		
-		const forms = ['ます', 'た', 'て', 'ない'];
-		const selectedForm = forms[Math.floor(Math.random() * forms.length)];
-		conjugationForm = selectedForm;
+		// Formas con información de formalidad
+		const formsWithFormality = [
+			{ form: 'ます', formality: 'formal' },
+			{ form: 'ました', formality: 'formal' },
+			{ form: 'た', formality: 'informal' },
+			{ form: 'て', formality: 'informal' },
+			{ form: 'ない', formality: 'informal' }
+		];
+		
+		const selected = formsWithFormality[Math.floor(Math.random() * formsWithFormality.length)];
+		conjugationForm = selected.form;
+		conjugationFormality = selected.formality;
 		
 		const conjugations = conjugateVerb(currentVerb);
-		const selectedConjugation = conjugations.find(c => c.label.includes(selectedForm));
+		const selectedConjugation = conjugations.find(c => c.label.includes(selected.form));
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada
@@ -198,8 +208,8 @@
 		
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
 		// Esto hace el ejercicio más desafiante
-		const otherForms = forms.filter(f => f !== selectedForm);
-		const wrongAnswers = otherForms.map(form => {
+		const otherForms = formsWithFormality.filter(f => f.form !== selected.form).map(f => f.form);
+		const wrongAnswers = otherForms.slice(0, 3).map(form => {
 			return conjugations.find(c => c.label.includes(form))?.kana || currentVerb.kana;
 		});
 		
@@ -765,10 +775,15 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-4">{currentVerb['meaning-es']}, {conjugationTranslation}</div>
+					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}, {conjugationTranslation}</div>
+					<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50 mb-4">
+						<span class="text-sm font-medium text-purple-300">
+							{conjugationFormality === 'formal' ? 'Formal' : 'Informal'}
+						</span>
+					</div>
 					<button
 						onclick={() => speak(currentVerb!.kanji || currentVerb!.kana)}
-						class="mt-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
+						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
 					</button>
