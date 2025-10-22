@@ -52,102 +52,119 @@
 	});
 </script>
 
-<div class="container mx-auto px-4 py-8">
-	<!-- Header -->
-	<div class="mb-8">
-		<h1 class="text-4xl font-bold mb-4 bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-			📚 Diccionario de Verbos
-		</h1>
-		<p class="text-slate-400">
-			Explora {stats.total} verbos japoneses (JLPT N5)
-		</p>
-	</div>
+<section class="space-y-8 pb-10">
+	<header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10">
+		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+			<div class="flex items-center gap-4">
+				<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
+					📚
+				</div>
+				<div>
+					<p class="text-xs uppercase tracking-[0.25em] text-indigo-200">Centro de referencia</p>
+					<h1 class="mt-1 text-3xl font-bold text-white">Diccionario de verbos japoneses</h1>
+					<p class="mt-1 text-sm text-slate-300 max-w-xl">
+						Explora {stats.total} verbos JLPT N5 con filtros rápidos, ejemplos claros y el mismo sistema de colores que en la guía de verbos.
+					</p>
+				</div>
+			</div>
+			<div class="flex flex-col gap-3 md:flex-row md:items-center">
+				<a href="/practica" class="inline-flex items-center gap-2 rounded-2xl bg-white/95 px-5 py-3 text-sm font-semibold text-indigo-700 shadow transition-transform active:scale-95">
+					🎮 Ir a práctica
+				</a>
+				<a href="/conjugaciones" class="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/60 px-5 py-3 text-sm font-semibold text-indigo-100 transition-transform active:scale-95">
+					🈂️ Ver guías
+				</a>
+			</div>
+		</div>
+	</header>
 
-	<!-- Search and Filters -->
-	<div class="mb-8 space-y-4">
-		<!-- Search Bar -->
-		<div class="relative">
-			<input
-				type="text"
-				bind:value={searchQuery}
-				placeholder="🔍 Buscar por kanji, kana, romaji o significado..."
-				class="w-full px-6 py-4 bg-slate-900 border-2 border-slate-800 rounded-xl focus:border-indigo-500 focus:outline-none transition-colors text-white placeholder-slate-500"
-			/>
-			{#if searchQuery}
+	<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+		<!-- Search and Filters -->
+		<div class="space-y-4">
+			<!-- Search Bar -->
+			<div class="relative">
+				<input
+					type="text"
+					bind:value={searchQuery}
+					placeholder="🔍 Buscar por kanji, kana, romaji o significado..."
+					class="w-full px-6 py-4 rounded-xl border border-slate-800 bg-slate-950/80 text-white placeholder-slate-500 transition-colors focus:border-indigo-500 focus:outline-none"
+				/>
+				{#if searchQuery}
+					<button
+						onclick={() => (searchQuery = '')}
+						class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+					>
+						✕
+					</button>
+				{/if}
+			</div>
+
+			<!-- Filter Buttons -->
+			<div class="flex flex-wrap gap-3">
 				<button
-					onclick={() => (searchQuery = '')}
-					class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors"
+					onclick={() => (selectedType = 'all')}
+					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'all'
+						? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40'
+						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-indigo-500'}"
 				>
-					✕
+					Todos ({stats.total})
 				</button>
-			{/if}
+				<button
+					onclick={() => (selectedType = 'ichidan')}
+					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
+						? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40'
+						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-emerald-500'}"
+				>
+					Ichidan · 一段 ({stats.ichidan})
+				</button>
+				<button
+					onclick={() => (selectedType = 'godan')}
+					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
+						? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40'
+						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-blue-500'}"
+				>
+					Godan · 五段 ({stats.godan})
+				</button>
+				<button
+					onclick={() => (selectedType = 'irregular')}
+					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'irregular'
+						? 'bg-purple-600 text-white shadow-lg shadow-purple-500/40'
+						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-purple-500'}"
+				>
+					Irregular ({stats.irregular})
+				</button>
+			</div>
 		</div>
 
-		<!-- Filter Buttons -->
-		<div class="flex flex-wrap gap-3">
-			<button
-				onclick={() => (selectedType = 'all')}
-				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'all'
-					? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/50'
-					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-indigo-500'}"
-			>
-				Todos ({stats.total})
-			</button>
-			<button
-				onclick={() => (selectedType = 'ichidan')}
-				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
-					? 'bg-green-600 text-white shadow-lg shadow-green-500/50'
-					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-green-500'}"
-			>
-				Ichidan · 一段 ({stats.ichidan})
-			</button>
-			<button
-				onclick={() => (selectedType = 'godan')}
-				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
-					? 'bg-blue-600 text-white shadow-lg shadow-blue-500/50'
-					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-blue-500'}"
-			>
-				Godan · 五段 ({stats.godan})
-			</button>
-			<button
-				onclick={() => (selectedType = 'irregular')}
-				class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'irregular'
-					? 'bg-purple-600 text-white shadow-lg shadow-purple-500/50'
-					: 'bg-slate-900 border-2 border-slate-800 text-slate-300 hover:border-purple-500'}"
-			>
-				Irregular ({stats.irregular})
-			</button>
+		<!-- Results Count -->
+		<div>
+			<p class="text-sm text-slate-400">
+				Mostrando <span class="font-semibold text-indigo-400">{filteredVerbs().length}</span> de <span class="font-semibold">{stats.total}</span> verbos
+			</p>
 		</div>
+
+		<!-- Verbs Grid -->
+		{#if filteredVerbs().length === 0}
+			<div class="text-center py-20">
+				<div class="text-7xl mb-6">🔍</div>
+				<p class="text-2xl text-slate-300 mb-2">No se encontraron verbos</p>
+				<p class="text-slate-500">Intenta con otra búsqueda o filtro</p>
+				<button
+					onclick={() => {
+						searchQuery = '';
+						selectedType = 'all';
+					}}
+					class="mt-6 px-6 py-3 rounded-xl bg-indigo-600 font-medium transition-colors hover:bg-indigo-500"
+				>
+					Limpiar filtros
+				</button>
+			</div>
+		{:else}
+			<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+				{#each filteredVerbs() as verb (verb.kanji + verb.kana)}
+					<VerbCard {verb} />
+				{/each}
+			</div>
+		{/if}
 	</div>
-
-	<!-- Results Count -->
-	<div class="mb-6">
-		<p class="text-slate-400">
-			Mostrando <span class="font-semibold text-indigo-400">{filteredVerbs().length}</span> de <span class="font-semibold">{stats.total}</span> verbos
-		</p>
-	</div>
-
-	<!-- Verbs Grid -->
-	{#if filteredVerbs().length === 0}
-		<div class="text-center py-20">
-			<div class="text-7xl mb-6">🔍</div>
-			<p class="text-2xl text-slate-300 mb-2">No se encontraron verbos</p>
-			<p class="text-slate-500">Intenta con otra búsqueda o filtro</p>
-			<button
-				onclick={() => {
-					searchQuery = '';
-					selectedType = 'all';
-				}}
-				class="mt-6 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-xl font-medium transition-colors"
-			>
-				Limpiar filtros
-			</button>
-		</div>
-	{:else}
-		<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-			{#each filteredVerbs() as verb (verb.kanji + verb.kana)}
-				<VerbCard {verb} />
-			{/each}
-		</div>
-	{/if}
-</div>
+</section>

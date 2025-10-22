@@ -437,60 +437,78 @@
 
 <div class="pb-6">
 	{#if currentMode === 'menu'}
-		<!-- Game Selection Menu -->
-		<section class="space-y-6">
-			<div class="text-center">
-				<div class="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl mb-4">
-					🎮
+		<section class="space-y-8">
+			<header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10">
+				<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+					<div class="flex items-center gap-4">
+						<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
+							🎮
+						</div>
+						<div>
+							<p class="text-xs uppercase tracking-[0.25em] text-indigo-200">Centro de práctica</p>
+							<h1 class="mt-1 text-3xl font-bold text-white">Diseña tu sesión perfecta</h1>
+							<p class="mt-1 text-sm text-slate-300 max-w-xl">
+								Combina cantidad de preguntas y modos de juego para reforzar conjugaciones, significado y audio según tus objetivos del día.
+							</p>
+						</div>
+					</div>
+					<div class="flex flex-col gap-3 md:flex-row md:items-center">
+						<a href="/diccionario" class="inline-flex items-center gap-2 rounded-2xl bg-white/95 px-5 py-3 text-sm font-semibold text-indigo-700 shadow transition-transform active:scale-95">
+							📚 Ver diccionario
+						</a>
+						<a href="/conjugaciones" class="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/60 px-5 py-3 text-sm font-semibold text-indigo-100 transition-transform active:scale-95">
+							🈂️ Ver guías
+						</a>
+					</div>
 				</div>
-				<h1 class="text-3xl font-bold text-white mb-2">Modo Práctica</h1>
-				<p class="text-slate-400">Elige cuántas preguntas y un modo de juego</p>
-			</div>
+			</header>
 
-			<!-- Questions Selector -->
-			<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-				<h2 class="text-base font-semibold text-white mb-3">Cantidad de preguntas</h2>
-				<div class="grid grid-cols-4 gap-2">
-					{#each [10, 20, 30, 40] as amount}
+			<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+				<!-- Questions Selector -->
+				<div>
+					<h2 class="text-base font-semibold text-white mb-3">Cantidad de preguntas</h2>
+					<div class="grid grid-cols-4 gap-2">
+						{#each [10, 20, 30, 40] as amount}
+							<button
+								onclick={() => questionsPerSession = amount}
+								class="rounded-xl border-2 p-3 text-center font-semibold transition-all active:scale-95 {
+									questionsPerSession === amount
+										? 'border-indigo-500 bg-indigo-500/20 text-white'
+										: 'border-slate-800 bg-slate-900 text-slate-400'
+								}"
+							>
+								<div class="text-2xl font-bold">{amount}</div>
+							</button>
+						{/each}
+					</div>
+				</div>
+
+				<div class="grid gap-4">
+					{#each games as game}
 						<button
-							onclick={() => questionsPerSession = amount}
-							class="rounded-xl border-2 p-3 text-center font-semibold transition-all active:scale-95 {
-								questionsPerSession === amount
-									? 'border-indigo-500 bg-indigo-500/20 text-white'
-									: 'border-slate-800 bg-slate-900 text-slate-400'
-							}"
+							onclick={() => startGame(game.id as GameMode)}
+							class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br {game.color} text-left p-[1px] transition-all active:scale-95"
 						>
-							<div class="text-2xl font-bold">{amount}</div>
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<div class="grid gap-4">
-				{#each games as game}
-					<button
-						onclick={() => startGame(game.id as GameMode)}
-						class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br {game.color} text-left p-[1px] transition-all active:scale-95"
-					>
-						<div class="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-slate-950/90 p-5">
-							<div class="flex items-start gap-4">
-								<div class="text-4xl">{game.icon}</div>
-								<div class="flex-1">
-									<div class="flex items-center justify-between mb-1">
-										<h2 class="text-xl font-semibold text-white">{game.title}</h2>
-										<span class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-300">
-											{game.difficulty}
-										</span>
-									</div>
-									<p class="text-sm text-slate-400">{game.description}</p>
-									<div class="mt-3 inline-flex items-center text-xs font-semibold uppercase tracking-wider text-indigo-200 group-hover:text-white transition-colors">
-										Jugar ahora →
+							<div class="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-slate-950/90 p-5">
+								<div class="flex items-start gap-4">
+									<div class="text-4xl">{game.icon}</div>
+									<div class="flex-1">
+										<div class="flex items-center justify-between mb-1">
+											<h2 class="text-xl font-semibold text-white">{game.title}</h2>
+											<span class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-300">
+												{game.difficulty}
+											</span>
+										</div>
+										<p class="text-sm text-slate-400">{game.description}</p>
+										<div class="mt-3 inline-flex items-center text-xs font-semibold uppercase tracking-wider text-indigo-200 group-hover:text-white transition-colors">
+											Jugar ahora →
+										</div>
 									</div>
 								</div>
 							</div>
-						</div>
-					</button>
-				{/each}
+						</button>
+					{/each}
+				</div>
 			</div>
 		</section>
 
