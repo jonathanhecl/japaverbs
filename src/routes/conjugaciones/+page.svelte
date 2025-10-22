@@ -1,11 +1,75 @@
 <script lang="ts">
   import { speak } from '$lib/utils/tts';
+  import { tick } from 'svelte';
 
-  let expandedSection = $state<number | null>(null);
+  let currentSection = $state(0);
+  let sectionCarouselEl: HTMLDivElement | null = null;
 
-  // Función para obtener colores según el tipo de forma
+  type SectionColor = 'indigo' | 'purple' | 'green' | 'yellow';
+
+  interface SectionPalette {
+    iconBg: string;
+    accentText: string;
+  }
+
+  interface VerbExample {
+    kanji: string;
+    kana: string;
+    romaji: string;
+    meaning: string;
+  }
+
+  interface SentenceExample {
+    text: string;
+    translation: string;
+  }
+
+  interface StepDetail {
+    step: string;
+    example?: string;
+    examples?: string[];
+    note?: string;
+  }
+
+  interface ConjugationForm {
+    form: string;
+    result: string;
+  }
+
+  interface ConjugationDetail {
+    verb: string;
+    forms: ConjugationForm[];
+  }
+
+  interface SubsectionDetail {
+    title: string;
+    badge: string;
+    explanation: string;
+    wordExamples?: VerbExample[];
+    sentenceExamples?: SentenceExample[];
+    steps?: StepDetail[];
+    conjugations?: ConjugationDetail[];
+  }
+
+  interface TipDetail {
+    title: string;
+    icon: string;
+    description: string;
+    priority: 'Alta' | 'Media';
+  }
+
+  interface SectionDetail {
+    title: string;
+    icon: string;
+    color: SectionColor;
+    palette: SectionPalette;
+    intro: string;
+    subsections?: SubsectionDetail[];
+    tips?: TipDetail[];
+  }
+
   function getBadgeColors(badge: string) {
-    switch(badge) {
+    switch (badge) {
       case 'Básica':
         return { bg: 'bg-slate-500/20', text: 'text-slate-200', border: 'border-slate-500/50' };
       case 'Formal':
@@ -23,17 +87,18 @@
     }
   }
 
-  const sections = [
+  const sections: SectionDetail[] = [
     {
       title: 'Tipos de verbos japoneses',
       icon: '🧭',
       color: 'indigo',
+      palette: getSectionPalette('indigo'),
       intro: 'Los verbos japoneses se clasifican en tres grupos principales según su patrón de conjugación.',
       subsections: [
         {
           title: 'Verbos Godan (五段)',
           badge: 'Grupo 1',
-          examples: [
+          wordExamples: [
             { kanji: '行く', kana: 'いく', romaji: 'iku', meaning: 'ir' },
             { kanji: '書く', kana: 'かく', romaji: 'kaku', meaning: 'escribir' },
             { kanji: '飲む', kana: 'のむ', romaji: 'nomu', meaning: 'beber' },
@@ -44,7 +109,7 @@
         {
           title: 'Verbos Ichidan (一段)',
           badge: 'Grupo 2',
-          examples: [
+          wordExamples: [
             { kanji: '食べる', kana: 'たべる', romaji: 'taberu', meaning: 'comer' },
             { kanji: '見る', kana: 'みる', romaji: 'miru', meaning: 'ver' },
             { kanji: '起きる', kana: 'おきる', romaji: 'okiru', meaning: 'levantarse' },
@@ -55,7 +120,7 @@
         {
           title: 'Verbos Irregulares',
           badge: 'Grupo 3',
-          examples: [
+          wordExamples: [
             { kanji: 'する', kana: 'する', romaji: 'suru', meaning: 'hacer' },
             { kanji: '来る', kana: 'くる', romaji: 'kuru', meaning: 'venir' }
           ],
@@ -67,13 +132,14 @@
       title: 'Formas de conjugación',
       icon: '📚',
       color: 'purple',
+      palette: getSectionPalette('purple'),
       intro: 'Cada verbo japonés tiene múltiples formas que expresan tiempo, cortesía y modo.',
       subsections: [
         {
           title: 'Forma Diccionario (辞書形)',
           badge: 'Básica',
           explanation: 'Es la forma base del verbo. Se usa en contextos informales y es la forma que aparece en los diccionarios.',
-          examples: [
+          sentenceExamples: [
             { text: '明日、映画を見る。', translation: 'Mañana veré una película.' }
           ]
         },
@@ -81,7 +147,7 @@
           title: 'Forma Masu (ます形)',
           badge: 'Formal',
           explanation: 'Forma cortés del presente/futuro. Es esencial para conversaciones formales.',
-          examples: [
+          sentenceExamples: [
             { text: '日本語を勉強します。', translation: 'Estudio japonés.' },
             { text: '明日行きます。', translation: 'Iré mañana.' }
           ]
@@ -90,7 +156,7 @@
           title: 'Forma Ta (た形)',
           badge: 'Pasado',
           explanation: 'Expresa acciones completadas en el pasado (informal).',
-          examples: [
+          sentenceExamples: [
             { text: '昨日、友達に会った。', translation: 'Ayer vi a un amigo.' },
             { text: '朝ごはんを食べた。', translation: 'Desayuné.' }
           ]
@@ -99,7 +165,7 @@
           title: 'Forma Te (て形)',
           badge: 'Versátil',
           explanation: 'Una de las formas más importantes. Se usa para conectar verbos, hacer peticiones y formar el progresivo.',
-          examples: [
+          sentenceExamples: [
             { text: 'ご飯を食べて、寝る。', translation: 'Como y luego duermo.' },
             { text: '今、勉強している。', translation: 'Ahora estoy estudiando.' },
             { text: '手伝ってください。', translation: 'Por favor ayúdame.' }
@@ -109,7 +175,7 @@
           title: 'Forma Nai (ない形)',
           badge: 'Negativa',
           explanation: 'Forma negativa informal del presente/futuro.',
-          examples: [
+          sentenceExamples: [
             { text: '今日は行かない。', translation: 'Hoy no voy.' },
             { text: 'お酒を飲まない。', translation: 'No bebo alcohol.' }
           ]
@@ -118,7 +184,7 @@
           title: 'Forma Mashita (ました形)',
           badge: 'Pasado Formal',
           explanation: 'Pasado cortés. Combina cortesía con tiempo pasado.',
-          examples: [
+          sentenceExamples: [
             { text: '昨日、東京に行きました。', translation: 'Ayer fui a Tokio.' },
             { text: '映画を見ました。', translation: 'Vi una película.' }
           ]
@@ -129,6 +195,7 @@
       title: 'Guía paso a paso',
       icon: '🛠️',
       color: 'green',
+      palette: getSectionPalette('green'),
       intro: 'Aprende a conjugar cada tipo de verbo con ejemplos detallados.',
       subsections: [
         {
@@ -192,6 +259,7 @@
       title: 'Consejos y trucos',
       icon: '💡',
       color: 'yellow',
+      palette: getSectionPalette('yellow'),
       intro: 'Estrategias efectivas para dominar las conjugaciones verbales.',
       tips: [
         {
@@ -246,8 +314,78 @@
     }
   ];
 
-  function toggleSection(index: number) {
-    expandedSection = expandedSection === index ? null : index;
+  const sectionCount = sections.length;
+
+  function getSectionPalette(color: SectionColor): SectionPalette {
+    switch (color) {
+      case 'indigo':
+        return {
+          iconBg: 'bg-indigo-500/15 text-indigo-200',
+          accentText: 'text-indigo-200'
+        };
+      case 'purple':
+        return {
+          iconBg: 'bg-purple-500/15 text-purple-200',
+          accentText: 'text-purple-200'
+        };
+      case 'green':
+        return {
+          iconBg: 'bg-emerald-500/15 text-emerald-200',
+          accentText: 'text-emerald-200'
+        };
+      case 'yellow':
+        return {
+          iconBg: 'bg-amber-500/15 text-amber-200',
+          accentText: 'text-amber-200'
+        };
+      default:
+        return {
+          iconBg: 'bg-slate-500/15 text-slate-200',
+          accentText: 'text-slate-200'
+        };
+    }
+  }
+
+  async function goToSection(index: number) {
+    const clamped = Math.max(0, Math.min(index, sectionCount - 1));
+    currentSection = clamped;
+    await tick();
+    if (sectionCarouselEl) {
+      const width = sectionCarouselEl.clientWidth;
+      sectionCarouselEl.scrollTo({ left: clamped * width, behavior: 'smooth' });
+    }
+  }
+
+  function nextSection() {
+    if (currentSection < sectionCount - 1) {
+      goToSection(currentSection + 1);
+    }
+  }
+
+  function prevSection() {
+    if (currentSection > 0) {
+      goToSection(currentSection - 1);
+    }
+  }
+
+  function handleCarouselScroll() {
+    if (!sectionCarouselEl) return;
+    const width = sectionCarouselEl.clientWidth;
+    if (width === 0) return;
+    const index = Math.round(sectionCarouselEl.scrollLeft / width);
+    if (index !== currentSection) {
+      currentSection = Math.max(0, Math.min(index, sectionCount - 1));
+    }
+  }
+
+  function handleSectionKeydown(event: KeyboardEvent) {
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      nextSection();
+    } else if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      prevSection();
+    }
   }
 </script>
 
@@ -256,163 +394,236 @@
   <meta name="description" content="Aprende a conjugar verbos godan, ichidan e irregulares con ejemplos prácticos." />
 </svelte:head>
 
-<section class="space-y-6 pb-6">
-  <header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 text-center">
-    <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
-      🈂️
-    </div>
-    <h1 class="mt-4 text-3xl font-bold text-white">Guía completa de conjugación</h1>
-    <p class="mt-2 text-sm text-slate-300">
-      Domina las conjugaciones verbales del japonés con ejemplos detallados y ejercicios prácticos
-    </p>
-    <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
-      <a href="/diccionario" class="rounded-2xl bg-white px-5 py-2 text-sm font-semibold text-indigo-700 active:scale-95 transition-transform">
-        📚 Ver diccionario
-      </a>
-      <a href="/practica" class="rounded-2xl border border-indigo-500/50 px-5 py-2 text-sm font-semibold text-indigo-100 active:scale-95 transition-transform">
-        🎮 Ir a práctica
-      </a>
+<section class="space-y-8 pb-10">
+  <header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10">
+    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+      <div class="flex items-center gap-4">
+        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
+          🈂️
+        </div>
+        <div>
+          <p class="text-xs uppercase tracking-[0.25em] text-indigo-200">Centro de aprendizaje</p>
+          <h1 class="mt-1 text-3xl font-bold text-white">Guía de verbos japonesa</h1>
+          <p class="mt-1 text-sm text-slate-300 max-w-xl">
+            Comprende cómo se clasifican, se conjugan y se aplican los verbos con ejemplos claros y recursos prácticos.
+          </p>
+        </div>
+      </section>
+      <div class="flex flex-col gap-3 md:flex-row md:items-center">
+        <a href="/diccionario" class="inline-flex items-center gap-2 rounded-2xl bg-white/95 px-5 py-3 text-sm font-semibold text-indigo-700 shadow transition-transform active:scale-95">
+          📚 Ver diccionario
+        </a>
+        <a href="/practica" class="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/60 px-5 py-3 text-sm font-semibold text-indigo-100 transition-transform active:scale-95">
+          🎮 Ir a práctica
+        </a>
+      </div>
     </div>
   </header>
 
-  <div class="space-y-4">
-    {#each sections as section, i}
-      <article class="rounded-3xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+  <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Índice interactivo</p>
+        <h2 class="mt-2 text-2xl font-semibold text-white">Explora la guía como una wiki</h2>
+        <p class="mt-2 text-sm text-slate-400 max-w-2xl">
+          Navega las secciones principales con el carrusel lateral. Usa las flechas para avanzar y consulta cada tarjeta para profundizar.<br />
+          También puedes saltar directamente desde la lista de secciones.
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
         <button
-          onclick={() => toggleSection(i)}
-          class="w-full flex items-center justify-between p-5 text-left hover:bg-slate-800/50 transition-colors"
+          onclick={prevSection}
+          class="h-10 w-10 rounded-full border border-slate-700 text-slate-300 transition-colors hover:border-indigo-400 hover:text-indigo-200 disabled:pointer-events-none disabled:opacity-40"
+          disabled={currentSection === 0}
+          aria-label="Sección anterior"
+          type="button"
         >
-          <div class="flex items-center gap-3">
-            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-{section.color}-500/20 text-2xl">
-              {section.icon}
-            </div>
-            <div>
-              <h2 class="text-xl font-semibold text-white">{section.title}</h2>
-              <p class="text-sm text-slate-400 mt-1">{section.intro}</p>
-            </div>
-          </div>
-          <div class="text-slate-400 text-2xl transition-transform {expandedSection === i ? 'rotate-180' : ''}">
-            ▼
-          </div>
+          ←
         </button>
+        <button
+          onclick={nextSection}
+          class="h-10 w-10 rounded-full border border-slate-700 text-slate-300 transition-colors hover:border-indigo-400 hover:text-indigo-200 disabled:pointer-events-none disabled:opacity-40"
+          disabled={currentSection === sectionCount - 1}
+          aria-label="Sección siguiente"
+          type="button"
+        >
+          →
+        </button>
+      </div>
+    </div>
 
-        {#if expandedSection === i}
-          <div class="p-5 pt-0 space-y-6">
-            {#if section.subsections}
-              {#each section.subsections as subsection}
-                {@const badgeColors = getBadgeColors(subsection.badge)}
-                <div class="rounded-2xl border border-slate-800 bg-slate-950/50 p-5">
-                  <div class="flex items-start justify-between mb-3">
-                    <h3 class="text-lg font-semibold text-white">{subsection.title}</h3>
-                    <span class="text-xs px-2 py-1 rounded-full {badgeColors.bg} {badgeColors.text} border {badgeColors.border}">
-                      {subsection.badge}
-                    </span>
+    <div class="mt-6 grid gap-6 lg:grid-cols-[280px,1fr]">
+      <aside class="space-y-3">
+        {#each sections as section, index}
+          <button
+            onclick={() => goToSection(index)}
+            class={`flex w-full items-start gap-3 rounded-2xl border px-4 py-3 text-left transition-all ${
+              currentSection === index
+                ? 'border-indigo-400 bg-indigo-500/10 text-white shadow-md shadow-indigo-500/20'
+                : 'border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-600'
+            }`}
+            type="button"
+          >
+            <span class={`flex h-10 w-10 items-center justify-center rounded-xl ${section.palette.iconBg}`}>{section.icon}</span>
+            <span>
+              <span class="text-sm font-semibold">{section.title}</span>
+              <span class="mt-1 block text-xs text-slate-400">{section.intro}</span>
+            </span>
+          </button>
+        {/each}
+      </aside>
+
+      <section
+        class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60"
+        bind:this={sectionCarouselEl}
+        onscroll={handleCarouselScroll}
+        onkeydown={handleSectionKeydown}
+        role="region"
+        aria-label="Carrusel de secciones de la guía de verbos"
+        tabindex={currentSection >= 0 ? 0 : undefined}
+      >
+        <div class="flex">
+          {#each sections as section, index (section.title)}
+            <article class="w-full flex-shrink-0 p-5 sm:p-7 md:p-8">
+              <header class="mb-6 flex flex-col gap-4 border-b border-slate-800 pb-6 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex items-start gap-4">
+                  <span class={`flex h-14 w-14 items-center justify-center rounded-2xl text-3xl ${section.palette.iconBg}`}>
+                    {section.icon}
+                  </span>
+                  <div>
+                    <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Sección {index + 1} de {sectionCount}</p>
+                    <h3 class="mt-1 text-2xl font-semibold text-white">{section.title}</h3>
+                    <p class="mt-2 text-sm text-slate-300">{section.intro}</p>
                   </div>
-                  
-                  <p class="text-sm text-slate-300 mb-4">{subsection.explanation}</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-400">
+                  <span class="inline-flex h-2 w-6 rounded-full bg-slate-700">
+                    <span class={`block h-full rounded-full ${currentSection === index ? 'w-full bg-indigo-400' : 'w-1 bg-transparent'}`}></span>
+                  </span>
+                  {index + 1}/{sectionCount}
+                </div>
+              </header>
 
-                  {#if subsection.examples && subsection.examples.length > 0 && subsection.examples[0].kanji}
-                    <div class="grid gap-2">
-                      {#each subsection.examples as example}
-                        <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-900/50 border border-slate-800">
-                          <div class="flex-1">
-                            <p class="text-white font-medium">{example.kanji} ({example.kana})</p>
-                            <p class="text-sm text-slate-400">{example['meaning-es']}</p>
-                          </div>
-                          <button
-                            onclick={() => speak(example.kanji)}
-                            class="p-2 rounded-lg hover:bg-slate-800 transition-colors"
-                          >
-                            🔊
-                          </button>
+              <div class="space-y-6">
+                {#if section.subsections}
+                  <div class="grid gap-5 lg:grid-cols-2">
+                    {#each section.subsections as subsection}
+                      {@const badgeColors = getBadgeColors(subsection.badge)}
+                      <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <div class="flex items-start justify-between gap-3">
+                          <h4 class="text-lg font-semibold text-white">{subsection.title}</h4>
+                          <span class={`text-xs px-2 py-1 rounded-full border ${badgeColors.border} ${badgeColors.bg} ${badgeColors.text}`}>
+                            {subsection.badge}
+                          </span>
                         </div>
-                      {/each}
-                    </div>
-                  {/if}
+                        <p class="mt-3 text-sm text-slate-300">{subsection.explanation}</p>
 
-                  {#if subsection.examples && subsection.examples.length > 0 && subsection.examples[0].text}
-                    <div class="space-y-2">
-                      {#each subsection.examples as example}
-                        <div class="p-3 rounded-xl bg-slate-900/50 border border-slate-800">
-                          <p class="text-white font-japanese mb-1">{example.text}</p>
-                          <p class="text-sm text-slate-400">{example.translation}</p>
-                        </div>
-                      {/each}
-                    </div>
-                  {/if}
-
-                  {#if subsection.steps}
-                    <div class="space-y-3">
-                      {#each subsection.steps as step}
-                        <div class="pl-4 border-l-2 border-{section.color}-500">
-                          <p class="text-sm font-semibold text-{section.color}-300 mb-1">{step.step}</p>
-                          {#if step.example}
-                            <p class="text-sm text-slate-300">{step.example}</p>
-                          {/if}
-                          {#if step.examples}
-                            <div class="space-y-1 mt-2">
-                              {#each step.examples as ex}
-                                <p class="text-xs text-slate-400 font-mono">• {ex}</p>
-                              {/each}
-                            </div>
-                          {/if}
-                          {#if step.note}
-                            <p class="text-xs text-amber-400 mt-2">💡 {step.note}</p>
-                          {/if}
-                        </div>
-                      {/each}
-                    </div>
-                  {/if}
-
-                  {#if subsection.conjugations}
-                    <div class="space-y-4">
-                      {#each subsection.conjugations as conj}
-                        <div class="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-                          <h4 class="text-base font-semibold text-white mb-3">{conj.verb}</h4>
-                          <div class="grid gap-2">
-                            {#each conj.forms as form}
-                              <div class="flex justify-between items-center p-2 rounded-lg bg-slate-950/50">
-                                <span class="text-xs text-slate-400">{form.form}</span>
-                                <span class="text-sm font-medium text-white">{form.result}</span>
+                        {#if subsection.wordExamples && subsection.wordExamples.length > 0}
+                          <div class="mt-4 space-y-2">
+                            {#each subsection.wordExamples as example}
+                              <div class="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/50 p-3">
+                                <div class="flex-1">
+                                  <p class="text-white font-medium">{example.kanji} ({example.kana})</p>
+                                  <p class="text-xs text-slate-400">{example.meaning}</p>
+                                </div>
+                                <button
+                                  onclick={() => speak(example.kanji)}
+                                  class="rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-300 transition-colors hover:border-indigo-400 hover:text-indigo-200"
+                                  type="button"
+                                >
+                                  🔊
+                                </button>
                               </div>
                             {/each}
                           </div>
-                        </div>
-                      {/each}
-                    </div>
-                  {/if}
-                </div>
-              {/each}
-            {/if}
+                        {/if}
 
-            {#if section.tips}
-              <div class="grid gap-3">
-                {#each section.tips as tip}
-                  <div class="rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
-                    <div class="flex items-start gap-3 mb-2">
-                      <span class="text-2xl">{tip.icon}</span>
-                      <div class="flex-1">
-                        <div class="flex items-center justify-between mb-1">
-                          <h3 class="text-base font-semibold text-white">{tip.title}</h3>
-                          <span class="text-xs px-2 py-1 rounded-full {
-                            tip.priority === 'Alta' 
-                              ? 'bg-red-500/20 text-red-300 border border-red-500/50' 
-                              : 'bg-blue-500/20 text-blue-300 border border-blue-500/50'
-                          }">
-                            {tip.priority}
-                          </span>
-                        </div>
-                        <p class="text-sm text-slate-400">{tip.description}</p>
+                        {#if subsection.sentenceExamples && subsection.sentenceExamples.length > 0}
+                          <div class="mt-4 space-y-3">
+                            {#each subsection.sentenceExamples as example}
+                              <div class="rounded-xl border border-slate-800 bg-slate-950/50 p-4">
+                                <p class="text-sm text-white font-japanese">{example.text}</p>
+                                <p class="mt-1 text-xs text-slate-400">{example.translation}</p>
+                              </div>
+                            {/each}
+                          </div>
+                        {/if}
+
+                        {#if subsection.steps}
+                          <ol class="mt-4 space-y-3">
+                            {#each subsection.steps as step}
+                              <li class="rounded-xl border border-slate-800 bg-slate-950/50 p-3">
+                                <p class={`text-xs font-semibold uppercase tracking-wide ${section.palette.accentText}`}>{step.step}</p>
+                                {#if step.example}
+                                  <p class="mt-1 text-sm text-slate-300">{step.example}</p>
+                                {/if}
+                                {#if step.examples}
+                                  <div class="mt-2 space-y-1 text-xs text-slate-400 font-mono">
+                                    {#each step.examples as exampleText}
+                                      <p>• {exampleText}</p>
+                                    {/each}
+                                  </div>
+                                {/if}
+                                {#if step.note}
+                                  <p class="mt-2 text-xs text-amber-300">💡 {step.note}</p>
+                                {/if}
+                              </li>
+                            {/each}
+                          </ol>
+                        {/if}
+
+                        {#if subsection.conjugations}
+                          <div class="mt-4 space-y-4">
+                            {#each subsection.conjugations as conjugation}
+                              <div class="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                                <p class="text-sm font-semibold text-white">{conjugation.verb}</p>
+                                <div class="mt-3 grid gap-2">
+                                  {#each conjugation.forms as form}
+                                    <div class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2">
+                                      <span class="text-xs text-slate-400">{form.form}</span>
+                                      <span class="text-sm font-medium text-white">{form.result}</span>
+                                    </div>
+                                  {/each}
+                                </div>
+                              </div>
+                            {/each}
+                          </div>
+                        {/if}
                       </div>
-                    </div>
+                    {/each}
                   </div>
-                {/each}
+                {/if}
+
+                {#if section.tips}
+                  <div class="grid gap-3 md:grid-cols-2">
+                    {#each section.tips as tip}
+                      <div class="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                        <div class="flex items-start gap-3">
+                          <span class="text-2xl">{tip.icon}</span>
+                          <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                              <h4 class="text-base font-semibold text-white">{tip.title}</h4>
+                              <span class={`rounded-full border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+                                tip.priority === 'Alta'
+                                  ? 'border-red-500/50 bg-red-500/10 text-red-200'
+                                  : 'border-blue-500/50 bg-blue-500/10 text-blue-200'
+                              }`}>
+                                {tip.priority}
+                              </span>
+                            </div>
+                            <p class="mt-2 text-sm text-slate-300">{tip.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    {/each}
+                  </div>
+                {/if}
               </div>
-            {/if}
-          </div>
-        {/if}
-      </article>
-    {/each}
+            </article>
+          {/each}
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
