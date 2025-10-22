@@ -452,14 +452,6 @@
 							</p>
 						</div>
 					</div>
-					<div class="flex flex-col gap-3 md:flex-row md:items-center">
-						<a href="/diccionario" class="inline-flex items-center gap-2 rounded-2xl bg-white/95 px-5 py-3 text-sm font-semibold text-indigo-700 shadow transition-transform active:scale-95">
-							📚 Ver diccionario
-						</a>
-						<a href="/conjugaciones" class="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/60 px-5 py-3 text-sm font-semibold text-indigo-100 transition-transform active:scale-95">
-							🈂️ Ver guías
-						</a>
-					</div>
 				</div>
 			</header>
 
