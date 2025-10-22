@@ -537,7 +537,16 @@
                           <div class="mt-4 space-y-3">
                             {#each subsection.sentenceExamples as example}
                               <div class="rounded-xl border border-slate-800 bg-slate-950/50 p-4">
-                                <p class="text-sm text-white font-japanese">{example.text}</p>
+                                <div class="flex items-start justify-between gap-3">
+                                  <p class="text-sm text-white font-japanese">{example.text}</p>
+                                  <button
+                                    onclick={() => speak(example.text)}
+                                    class="rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-300 transition-colors hover:border-indigo-400 hover:text-indigo-200"
+                                    type="button"
+                                  >
+                                    🔊
+                                  </button>
+                                </div>
                                 <p class="mt-1 text-xs text-slate-400">{example.translation}</p>
                               </div>
                             {/each}
