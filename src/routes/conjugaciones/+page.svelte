@@ -4,6 +4,7 @@
 
   let currentSection = $state(0);
   let sectionCarouselEl: HTMLDivElement | null = null;
+  let touchStartX = $state<number | null>(null);
 
   type SectionColor = 'indigo' | 'purple' | 'green' | 'yellow';
 
@@ -387,6 +388,31 @@
       prevSection();
     }
   }
+
+  function handleTouchStart(event: TouchEvent) {
+    if (event.touches.length > 0) {
+      touchStartX = event.touches[0].clientX;
+    }
+  }
+
+  function handleTouchEnd(event: TouchEvent) {
+    if (touchStartX === null || event.changedTouches.length === 0) {
+      touchStartX = null;
+      return;
+    }
+
+    const touchEndX = event.changedTouches[0].clientX;
+    const deltaX = touchEndX - touchStartX;
+    const threshold = 50;
+
+    if (deltaX > threshold) {
+      prevSection();
+    } else if (deltaX < -threshold) {
+      nextSection();
+    }
+
+    touchStartX = null;
+  }
 </script>
 
 <svelte:head>
@@ -417,10 +443,7 @@
       <div>
         <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Índice interactivo</p>
         <h2 class="mt-2 text-2xl font-semibold text-white">Aprende sobre verbos japoneses</h2>
-        <p class="mt-2 text-sm text-slate-400 max-w-2xl">
-          Navega las secciones principales con el carrusel lateral. Usa las flechas para avanzar y consulta cada tarjeta para profundizar.<br />
-          También puedes saltar directamente desde la lista de secciones.
-        </p>
+        <p class="mt-2 text-sm text-slate-400 max-w-2xl">Explora cada tema y profundiza en las tarjetas de referencia para dominar las conjugaciones.</p>
       </div>
       <div class="flex items-center gap-3">
         <button
@@ -449,6 +472,8 @@
         class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60"
         bind:this={sectionCarouselEl}
         onscroll={handleCarouselScroll}
+        ontouchstart={handleTouchStart}
+        ontouchend={handleTouchEnd}
         role="group"
         aria-label="Carrusel de secciones de la guía de verbos"
       >
