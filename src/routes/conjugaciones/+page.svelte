@@ -444,27 +444,7 @@
       </div>
     </div>
 
-    <div class="mt-6 grid gap-6 lg:grid-cols-[280px,1fr]">
-      <aside class="space-y-3">
-        {#each sections as section, index}
-          <button
-            onclick={() => goToSection(index)}
-            class={`flex w-full items-start gap-3 rounded-2xl border px-4 py-3 text-left transition-all ${
-              currentSection === index
-                ? 'border-indigo-400 bg-indigo-500/10 text-white shadow-md shadow-indigo-500/20'
-                : 'border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-600'
-            }`}
-            type="button"
-          >
-            <span class={`flex h-10 w-10 items-center justify-center rounded-xl ${section.palette.iconBg}`}>{section.icon}</span>
-            <span>
-              <span class="text-sm font-semibold">{section.title}</span>
-              <span class="mt-1 block text-xs text-slate-400">{section.intro}</span>
-            </span>
-          </button>
-        {/each}
-      </aside>
-
+    <div class="mt-6">
       <div
         class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60"
         bind:this={sectionCarouselEl}
