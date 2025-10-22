@@ -492,24 +492,6 @@
 					</button>
 				{/each}
 			</div>
-
-			<!-- Quick Stats -->
-			<div class="grid grid-cols-2 gap-3 pt-4">
-				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
-					<div class="text-2xl mb-1">📊</div>
-					<p class="text-lg font-bold text-white">{$userProfile.totalPractices}</p>
-					<p class="text-xs text-slate-400">Sesiones totales</p>
-				</div>
-				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
-					<div class="text-2xl mb-1">🎯</div>
-					<p class="text-lg font-bold text-white">
-						{$userProfile.totalQuestions > 0 
-							? Math.round(($userProfile.totalCorrect / $userProfile.totalQuestions) * 100) 
-							: 0}%
-					</p>
-					<p class="text-xs text-slate-400">Precisión global</p>
-				</div>
-			</div>
 		</section>
 
 	{:else if currentMode === 'flashcards'}
