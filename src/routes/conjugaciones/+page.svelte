@@ -408,14 +408,6 @@
             Comprende cómo se clasifican, se conjugan y se aplican los verbos con ejemplos claros y recursos prácticos.
           </p>
         </div>
-      </section>
-      <div class="flex flex-col gap-3 md:flex-row md:items-center">
-        <a href="/diccionario" class="inline-flex items-center gap-2 rounded-2xl bg-white/95 px-5 py-3 text-sm font-semibold text-indigo-700 shadow transition-transform active:scale-95">
-          📚 Ver diccionario
-        </a>
-        <a href="/practica" class="inline-flex items-center gap-2 rounded-2xl border border-indigo-500/60 px-5 py-3 text-sm font-semibold text-indigo-100 transition-transform active:scale-95">
-          🎮 Ir a práctica
-        </a>
       </div>
     </div>
   </header>
@@ -424,7 +416,7 @@
     <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
       <div>
         <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Índice interactivo</p>
-        <h2 class="mt-2 text-2xl font-semibold text-white">Explora la guía como una wiki</h2>
+        <h2 class="mt-2 text-2xl font-semibold text-white">Aprende sobre verbos japoneses</h2>
         <p class="mt-2 text-sm text-slate-400 max-w-2xl">
           Navega las secciones principales con el carrusel lateral. Usa las flechas para avanzar y consulta cada tarjeta para profundizar.<br />
           También puedes saltar directamente desde la lista de secciones.
@@ -473,14 +465,12 @@
         {/each}
       </aside>
 
-      <section
+      <div
         class="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-950/60"
         bind:this={sectionCarouselEl}
         onscroll={handleCarouselScroll}
-        onkeydown={handleSectionKeydown}
-        role="region"
+        role="group"
         aria-label="Carrusel de secciones de la guía de verbos"
-        tabindex={currentSection >= 0 ? 0 : undefined}
       >
         <div class="flex">
           {#each sections as section, index (section.title)}
