@@ -51,49 +51,30 @@
 	// Reactive derived value for verb statistics
 	const verbStats = $derived(() => getVerbStats());
 
+	// Reactive derived value for current session errors
+	const currentSessionErrors = $derived(() => sessionResults.filter(r => !r.correct).map(r => r.verb.kanji));
+
 	// Helper function to aggregate verb statistics
 	function getVerbStats(): VerbStats[] {
 		const statsMap = new Map<string, VerbStats>();
 		
-		// First, get historical data from userProfile
-		for (const [verbId, verbData] of Object.entries($userProfile.studiedVerbs)) {
-			// Find the verb object from our verbs array
-			const verb = verbs.find(v => v.kanji === verbId);
-			if (verb) {
-				statsMap.set(verbId, {
-					verb,
-					correctCount: verbData.correctCount,
-					incorrectCount: verbData.incorrectCount,
-					previousMastery: verbData.masteryScore,
-					newMastery: verbData.masteryScore
-				});
-			}
-		}
-		
-		// Then, update with current session results
+		// Only process verbs from current session
 		for (const result of sessionResults) {
 			const verbKey = result.verb.kanji;
 			
-			if (!statsMap.has(verbKey)) {
-				// If verb not in historical data, create new entry
-				statsMap.set(verbKey, {
-					verb: result.verb,
-					correctCount: 0,
-					incorrectCount: 0,
-					previousMastery: result.previousMastery,
-					newMastery: result.newMastery
-				});
-			}
+			// Get historical data from userProfile if exists
+			const historicalData = $userProfile.studiedVerbs[verbKey];
+			const historicalCorrect = historicalData?.correctCount || 0;
+			const historicalIncorrect = historicalData?.incorrectCount || 0;
 			
-			const stats = statsMap.get(verbKey)!;
-			// Add current session results to historical counts
-			if (result.correct) {
-				stats.correctCount++;
-			} else {
-				stats.incorrectCount++;
-			}
-			// Update mastery with current session value
-			stats.newMastery = result.newMastery;
+			// Create stats with historical data
+			statsMap.set(verbKey, {
+				verb: result.verb,
+				correctCount: historicalCorrect,
+				incorrectCount: historicalIncorrect,
+				previousMastery: result.previousMastery,
+				newMastery: result.newMastery
+			});
 		}
 		
 		return Array.from(statsMap.values());
@@ -1482,19 +1463,20 @@
 					<span>Detalle por verbo</span>
 				</h2>
 				
-				{#if verbStats().some(s => s.incorrectCount > 0)}
+				{#if currentSessionErrors().length > 0}
 					<div class="mb-4 p-3 rounded-xl border border-orange-500/30 bg-orange-500/10">
 						<p class="text-sm text-orange-300 flex items-center gap-2">
 							<span>⚠️</span>
-							<span>Verbos para repasar: {verbStats().filter(s => s.incorrectCount > 0).length}</span>
+							<span>Verbos para repasar: {currentSessionErrors().length}</span>
 						</p>
 					</div>
 				{/if}
 				
 				<div class="space-y-2">
 					{#each verbStats() as stats}
+						{@const hasCurrentSessionError = currentSessionErrors().includes(stats.verb.kanji)}
 						<div class="rounded-xl border {
-							stats.incorrectCount === 0 
+							!hasCurrentSessionError 
 								? 'border-green-500/20 bg-green-500/5' 
 								: 'border-orange-500/30 bg-orange-500/10'
 						} p-4 transition-all hover:scale-[1.02]">
@@ -1503,7 +1485,7 @@
 									<div class="flex items-center gap-2 mb-1">
 										<span class="text-xl font-bold text-white">{stats.verb.kanji}</span>
 										<span class="text-base text-slate-400">{stats.verb.kana}</span>
-										{#if stats.incorrectCount === 0}
+										{#if !hasCurrentSessionError}
 											<span class="text-green-400 text-lg">✓</span>
 										{:else}
 											<span class="text-orange-400 text-lg">⚠️</span>
@@ -1511,21 +1493,7 @@
 									</div>
 									<p class="text-sm text-indigo-300">{stats.verb['meaning-es']}</p>
 									
-									<!-- Estadísticas del verbo -->
-									<div class="flex items-center gap-4 mt-2 text-xs">
-										<span class="text-green-400 flex items-center gap-1">
-											<span>✓</span>
-											<span>{stats.correctCount} correcta{stats.correctCount !== 1 ? 's' : ''}</span>
-										</span>
-										{#if stats.incorrectCount > 0}
-											<span class="text-orange-400 flex items-center gap-1">
-												<span>✗</span>
-												<span>{stats.incorrectCount} error{stats.incorrectCount !== 1 ? 'es' : ''}</span>
-											</span>
-										{/if}
-									</div>
-									
-									{#if stats.incorrectCount > 0}
+									{#if hasCurrentSessionError}
 										<p class="text-xs text-orange-400 mt-1 flex items-center gap-1">
 											<span>🔄</span>
 											<span>Necesita repaso</span>
