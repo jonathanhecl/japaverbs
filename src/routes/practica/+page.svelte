@@ -5,7 +5,7 @@
 	import type { Verb } from '$lib/types/verb';
 	import verbs from '$lib/data/verbs';
 
-	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'results';
+	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'results';
 
 	interface VerbResult {
 		verb: Verb;
@@ -35,6 +35,10 @@
 	let sessionResults = $state<VerbResult[]>([]);
 	let completedGameMode = $state<GameMode>('flashcards');
 	let autoReadVerbs = $state(false);
+	let showTimer = $state(false);
+	let timerSeconds = $state(0);
+	let timerInterval: ReturnType<typeof setInterval> | null = null;
+	let currentConjugations = $state<any[]>([]);
 
 	// Función para obtener colores según el tipo de forma
 	function getFormColor(key: string) {
@@ -94,6 +98,15 @@
 			color: 'from-indigo-500 to-purple-500',
 			difficulty: 'Difícil',
 			order: 5
+		},
+		{
+			id: 'inverse-conjugation-quiz',
+			title: 'Quiz de conjugación inversa',
+			description: 'Elige la traducción correcta de la conjugación',
+			icon: '🔄',
+			color: 'from-purple-500 to-pink-500',
+			difficulty: 'Difícil',
+			order: 6
 		}
 	].sort((a, b) => a.order - b.order);
 
@@ -107,6 +120,10 @@
 
 		if (settings.autoReadVerbs !== autoReadVerbs) {
 			autoReadVerbs = settings.autoReadVerbs;
+		}
+
+		if (settings.showTimer !== showTimer) {
+			showTimer = settings.showTimer;
 		}
 	});
 
@@ -122,10 +139,40 @@
 		userProfile.updatePracticeSettings({ autoReadVerbs: enabled });
 	}
 
+	function updateTimerPreference(enabled: boolean) {
+		if (showTimer === enabled) return;
+		showTimer = enabled;
+		userProfile.updatePracticeSettings({ showTimer: enabled });
+	}
+
+	function startTimer() {
+		if (!showTimer || timerInterval) return;
+		timerSeconds = 0;
+		timerInterval = setInterval(() => {
+			timerSeconds++;
+		}, 1000);
+	}
+
+	function stopTimer() {
+		if (timerInterval) {
+			clearInterval(timerInterval);
+			timerInterval = null;
+		}
+	}
+
+	function formatTime(seconds: number): string {
+		const mins = Math.floor(seconds / 60);
+		const secs = seconds % 60;
+		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	}
+
 	function startGame(mode: GameMode) {
 		currentMode = mode;
 		completedGameMode = mode;
 		sessionResults = []; // Reiniciar resultados de la sesión
+		
+		// Iniciar timer si está habilitado
+		startTimer();
 		
 		// Implementar algoritmo de repetición espaciada
 		const today = new Date().toISOString().split('T')[0];
@@ -203,11 +250,18 @@
 		autoPlayedExample = false;
 		autoReadTriggered = false;
 		questionCount++;
+		
+		// Update conjugations when verb changes
+		if (currentVerb) {
+			currentConjugations = conjugateVerb(currentVerb);
+		}
 
 		if (currentMode === 'multiple-choice' || currentMode === 'listening') {
 			generateOptions();
 		} else if (currentMode === 'conjugation-quiz') {
 			generateConjugationQuiz();
+		} else if (currentMode === 'inverse-conjugation-quiz') {
+			generateInverseConjugationQuiz();
 		}
 	}
 
@@ -239,8 +293,7 @@
 		conjugationForm = selected.form;
 		conjugationFormality = selected.formality;
 		
-		const conjugations = conjugateVerb(currentVerb);
-		const selectedConjugation = conjugations.find(c => c.label.includes(selected.form));
+		const selectedConjugation = currentConjugations.find(c => c.label.includes(selected.form));
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada
@@ -252,7 +305,7 @@
 		const wrongAnswers: string[] = [];
 		
 		for (const formObj of otherForms) {
-			const conj = conjugations.find(c => c.label.includes(formObj.form));
+			const conj = currentConjugations.find(c => c.label.includes(formObj.form));
 			if (conj && conj.kana !== correctConjugation && !wrongAnswers.includes(conj.kana)) {
 				wrongAnswers.push(conj.kana);
 			}
@@ -260,6 +313,58 @@
 		}
 		
 		options = shuffleArray([correctConjugation, ...wrongAnswers]);
+	}
+
+	function generateInverseConjugationQuiz() {
+		if (!currentVerb) return;
+		
+		// Formas con información de formalidad
+		const formsWithFormality = [
+			{ form: 'ます', formality: 'formal' },
+			{ form: 'ました', formality: 'formal' },
+			{ form: 'た', formality: 'informal' },
+			{ form: 'て', formality: 'informal' },
+			{ form: 'ない', formality: 'informal' }
+		];
+		
+		const selected = formsWithFormality[Math.floor(Math.random() * formsWithFormality.length)];
+		conjugationForm = selected.form;
+		conjugationFormality = selected.formality;
+		
+		const selectedConjugation = currentConjugations.find(c => c.label.includes(selected.form));
+		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
+		
+		// Guardar la traducción de la forma seleccionada (esta será la respuesta correcta)
+		conjugationTranslation = selectedConjugation?.translation || currentVerb['meaning-es'];
+		
+		// Generar opciones incorrectas usando traducciones de OTRAS CONJUGACIONES DEL MISMO VERBO
+		const otherForms = formsWithFormality.filter(f => f.form !== selected.form);
+		const wrongAnswers: string[] = [];
+		
+		for (const formObj of otherForms) {
+			const conj = currentConjugations.find(c => c.label.includes(formObj.form));
+			if (conj && conj.translation !== conjugationTranslation && !wrongAnswers.includes(conj.translation)) {
+				wrongAnswers.push(conj.translation);
+			}
+			if (wrongAnswers.length >= 3) break;
+		}
+		
+		// Si no hay suficientes opciones incorrectas del mismo verbo, agregar de otros verbos
+		if (wrongAnswers.length < 3) {
+			const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
+			for (const verb of otherVerbs) {
+				if (wrongAnswers.length >= 3) break;
+				const otherConjugations = conjugateVerb(verb);
+				for (const conj of otherConjugations) {
+					if (conj.translation !== conjugationTranslation && !wrongAnswers.includes(conj.translation)) {
+						wrongAnswers.push(conj.translation);
+						if (wrongAnswers.length >= 3) break;
+					}
+				}
+			}
+		}
+		
+		options = shuffleArray([conjugationTranslation, ...wrongAnswers]);
 	}
 
 	// Auto-reproducir ejemplo cuando se voltea la tarjeta en flashcards
@@ -398,8 +503,7 @@
 		if (!currentVerb || selectedAnswer) return;
 		
 		selectedAnswer = answer;
-		const conjugations = conjugateVerb(currentVerb);
-		const correctAnswer = conjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
+		const correctAnswer = currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
 		const correct = answer === correctAnswer;
 		
 		// Guardar mastery score previo
@@ -409,6 +513,61 @@
 		if (autoReadVerbs) {
 			setTimeout(() => {
 				speak(correctAnswer);
+			}, 300);
+		}
+		
+		if (correct) {
+			correctCount++;
+			userProfile.addXP(15);
+			userProfile.recordPractice(currentVerb.kanji, true);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: true,
+				previousMastery,
+				newMastery
+			});
+			
+			// Mostrar botón verde por 1 segundo antes de pasar al siguiente
+			setTimeout(() => {
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
+		} else {
+			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
+			showErrorOverlay = true;
+			
+			userProfile.recordPractice(currentVerb.kanji, false);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: false,
+				previousMastery,
+				newMastery
+			});
+			// El overlay se cerrará al tocar en cualquier parte
+		}
+	}
+
+	function handleInverseConjugationQuizAnswer(answer: string) {
+		if (!currentVerb || selectedAnswer) return;
+		
+		selectedAnswer = answer;
+		const selectedConjugation = currentConjugations.find(c => c.label.includes(conjugationForm));
+		const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
+		const correct = answer === correctAnswer;
+		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
+		// Leer la forma conjugada en japonés siempre que está habilitada la auto-lectura
+		if (autoReadVerbs) {
+			setTimeout(() => {
+				speak(selectedConjugation?.kana || currentVerb!.kana);
 			}, 300);
 		}
 		
@@ -488,6 +647,9 @@
 	}
 
 	function finishGame() {
+		// Detener timer
+		stopTimer();
+		
 		const accuracy = Math.round((correctCount / questionCount) * 100);
 		
 		// Check for achievements
@@ -504,6 +666,9 @@
 	}
 
 	function exitGame() {
+		// Detener timer
+		stopTimer();
+		
 		if (confirm('¿Seguro que quieres salir? Se perderá el progreso actual.')) {
 			currentMode = 'menu';
 		}
@@ -600,6 +765,23 @@
 							<span class="text-2xl">🔊</span>
 						</label>
 					</div>
+
+					<div>
+						<p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Visualización</p>
+						<label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-800 bg-slate-900/70 cursor-pointer hover:border-indigo-500 transition-colors">
+							<input
+								type="checkbox"
+								checked={showTimer}
+								onchange={(event) => updateTimerPreference((event.target as HTMLInputElement).checked)}
+								class="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:ring-offset-slate-900"
+							/>
+							<div class="flex-1">
+								<p class="text-white font-medium">Mostrar temporizador</p>
+								<p class="text-sm text-slate-400">Muestra el tiempo transcurrido durante la sesión de práctica</p>
+							</div>
+							<span class="text-2xl">⏱️</span>
+						</label>
+					</div>
 				</div>
 			</div>
 		</section>
@@ -615,8 +797,15 @@
 				>
 					← Salir
 				</button>
-				<div class="text-sm text-slate-400">
-					{currentIndex + 1} / {gameVerbs.length}
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
 				</div>
 			</div>
 
@@ -733,8 +922,15 @@
 				>
 					← Salir
 				</button>
-				<div class="text-sm text-slate-400">
-					{currentIndex + 1} / {gameVerbs.length}
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
 				</div>
 			</div>
 
@@ -805,8 +1001,15 @@
 				>
 					← Salir
 				</button>
-				<div class="text-sm text-slate-400">
-					{currentIndex + 1} / {gameVerbs.length}
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
 				</div>
 			</div>
 
@@ -873,8 +1076,15 @@
 				>
 					← Salir
 				</button>
-				<div class="text-sm text-slate-400">
-					{currentIndex + 1} / {gameVerbs.length}
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
 				</div>
 			</div>
 
@@ -901,7 +1111,6 @@
 				</div>
 
 				<!-- Options -->
-				{@const conjugations = conjugateVerb(currentVerb)}
 				<div class="grid gap-3">
 					{#each options as option}
 						<button
@@ -912,13 +1121,13 @@
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 									: selectedAnswer === option
 										? (() => {
-											const correctAnswer = conjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
+											const correctAnswer = currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
 											return option === correctAnswer
 												? 'border-green-500 bg-green-500/20 text-green-400'
 												: 'border-red-500 bg-red-500/20 text-red-400';
 										})()
 										: (() => {
-											const correctAnswer = conjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
+											const correctAnswer = currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
 											return option === correctAnswer
 												? 'border-green-500 bg-green-500/20 text-green-400'
 												: 'border-slate-800 bg-slate-900/50 text-slate-500';
@@ -926,6 +1135,96 @@
 							}"
 						>
 							<div class="text-2xl font-medium">{option}</div>
+						</button>
+					{/each}
+				</div>
+			{:else}
+				<div class="text-center py-20">
+					<div class="text-6xl mb-4">🎉</div>
+					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
+					<p class="text-slate-400 mb-6">
+						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+					</p>
+					<button
+						onclick={() => currentMode = 'menu'}
+						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
+					>
+						Volver al menú
+					</button>
+				</div>
+			{/if}
+		</section>
+
+	{:else if currentMode === 'inverse-conjugation-quiz'}
+		<!-- Inverse Conjugation Quiz Game -->
+		<section class="space-y-6">
+			<!-- Header -->
+			<div class="flex items-center justify-between">
+				<button
+					onclick={exitGame}
+					class="text-slate-400 hover:text-white transition-colors"
+				>
+					← Salir
+				</button>
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
+				</div>
+			</div>
+
+			{#if currentVerb}
+				<!-- Question -->
+				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
+					<p class="text-sm text-slate-400 mb-4">¿Qué significa esta conjugación?</p>
+					<div class="text-5xl font-bold text-white mb-3">
+						{currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana}
+					</div>
+					<div class="text-lg text-indigo-400 mb-2">Verbo: {currentVerb.kanji} ({currentVerb['meaning-es']})</div>
+					<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50 mb-4">
+						<span class="text-sm font-medium text-purple-300">
+							{conjugationFormality === 'formal' ? 'Formal' : 'Informal'}
+						</span>
+					</div>
+					<button
+						onclick={() => speak(currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb!.kana)}
+						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
+					>
+						🔊
+					</button>
+				</div>
+
+				<!-- Options -->
+				<div class="grid gap-3">
+					{#each options as option}
+						{@const selectedConjugation = currentConjugations.find(c => c.label.includes(conjugationForm))}
+						<button
+							onclick={() => handleInverseConjugationQuizAnswer(option)}
+							disabled={selectedAnswer !== null}
+							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
+								selectedAnswer === null
+									? 'border-slate-800 bg-slate-900/70 text-white hover:border-purple-500'
+									: selectedAnswer === option
+										? (() => {
+											const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
+											return option === correctAnswer
+												? 'border-green-500 bg-green-500/20 text-green-400'
+												: 'border-red-500 bg-red-500/20 text-red-400';
+										})()
+										: (() => {
+											const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
+											return option === correctAnswer
+												? 'border-green-500 bg-green-500/20 text-green-400'
+												: 'border-slate-800 bg-slate-900/50 text-slate-500';
+										})()
+							}"
+						>
+							<div class="text-xl font-medium">{option}</div>
 						</button>
 					{/each}
 				</div>
@@ -957,8 +1256,15 @@
 				>
 					← Salir
 				</button>
-				<div class="text-sm text-slate-400">
-					{currentIndex + 1} / {gameVerbs.length}
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
 				</div>
 			</div>
 
@@ -990,10 +1296,9 @@
 					</div>
 				{:else}
 					<!-- Conjugations Display -->
-					{@const conjugations = conjugateVerb(currentVerb)}
 					<div class="space-y-3">
 						<div class="grid gap-2">
-							{#each conjugations.slice(1) as form}
+							{#each currentConjugations.slice(1) as form}
 								{@const colors = getFormColor(form.key)}
 								<div class="rounded-xl border {colors.border} {colors.bg} p-4">
 									<div class="flex items-start justify-between mb-2">

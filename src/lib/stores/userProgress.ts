@@ -13,6 +13,7 @@ export interface DailyProgress {
 export interface PracticeSettings {
 	questionsPerSession: number;
 	autoReadVerbs: boolean;
+	showTimer: boolean;
 }
 
 export interface UserProfile {
@@ -53,7 +54,8 @@ const defaultProfile: UserProfile = {
 	achievements: [],
 	practiceSettings: {
 		questionsPerSession: 10,
-		autoReadVerbs: false
+		autoReadVerbs: false,
+		showTimer: false
 	}
 };
 
