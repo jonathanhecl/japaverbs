@@ -294,6 +294,6 @@ export function getMasteryLevel(masteryScore: number): { label: string; color: s
 	if (masteryScore <= -1) return { label: 'Difícil', color: 'text-orange-400' };
 	if (masteryScore === 0) return { label: 'Nuevo', color: 'text-slate-400' };
 	if (masteryScore <= 2) return { label: 'Aprendiendo', color: 'text-yellow-400' };
-	if (masteryScore <= 4) return { label: 'Bueno', color: 'text-blue-400' };
+	if (masteryScore <= 3) return { label: 'Bueno', color: 'text-blue-400' };
 	return { label: 'Dominado', color: 'text-green-400' };
 }

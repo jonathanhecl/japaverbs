@@ -50,7 +50,7 @@
 			const progress = profile.studiedVerbs[verb.kanji];
 			if (!progress) {
 				notStartedCount++;
-			} else if (progress.masteryScore >= 5) {
+			} else if (progress.masteryScore >= 4) {
 				masteredCount++;
 			} else {
 				inProgressCount++;
