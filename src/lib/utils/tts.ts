@@ -75,6 +75,13 @@ export function speak(text: string, options: SpeakOptions = {}): SpeakStatus {
   utter.volume = 1;
 
   const speakUtterance = () => {
+    // Algunos navegadores (especialmente Chrome) requieren llamar a resume()
+    // porque speechSynthesis puede quedar en pausa después de cancel() o tras
+    // haber estado en segundo plano.
+    if (typeof synth.resume === 'function') {
+      synth.resume();
+    }
+
     synth.cancel();
     synth.speak(utter);
   };

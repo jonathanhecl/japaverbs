@@ -32,6 +32,7 @@
 	let conjugationTranslation = $state('');
 	let conjugationFormality = $state(''); // 'formal' o 'informal'
 	let autoPlayedExample = $state(false);
+	let autoReadTriggered = $state(false);
 	let sessionResults = $state<VerbResult[]>([]);
 	let completedGameMode = $state<GameMode>('flashcards');
 	let autoReadVerbs = $state(false);
@@ -176,6 +177,7 @@
 		selectedAnswer = null;
 		feedback = '';
 		autoPlayedExample = false;
+		autoReadTriggered = false;
 		questionCount++;
 
 		if (currentMode === 'multiple-choice' || currentMode === 'listening') {
@@ -267,12 +269,16 @@
 
 	// Auto-leer verbos cuando está habilitado
 	$effect(() => {
-		if (autoReadVerbs && currentVerb && !autoPlayedExample && currentMode !== 'listening') {
-			setTimeout(() => {
-				speak(currentVerb!.kanji || currentVerb!.kana);
-				autoPlayedExample = true;
-			}, 800);
+		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || autoReadTriggered) {
+			return;
 		}
+
+		const timer = setTimeout(() => {
+			speak(currentVerb!.kanji || currentVerb!.kana);
+			autoReadTriggered = true;
+		}, 800);
+
+		return () => clearTimeout(timer);
 	});
 
 	// Auto-leer verbo en modo conjugación cuando se muestran las conjugaciones
