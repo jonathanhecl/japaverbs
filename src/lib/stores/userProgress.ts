@@ -143,14 +143,32 @@ function createUserStore() {
 			studiedVerb.timesReviewed++;
 			studiedVerb.lastStudied = today;
 			
-			// Sistema de puntuación: +1 por correcto, -1 por incorrecto
-			// Rango: -5 (muy difícil) a +5 (dominado)
+			// Sistema de puntuación simplificado:
+			// 4 correctas seguidas = dominio completo (+5)
+			// Error desde dominio: baja a la mitad (+2)
+			// Segundo error: baja a cero (0)
+			// Tercer error: negativo (-1) para repaso inmediato
 			if (correct) {
 				studiedVerb.correctCount++;
-				studiedVerb.masteryScore = Math.min(5, studiedVerb.masteryScore + 1);
+				// Si tiene 4 o más correctas seguidas, dominio completo
+				if (studiedVerb.masteryScore >= 4) {
+					studiedVerb.masteryScore = 5; // Dominio completo
+				} else {
+					studiedVerb.masteryScore = Math.min(5, studiedVerb.masteryScore + 1);
+				}
 			} else {
 				studiedVerb.incorrectCount++;
-				studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 1);
+				// Lógica de penalización según nivel actual
+				if (studiedVerb.masteryScore === 5) {
+					// Error desde dominio: baja a la mitad
+					studiedVerb.masteryScore = 2;
+				} else if (studiedVerb.masteryScore >= 2) {
+					// Segundo error: baja a cero
+					studiedVerb.masteryScore = 0;
+				} else {
+					// Tercer error o más: negativo para repaso inmediato
+					studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 1);
+				}
 			}
 
 			// Calcular próxima fecha de revisión usando repetición espaciada
