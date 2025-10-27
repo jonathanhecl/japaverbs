@@ -403,8 +403,19 @@
 		}
 
 		const timer = setTimeout(() => {
-			speak(currentVerb!.kanji || currentVerb!.kana);
-			autoReadTriggered = true;
+			let textToSpeak: string | undefined;
+
+			if (currentMode === 'inverse-conjugation-quiz') {
+				const selectedConjugation = currentConjugations.find((c) => c.label.includes(conjugationForm));
+				textToSpeak = selectedConjugation?.kana || currentVerb!.kana;
+			} else {
+				textToSpeak = currentVerb!.kanji || currentVerb!.kana;
+			}
+
+			if (textToSpeak) {
+				speak(textToSpeak);
+				autoReadTriggered = true;
+			}
 		}, 800);
 
 		return () => clearTimeout(timer);
