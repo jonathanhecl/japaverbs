@@ -53,7 +53,7 @@
 </script>
 
 <section class="space-y-8 pb-10">
-	<header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10">
+	<header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10 sm:px-4">
 		<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
 			<div class="flex items-center gap-4">
 				<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
@@ -70,7 +70,7 @@
 		</div>
 	</header>
 
-	<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+	<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8 sm:px-4 sm:py-4">
 		<!-- Search and Filters -->
 		<div class="space-y-4">
 			<!-- Search Bar -->
