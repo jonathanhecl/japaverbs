@@ -14,6 +14,14 @@
 		newMastery: number;
 	}
 
+	interface VerbStats {
+		verb: Verb;
+		correctCount: number;
+		incorrectCount: number;
+		previousMastery: number;
+		newMastery: number;
+	}
+
 	let currentMode = $state<GameMode>('menu');
 	let selectedGame = $state<GameMode>('flashcards');
 	let questionsPerSession = $state(10);
@@ -39,6 +47,34 @@
 	let timerSeconds = $state(0);
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
 	let currentConjugations = $state<any[]>([]);
+
+	// Helper function to aggregate verb statistics
+	function getVerbStats(): VerbStats[] {
+		const statsMap = new Map<string, VerbStats>();
+		
+		for (const result of sessionResults) {
+			const verbKey = result.verb.kanji;
+			
+			if (!statsMap.has(verbKey)) {
+				statsMap.set(verbKey, {
+					verb: result.verb,
+					correctCount: 0,
+					incorrectCount: 0,
+					previousMastery: result.previousMastery,
+					newMastery: result.newMastery
+				});
+			}
+			
+			const stats = statsMap.get(verbKey)!;
+			if (result.correct) {
+				stats.correctCount++;
+			} else {
+				stats.incorrectCount++;
+			}
+		}
+		
+		return Array.from(statsMap.values());
+	}
 
 	// Función para obtener colores según el tipo de forma
 	function getFormColor(key: string) {
@@ -1423,35 +1459,51 @@
 					<span>Detalle por verbo</span>
 				</h2>
 				
-				{#if sessionResults.some(r => !r.correct)}
+				{@const verbStats = getVerbStats()}
+				{#if verbStats.some(s => s.incorrectCount > 0)}
 					<div class="mb-4 p-3 rounded-xl border border-orange-500/30 bg-orange-500/10">
 						<p class="text-sm text-orange-300 flex items-center gap-2">
 							<span>⚠️</span>
-							<span>Verbos para repasar: {sessionResults.filter(r => !r.correct).length}</span>
+							<span>Verbos para repasar: {verbStats.filter(s => s.incorrectCount > 0).length}</span>
 						</p>
 					</div>
 				{/if}
 				
 				<div class="space-y-2">
-					{#each sessionResults as result}
+					{#each verbStats as stats}
 						<div class="rounded-xl border {
-							result.correct 
+							stats.incorrectCount === 0 
 								? 'border-green-500/20 bg-green-500/5' 
 								: 'border-orange-500/30 bg-orange-500/10'
 						} p-4 transition-all hover:scale-[1.02]">
 							<div class="flex items-start justify-between gap-3">
 								<div class="flex-1">
 									<div class="flex items-center gap-2 mb-1">
-										<span class="text-xl font-bold text-white">{result.verb.kanji}</span>
-										<span class="text-base text-slate-400">{result.verb.kana}</span>
-										{#if result.correct}
+										<span class="text-xl font-bold text-white">{stats.verb.kanji}</span>
+										<span class="text-base text-slate-400">{stats.verb.kana}</span>
+										{#if stats.incorrectCount === 0}
 											<span class="text-green-400 text-lg">✓</span>
 										{:else}
 											<span class="text-orange-400 text-lg">⚠️</span>
 										{/if}
 									</div>
-									<p class="text-sm text-indigo-300">{result.verb['meaning-es']}</p>
-									{#if !result.correct}
+									<p class="text-sm text-indigo-300">{stats.verb['meaning-es']}</p>
+									
+									<!-- Estadísticas del verbo -->
+									<div class="flex items-center gap-4 mt-2 text-xs">
+										<span class="text-green-400 flex items-center gap-1">
+											<span>✓</span>
+											<span>{stats.correctCount} correcta{stats.correctCount !== 1 ? 's' : ''}</span>
+										</span>
+										{#if stats.incorrectCount > 0}
+											<span class="text-orange-400 flex items-center gap-1">
+												<span>✗</span>
+												<span>{stats.incorrectCount} error{stats.incorrectCount !== 1 ? 'es' : ''}</span>
+											</span>
+										{/if}
+									</div>
+									
+									{#if stats.incorrectCount > 0}
 										<p class="text-xs text-orange-400 mt-1 flex items-center gap-1">
 											<span>🔄</span>
 											<span>Necesita repaso</span>
@@ -1459,7 +1511,7 @@
 									{/if}
 								</div>
 								<button
-									onclick={() => speak(result.verb.kanji || result.verb.kana)}
+									onclick={() => speak(stats.verb.kanji || stats.verb.kana)}
 									class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg flex-shrink-0"
 									aria-label="Reproducir"
 								>
@@ -1475,14 +1527,14 @@
 								<div class="h-2 bg-slate-800 rounded-full overflow-hidden">
 									<div 
 										class="h-full transition-all duration-500 {
-											result.newMastery <= -3 ? 'bg-red-500' :
-											result.newMastery <= -1 ? 'bg-orange-500' :
-											result.newMastery === 0 ? 'bg-slate-500' :
-											result.newMastery <= 2 ? 'bg-yellow-500' :
-											result.newMastery <= 4 ? 'bg-blue-500' :
+											stats.newMastery <= -3 ? 'bg-red-500' :
+											stats.newMastery <= -1 ? 'bg-orange-500' :
+											stats.newMastery === 0 ? 'bg-slate-500' :
+											stats.newMastery <= 2 ? 'bg-yellow-500' :
+											stats.newMastery <= 4 ? 'bg-blue-500' :
 											'bg-green-500'
 										}"
-										style="width: {((result.newMastery + 5) / 10) * 100}%"
+										style="width: {((stats.newMastery + 5) / 10) * 100}%"
 									></div>
 								</div>
 							</div>
