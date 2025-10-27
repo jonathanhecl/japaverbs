@@ -1527,7 +1527,7 @@
 											stats.newMastery <= -1 ? 'bg-orange-500' :
 											stats.newMastery === 0 ? 'bg-slate-500' :
 											stats.newMastery <= 2 ? 'bg-yellow-500' :
-											stats.newMastery <= 4 ? 'bg-blue-500' :
+											stats.newMastery === 3 ? 'bg-blue-500' :
 											'bg-green-500'
 										}"
 										style="width: {((stats.newMastery + 5) / 10) * 100}%"
