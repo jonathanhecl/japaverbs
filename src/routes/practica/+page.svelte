@@ -34,6 +34,7 @@
 	let autoPlayedExample = $state(false);
 	let sessionResults = $state<VerbResult[]>([]);
 	let completedGameMode = $state<GameMode>('flashcards');
+	let autoReadVerbs = $state(false);
 
 	// Función para obtener colores según el tipo de forma
 	function getFormColor(key: string) {
@@ -244,12 +245,39 @@
 					autoPlayedExample = true;
 				}, 500);
 			}
+			
+			// Auto-leer verbo si está habilitado (además del ejemplo)
+			if (autoReadVerbs) {
+				setTimeout(() => {
+					speak(currentVerb!.kanji || currentVerb!.kana);
+				}, 1200);
+			}
 		}
 	});
 
 	// Auto-reproducir audio en modo listening al cargar nueva pregunta
 	$effect(() => {
 		if (currentMode === 'listening' && currentVerb && !autoPlayedExample) {
+			setTimeout(() => {
+				speak(currentVerb!.kanji || currentVerb!.kana);
+				autoPlayedExample = true;
+			}, 500);
+		}
+	});
+
+	// Auto-leer verbos cuando está habilitado
+	$effect(() => {
+		if (autoReadVerbs && currentVerb && !autoPlayedExample && currentMode !== 'listening') {
+			setTimeout(() => {
+				speak(currentVerb!.kanji || currentVerb!.kana);
+				autoPlayedExample = true;
+			}, 800);
+		}
+	});
+
+	// Auto-leer verbo en modo conjugación cuando se muestran las conjugaciones
+	$effect(() => {
+		if (autoReadVerbs && showAnswer && currentVerb && currentMode === 'conjugation' && !autoPlayedExample) {
 			setTimeout(() => {
 				speak(currentVerb!.kanji || currentVerb!.kana);
 				autoPlayedExample = true;
@@ -297,6 +325,13 @@
 			userProfile.addXP(10);
 			userProfile.recordPractice(currentVerb.kanji, true);
 			
+			// Auto-leer verbo si está habilitado
+			if (autoReadVerbs) {
+				setTimeout(() => {
+					speak(currentVerb!.kanji || currentVerb!.kana);
+				}, 300);
+			}
+			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -339,6 +374,13 @@
 		
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
+		// Leer la respuesta correcta siempre que está habilitada la auto-lectura
+		if (autoReadVerbs) {
+			setTimeout(() => {
+				speak(correctAnswer);
+			}, 300);
+		}
 		
 		if (correct) {
 			correctCount++;
@@ -391,6 +433,13 @@
 		if (knew) {
 			correctCount++;
 			userProfile.addXP(15);
+			
+			// Auto-leer verbo si está habilitado
+			if (autoReadVerbs) {
+				setTimeout(() => {
+					speak(currentVerb!.kanji || currentVerb!.kana);
+				}, 300);
+			}
 		}
 		
 		userProfile.recordPractice(currentVerb.kanji, knew);
@@ -473,6 +522,23 @@
 							</button>
 						{/each}
 					</div>
+				</div>
+
+				<!-- Auto-read Option -->
+				<div>
+					<h2 class="text-base font-semibold text-white mb-3">Opciones de audio</h2>
+					<label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-800 bg-slate-900/70 cursor-pointer hover:border-indigo-500 transition-colors">
+						<input
+							type="checkbox"
+							bind:checked={autoReadVerbs}
+							class="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:ring-offset-slate-900"
+						/>
+						<div class="flex-1">
+							<p class="text-white font-medium">Lectura automática de verbos</p>
+							<p class="text-sm text-slate-400">Reproduce automáticamente el audio de los verbos durante la práctica</p>
+						</div>
+						<span class="text-2xl">🔊</span>
+					</label>
 				</div>
 
 				<div class="grid gap-4">
