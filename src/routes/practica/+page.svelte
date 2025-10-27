@@ -4,7 +4,6 @@
 	import { conjugateVerb } from '$lib/utils/conjugation';
 	import type { Verb } from '$lib/types/verb';
 	import verbs from '$lib/data/verbs';
-	import { onMount } from 'svelte';
 
 	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'results';
 
@@ -97,6 +96,31 @@
 			order: 5
 		}
 	].sort((a, b) => a.order - b.order);
+
+	$effect(() => {
+		const settings = $userProfile.practiceSettings;
+		if (!settings) return;
+
+		if (settings.questionsPerSession !== questionsPerSession) {
+			questionsPerSession = settings.questionsPerSession;
+		}
+
+		if (settings.autoReadVerbs !== autoReadVerbs) {
+			autoReadVerbs = settings.autoReadVerbs;
+		}
+	});
+
+	function updateQuestionsPerSession(amount: number) {
+		if (questionsPerSession === amount) return;
+		questionsPerSession = amount;
+		userProfile.updatePracticeSettings({ questionsPerSession: amount });
+	}
+
+	function updateAutoReadPreference(enabled: boolean) {
+		if (autoReadVerbs === enabled) return;
+		autoReadVerbs = enabled;
+		userProfile.updatePracticeSettings({ autoReadVerbs: enabled });
+	}
 
 	function startGame(mode: GameMode) {
 		currentMode = mode;
@@ -511,42 +535,6 @@
 			</header>
 
 			<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
-				<!-- Questions Selector -->
-				<div>
-					<h2 class="text-base font-semibold text-white mb-3">Cantidad de preguntas</h2>
-					<div class="grid grid-cols-4 gap-2">
-						{#each [10, 20, 30, 40] as amount}
-							<button
-								onclick={() => questionsPerSession = amount}
-								class="rounded-xl border-2 p-3 text-center font-semibold transition-all active:scale-95 {
-									questionsPerSession === amount
-										? 'border-indigo-500 bg-indigo-500/20 text-white'
-										: 'border-slate-800 bg-slate-900 text-slate-400'
-								}"
-							>
-								<div class="text-2xl font-bold">{amount}</div>
-							</button>
-						{/each}
-					</div>
-				</div>
-
-				<!-- Auto-read Option -->
-				<div>
-					<h2 class="text-base font-semibold text-white mb-3">Opciones de audio</h2>
-					<label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-800 bg-slate-900/70 cursor-pointer hover:border-indigo-500 transition-colors">
-						<input
-							type="checkbox"
-							bind:checked={autoReadVerbs}
-							class="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:ring-offset-slate-900"
-						/>
-						<div class="flex-1">
-							<p class="text-white font-medium">Lectura automática de verbos</p>
-							<p class="text-sm text-slate-400">Reproduce automáticamente el audio de los verbos durante la práctica</p>
-						</div>
-						<span class="text-2xl">🔊</span>
-					</label>
-				</div>
-
 				<div class="grid gap-4">
 					{#each games as game}
 						<button
@@ -572,6 +560,46 @@
 							</div>
 						</button>
 					{/each}
+				</div>
+			</div>
+
+			<div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
+				<h2 class="text-base font-semibold text-white mb-4">Opciones de la sesión</h2>
+				<div class="space-y-5">
+					<div>
+						<p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Cantidad de preguntas</p>
+						<div class="grid grid-cols-4 gap-2">
+							{#each [10, 20, 30, 40] as amount}
+								<button
+									onclick={() => updateQuestionsPerSession(amount)}
+									class="rounded-xl border-2 p-3 text-center font-semibold transition-all active:scale-95 {
+										questionsPerSession === amount
+											? 'border-indigo-500 bg-indigo-500/20 text-white'
+											: 'border-slate-800 bg-slate-900 text-slate-400'
+									}"
+								>
+									<div class="text-2xl font-bold">{amount}</div>
+								</button>
+							{/each}
+						</div>
+					</div>
+
+					<div>
+						<p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Audio</p>
+						<label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-800 bg-slate-900/70 cursor-pointer hover:border-indigo-500 transition-colors">
+							<input
+								type="checkbox"
+								checked={autoReadVerbs}
+								onchange={(event) => updateAutoReadPreference((event.target as HTMLInputElement).checked)}
+								class="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:ring-offset-slate-900"
+							/>
+							<div class="flex-1">
+								<p class="text-white font-medium">Lectura automática de verbos</p>
+								<p class="text-sm text-slate-400">Reproduce automáticamente el audio de los verbos durante la práctica</p>
+							</div>
+							<span class="text-2xl">🔊</span>
+						</label>
+					</div>
 				</div>
 			</div>
 		</section>

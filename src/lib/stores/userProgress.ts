@@ -10,6 +10,11 @@ export interface DailyProgress {
 	verbsReviewed: string[];
 }
 
+export interface PracticeSettings {
+	questionsPerSession: number;
+	autoReadVerbs: boolean;
+}
+
 export interface UserProfile {
 	name: string;
 	createdAt: string;
@@ -30,6 +35,7 @@ export interface UserProfile {
 	}>;
 	dailyHistory: DailyProgress[];
 	achievements: string[];
+	practiceSettings: PracticeSettings;
 }
 
 const defaultProfile: UserProfile = {
@@ -44,12 +50,31 @@ const defaultProfile: UserProfile = {
 	totalQuestions: 0,
 	studiedVerbs: {},
 	dailyHistory: [],
-	achievements: []
+	achievements: [],
+	practiceSettings: {
+		questionsPerSession: 10,
+		autoReadVerbs: false
+	}
 };
 
 function createUserStore() {
 	const stored = browser ? localStorage.getItem('userProfile') : null;
-	const initial = stored ? { ...defaultProfile, ...JSON.parse(stored) } : defaultProfile;
+	const parsedProfile = stored ? JSON.parse(stored) : null;
+
+	const initial: UserProfile = {
+		...defaultProfile,
+		...(parsedProfile ?? {}),
+		studiedVerbs: {
+			...defaultProfile.studiedVerbs,
+			...(parsedProfile?.studiedVerbs ?? {})
+		},
+		dailyHistory: Array.isArray(parsedProfile?.dailyHistory) ? parsedProfile.dailyHistory : [],
+		achievements: Array.isArray(parsedProfile?.achievements) ? parsedProfile.achievements : [],
+		practiceSettings: {
+			...defaultProfile.practiceSettings,
+			...(parsedProfile?.practiceSettings ?? {})
+		}
+	};
 	
 	const { subscribe, set, update } = writable<UserProfile>(initial);
 
@@ -86,7 +111,11 @@ function createUserStore() {
 					...(data.studiedVerbs ?? {})
 				},
 				dailyHistory: Array.isArray(data.dailyHistory) ? data.dailyHistory : [],
-				achievements: Array.isArray(data.achievements) ? data.achievements : []
+				achievements: Array.isArray(data.achievements) ? data.achievements : [],
+				practiceSettings: {
+					...defaultProfile.practiceSettings,
+					...(data.practiceSettings ?? {})
+				}
 			};
 
 			set(sanitized);
@@ -191,6 +220,13 @@ function createUserStore() {
 			}
 			return profile;
 		}),
+		updatePracticeSettings: (partial: Partial<PracticeSettings>) => update(profile => ({
+			...profile,
+			practiceSettings: {
+				...profile.practiceSettings,
+				...partial
+			}
+		})),
 		reset: () => set(defaultProfile),
 		
 		// Export/Import Methods
