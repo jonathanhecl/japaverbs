@@ -48,14 +48,34 @@
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
 	let currentConjugations = $state<any[]>([]);
 
+	// Reactive derived value for verb statistics
+	const verbStats = $derived(() => getVerbStats());
+
 	// Helper function to aggregate verb statistics
 	function getVerbStats(): VerbStats[] {
 		const statsMap = new Map<string, VerbStats>();
 		
+		// First, get historical data from userProfile
+		for (const [verbId, verbData] of Object.entries($userProfile.studiedVerbs)) {
+			// Find the verb object from our verbs array
+			const verb = verbs.find(v => v.kanji === verbId);
+			if (verb) {
+				statsMap.set(verbId, {
+					verb,
+					correctCount: verbData.correctCount,
+					incorrectCount: verbData.incorrectCount,
+					previousMastery: verbData.masteryScore,
+					newMastery: verbData.masteryScore
+				});
+			}
+		}
+		
+		// Then, update with current session results
 		for (const result of sessionResults) {
 			const verbKey = result.verb.kanji;
 			
 			if (!statsMap.has(verbKey)) {
+				// If verb not in historical data, create new entry
 				statsMap.set(verbKey, {
 					verb: result.verb,
 					correctCount: 0,
@@ -66,11 +86,14 @@
 			}
 			
 			const stats = statsMap.get(verbKey)!;
+			// Add current session results to historical counts
 			if (result.correct) {
 				stats.correctCount++;
 			} else {
 				stats.incorrectCount++;
 			}
+			// Update mastery with current session value
+			stats.newMastery = result.newMastery;
 		}
 		
 		return Array.from(statsMap.values());
@@ -1459,18 +1482,17 @@
 					<span>Detalle por verbo</span>
 				</h2>
 				
-				{@const verbStats = getVerbStats()}
-				{#if verbStats.some(s => s.incorrectCount > 0)}
+				{#if verbStats().some(s => s.incorrectCount > 0)}
 					<div class="mb-4 p-3 rounded-xl border border-orange-500/30 bg-orange-500/10">
 						<p class="text-sm text-orange-300 flex items-center gap-2">
 							<span>⚠️</span>
-							<span>Verbos para repasar: {verbStats.filter(s => s.incorrectCount > 0).length}</span>
+							<span>Verbos para repasar: {verbStats().filter(s => s.incorrectCount > 0).length}</span>
 						</p>
 					</div>
 				{/if}
 				
 				<div class="space-y-2">
-					{#each verbStats as stats}
+					{#each verbStats() as stats}
 						<div class="rounded-xl border {
 							stats.incorrectCount === 0 
 								? 'border-green-500/20 bg-green-500/5' 
@@ -1522,7 +1544,13 @@
 							<!-- Progreso de mastery simplificado -->
 							<div class="mt-3">
 								<div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-									<span>Nivel de dominio</span>
+									<span>Nivel de dominio 
+										{#if stats.incorrectCount > 0}
+											(<span class="text-red-400">{stats.incorrectCount}</span>/<span class="text-green-400">{stats.correctCount}</span>)
+										{:else}
+											(<span class="text-green-400">{stats.correctCount}</span>)
+										{/if}
+									</span>
 								</div>
 								<div class="h-2 bg-slate-800 rounded-full overflow-hidden">
 									<div 
