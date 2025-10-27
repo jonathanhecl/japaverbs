@@ -143,14 +143,14 @@ function createUserStore() {
 			studiedVerb.timesReviewed++;
 			studiedVerb.lastStudied = today;
 			
-			// Sistema de puntuación: +1 por correcto, -2 por incorrecto
+			// Sistema de puntuación: +1 por correcto, -1 por incorrecto
 			// Rango: -5 (muy difícil) a +5 (dominado)
 			if (correct) {
 				studiedVerb.correctCount++;
 				studiedVerb.masteryScore = Math.min(5, studiedVerb.masteryScore + 1);
 			} else {
 				studiedVerb.incorrectCount++;
-				studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 2);
+				studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 1);
 			}
 
 			// Calcular próxima fecha de revisión usando repetición espaciada
