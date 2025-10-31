@@ -25,7 +25,7 @@
 
 <div class="min-h-screen bg-slate-950 text-white flex flex-col">
 	<!-- Content -->
-	<main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-20 pt-4 sm:px-5 sm:pb-24">
+	<main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-24 pt-4 sm:px-5 sm:pb-28">
 		{@render children?.()}
 	</main>
 
@@ -35,7 +35,7 @@
 			{#each navItems as item}
 				<a
 					href={item.href}
-					class="flex flex-1 flex-col items-center justify-center gap-1 py-3 transition-all {$page.url.pathname === item.href
+					class="flex flex-1 flex-col items-center justify-center gap-1 py-5 transition-all {$page.url.pathname === item.href
 						? 'text-white bg-indigo-600/20'
 						: 'text-slate-400 active:text-white'}"
 				>
