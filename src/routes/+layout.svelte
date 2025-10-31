@@ -25,17 +25,17 @@
 
 <div class="min-h-screen bg-slate-950 text-white flex flex-col">
 	<!-- Content -->
-	<main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-24 pt-4 sm:px-5 sm:pb-28">
+	<main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-32 pt-4 sm:px-5 sm:pb-36">
 		{@render children?.()}
 	</main>
 
 	<!-- Bottom Navigation -->
-	<nav class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-800 bg-slate-950/95 backdrop-blur-lg shadow-[0_-10px_25px_rgba(15,23,42,0.6)]">
+	<nav class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-800 bg-slate-950/95 backdrop-blur-lg shadow-[0_-10px_25px_rgba(15,23,42,0.6)] pb-4">
 		<div class="mx-auto flex max-w-3xl">
 			{#each navItems as item}
 				<a
 					href={item.href}
-					class="flex flex-1 flex-col items-center justify-center gap-1 py-5 transition-all {$page.url.pathname === item.href
+					class="flex flex-1 flex-col items-center justify-center gap-1 pt-4 pb-6 transition-all {$page.url.pathname === item.href
 						? 'text-white bg-indigo-600/20'
 						: 'text-slate-400 active:text-white'}"
 				>
