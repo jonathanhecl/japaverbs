@@ -720,8 +720,16 @@
 		// Detener timer
 		stopTimer();
 		
+		// Resetear estados de audio para evitar reproducción después de salir
+		autoPlayedExample = true;
+		autoReadTriggered = true;
+		
 		if (confirm('¿Seguro que quieres salir? Se perderá el progreso actual.')) {
 			currentMode = 'menu';
+		} else {
+			// Si no sale, restaurar los estados de audio
+			autoPlayedExample = false;
+			autoReadTriggered = false;
 		}
 	}
 </script>
