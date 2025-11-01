@@ -34,6 +34,7 @@
 	let currentIndex = $state(0);
 	let options = $state<string[]>([]);
 	let feedback = $state('');
+	let feedbackHint = $state('');
 	let showErrorOverlay = $state(false);
 	let conjugationForm = $state('');
 	let conjugationTranslation = $state('');
@@ -128,20 +129,20 @@
 			order: 1
 		},
 		{
+			id: 'verb-type-quiz',
+			title: 'Quiz de tipos de verbos',
+			description: 'Identifica si el verbo es Godan, Ichidan o Irregular',
+			icon: '🏷️',
+			color: 'from-amber-500 to-orange-500',
+			difficulty: 'Medio',
+			order: 2
+		},
+		{
 			id: 'multiple-choice',
 			title: 'Opción múltiple',
 			description: 'Elige la traducción correcta',
 			icon: '✅',
 			color: 'from-green-500 to-emerald-500',
-			difficulty: 'Medio',
-			order: 2
-		},
-		{
-			id: 'conjugation',
-			title: 'Estudio de conjugación',
-			description: 'Aprende las 18 formas JLPT N5 (formales e informales)',
-			icon: '📝',
-			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Medio',
 			order: 3
 		},
@@ -155,13 +156,22 @@
 			order: 4
 		},
 		{
+			id: 'conjugation',
+			title: 'Estudio de conjugación',
+			description: 'Aprende las 18 formas JLPT N5 (formales e informales)',
+			icon: '📝',
+			color: 'from-purple-500 to-pink-500',
+			difficulty: 'Medio',
+			order: 5
+		},
+		{
 			id: 'conjugation-quiz',
 			title: 'Quiz de conjugación',
 			description: 'Elige la forma JLPT N5 correcta',
 			icon: '🎯',
 			color: 'from-indigo-500 to-purple-500',
 			difficulty: 'Difícil',
-			order: 5
+			order: 6
 		},
 		{
 			id: 'inverse-conjugation-quiz',
@@ -170,15 +180,6 @@
 			icon: '🔄',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Difícil',
-			order: 6
-		},
-		{
-			id: 'verb-type-quiz',
-			title: 'Quiz de tipos de verbos',
-			description: 'Identifica si el verbo es Godan, Ichidan o Irregular',
-			icon: '🏷️',
-			color: 'from-amber-500 to-orange-500',
-			difficulty: 'Medio',
 			order: 7
 		}
 	].sort((a, b) => a.order - b.order);
@@ -320,6 +321,7 @@
 		showAnswer = false;
 		selectedAnswer = null;
 		feedback = '';
+		feedbackHint = '';
 		autoPlayedExample = false;
 		autoReadTriggered = false;
 		questionCount++;
@@ -596,6 +598,7 @@
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 		
 		if (correct) {
+			feedbackHint = '';
 			correctCount++;
 			userProfile.addXP(10);
 			userProfile.recordPractice(currentVerb.kanji, true);
@@ -677,6 +680,7 @@
 			}, 1000);
 		} else {
 			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
+			feedbackHint = '';
 			showErrorOverlay = true;
 			
 			userProfile.recordPractice(currentVerb.kanji, false);
@@ -801,7 +805,8 @@
 				loadNextQuestion();
 			}, 1000);
 		} else {
-			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}\n\n${correctExplanation}`;
+			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
+			feedbackHint = correctExplanation;
 			showErrorOverlay = true;
 			
 			userProfile.recordPractice(currentVerb.kanji, false);
@@ -1816,8 +1821,14 @@
 		<div class="rounded-3xl border-2 border-red-500 bg-slate-900/95 backdrop-blur-md p-8 text-center shadow-2xl shadow-red-500/50 max-w-md mx-4">
 			<div class="text-5xl mb-4">❌</div>
 			<p class="text-xl font-bold text-red-400 mb-2">Incorrecto</p>
-			<p class="text-lg font-medium text-white mb-4">{feedback}</p>
-			<p class="text-sm text-slate-400">Toca para continuar</p>
+			<p class="text-lg font-medium text-white">{feedback}</p>
+			{#if feedbackHint}
+				<div class="mt-4 rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-left">
+					<p class="text-sm font-semibold text-red-200 uppercase tracking-wide mb-1">Cómo identificarlo</p>
+					<p class="text-sm text-slate-200 leading-relaxed">{feedbackHint}</p>
+				</div>
+			{/if}
+			<p class="text-sm text-slate-400 mt-5">Toca para continuar</p>
 		</div>
 	</div>
 {/if}
