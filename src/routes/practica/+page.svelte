@@ -5,7 +5,7 @@
 	import type { Verb } from '$lib/types/verb';
 	import verbs from '$lib/data/verbs';
 
-	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'results';
+	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'results';
 
 	interface VerbResult {
 		verb: Verb;
@@ -171,6 +171,15 @@
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Difícil',
 			order: 6
+		},
+		{
+			id: 'verb-type-quiz',
+			title: 'Quiz de tipos de verbos',
+			description: 'Identifica si el verbo es Godan, Ichidan o Irregular',
+			icon: '🏷️',
+			color: 'from-amber-500 to-orange-500',
+			difficulty: 'Medio',
+			order: 7
 		}
 	].sort((a, b) => a.order - b.order);
 
@@ -326,6 +335,8 @@
 			generateConjugationQuiz();
 		} else if (currentMode === 'inverse-conjugation-quiz') {
 			generateInverseConjugationQuiz();
+		} else if (currentMode === 'verb-type-quiz') {
+			generateVerbTypeQuiz();
 		}
 	}
 
@@ -460,6 +471,29 @@
 		}
 		
 		options = shuffleArray([conjugationTranslation, ...wrongAnswers]);
+	}
+
+	function generateVerbTypeQuiz() {
+		if (!currentVerb) return;
+		
+		// Obtener el tipo correcto del verbo actual
+		const correctType = currentVerb.type;
+		
+		// Generar opciones incorrectas usando otros tipos de verbos
+		const allTypes = ['godan', 'ichidan', 'irregular'];
+		const wrongTypes = allTypes.filter(type => type !== correctType);
+		
+		// Crear las opciones con nombres en español
+		const typeNames: { [key: string]: string } = {
+			'godan': 'Godan (Grupo 1)',
+			'ichidan': 'Ichidan (Grupo 2)',
+			'irregular': 'Irregular (Grupo 3)'
+		};
+		
+		const correctAnswer = typeNames[correctType];
+		const wrongAnswers = wrongTypes.map(type => typeNames[type]);
+		
+		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
 
 	// Auto-reproducir ejemplo cuando se voltea la tarjeta en flashcards
@@ -711,6 +745,75 @@
 				newMastery
 			});
 			// El overlay se cerrará al tocar en cualquier parte
+		}
+	}
+
+	function handleVerbTypeQuizAnswer(answer: string) {
+		if (!currentVerb || selectedAnswer) return;
+		
+		selectedAnswer = answer;
+		
+		// Obtener el tipo correcto del verbo actual
+		const typeNames: { [key: string]: string } = {
+			'godan': 'Godan (Grupo 1)',
+			'ichidan': 'Ichidan (Grupo 2)',
+			'irregular': 'Irregular (Grupo 3)'
+		};
+		
+		// Explicaciones para cada tipo de verbo
+		const typeExplanations: { [key: string]: string } = {
+			'godan': 'Los verbos Godan (Grupo 1) terminan en -u, -ku, -gu, -su, -tsu, -nu, -bu, -mu, -ru. Cambian la vocal final al conjugar.',
+			'ichidan': 'Los verbos Ichidan (Grupo 2) siempre terminan en -ru. Simplemente se quita el -ru para conjugar.',
+			'irregular': 'Solo hay 2 verbos irregulares: する (hacer) y 来る (venir). Deben memorizarse.'
+		};
+		
+		const correctAnswer = typeNames[currentVerb.type];
+		const correctExplanation = typeExplanations[currentVerb.type];
+		const correct = answer === correctAnswer;
+		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		
+		// Leer la respuesta correcta siempre que está habilitada la auto-lectura
+		if (autoReadVerbs) {
+			setTimeout(() => {
+				speak(currentVerb.kanji || currentVerb.kana);
+			}, 300);
+		}
+		
+		if (correct) {
+			correctCount++;
+			feedback = '¡Correcto!';
+			userProfile.recordPractice(currentVerb.kanji, true);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: true,
+				previousMastery,
+				newMastery
+			});
+			
+			// Avanzar a la siguiente pregunta después de un breve retraso
+			setTimeout(() => {
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
+		} else {
+			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}\n\n${correctExplanation}`;
+			showErrorOverlay = true;
+			
+			userProfile.recordPractice(currentVerb.kanji, false);
+			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: false,
+				previousMastery,
+				newMastery
+			});
 		}
 	}
 
@@ -1352,6 +1455,91 @@
 					<button
 						onclick={() => currentMode = 'menu'}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
+					>
+						Volver al menú
+					</button>
+				</div>
+			{/if}
+		</section>
+
+	{:else if currentMode === 'verb-type-quiz'}
+		<!-- Verb Type Quiz Game -->
+		<section class="space-y-6">
+			<!-- Header -->
+			<div class="flex items-center justify-between">
+				<button
+					onclick={exitGame}
+					class="text-slate-400 hover:text-white transition-colors"
+				>
+					← Salir
+				</button>
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
+				</div>
+			</div>
+
+			{#if currentVerb}
+				<!-- Question -->
+				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
+					<p class="text-sm text-slate-400 mb-4">¿Qué tipo de verbo es?</p>
+					<div class="text-5xl font-bold text-white mb-3">
+						{currentVerb.kanji}
+					</div>
+					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
+					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}</div>
+					<button
+						onclick={() => speak(currentVerb.kanji || currentVerb.kana)}
+						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
+					>
+						🔊
+					</button>
+				</div>
+
+				<!-- Options -->
+				<div class="grid gap-3">
+					{#each options as option}
+						{@const typeNames: { [key: string]: string } = {
+							'godan': 'Godan (Grupo 1)',
+							'ichidan': 'Ichidan (Grupo 2)',
+							'irregular': 'Irregular (Grupo 3)'
+						}}
+						{@const correctAnswer = typeNames[currentVerb.type]}
+						<button
+							onclick={() => handleVerbTypeQuizAnswer(option)}
+							disabled={selectedAnswer !== null}
+							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
+								selectedAnswer === null
+									? 'border-slate-800 bg-slate-900/70 text-white hover:border-amber-500'
+									: selectedAnswer === option
+										? option === correctAnswer
+											? 'border-green-500 bg-green-500/20 text-green-400'
+											: 'border-red-500 bg-red-500/20 text-red-400'
+										: option === correctAnswer
+											? 'border-green-500 bg-green-500/20 text-green-400'
+											: 'border-slate-800 bg-slate-900/50 text-slate-500'
+							}"
+						>
+							<div class="text-2xl font-medium">{option}</div>
+						</button>
+					{/each}
+				</div>
+			{:else}
+				<div class="text-center py-20">
+					<div class="text-6xl mb-4">🎉</div>
+					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
+					<p class="text-slate-400 mb-6">
+						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+					</p>
+					<button
+						onclick={exitGame}
+						class="rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
 					</button>
