@@ -781,7 +781,7 @@
 		// Leer la respuesta correcta siempre que está habilitada la auto-lectura
 		if (autoReadVerbs) {
 			setTimeout(() => {
-				speak(currentVerb.kanji || currentVerb.kana);
+				currentVerb && speak(currentVerb.kanji || currentVerb.kana);
 			}, 300);
 		}
 		
@@ -1500,7 +1500,7 @@
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
 					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}</div>
 					<button
-						onclick={() => speak(currentVerb.kanji || currentVerb.kana)}
+						onclick={() => (currentVerb && speak(currentVerb.kanji || currentVerb.kana))}
 						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
