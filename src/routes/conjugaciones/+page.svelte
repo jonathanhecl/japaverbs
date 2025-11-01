@@ -75,8 +75,8 @@
         return { bg: 'bg-slate-500/20', text: 'text-slate-200', border: 'border-slate-500/50' };
       case 'Formal':
         return { bg: 'bg-blue-500/20', text: 'text-blue-200', border: 'border-blue-500/50' };
-      case 'Pasado Formal':
-        return { bg: 'bg-blue-500/20', text: 'text-blue-200', border: 'border-blue-500/50' };
+      case 'Informal':
+        return { bg: 'bg-slate-600/20', text: 'text-slate-200', border: 'border-slate-600/50' };
       case 'Pasado':
         return { bg: 'bg-orange-500/20', text: 'text-orange-200', border: 'border-orange-500/50' };
       case 'Versátil':
@@ -130,11 +130,11 @@
       ]
     },
     {
-      title: 'Formas de conjugación',
+      title: 'Formas de conjugación JLPT N5',
       icon: '📚',
       color: 'purple',
       palette: getSectionPalette('purple'),
-      intro: 'Cada verbo japonés tiene múltiples formas que expresan tiempo, cortesía y modo.',
+      intro: 'Las conjugaciones japonesas se organizan en dos categorías principales: formales (ます形) e informales (普通形). Ambas son esenciales para el JLPT N5.',
       subsections: [
         {
           title: 'Forma Diccionario (辞書形)',
@@ -145,49 +145,62 @@
           ]
         },
         {
-          title: 'Forma Masu (ます形)',
+          title: 'Formales (ます形)',
           badge: 'Formal',
-          explanation: 'Forma cortés del presente/futuro. Es esencial para conversaciones formales.',
+          explanation: 'Las formas formales se usan en conversaciones corteses, con superiores o en situaciones profesionales. Todas terminan en ます o ません.',
+          wordExamples: [
+            { kanji: '食べます', kana: 'たべます', romaji: 'tabemasu', meaning: 'como' },
+            { kanji: '食べません', kana: 'たべません', romaji: 'tabemasen', meaning: 'no como' },
+            { kanji: '食べました', kana: 'たべました', romaji: 'tabemashita', meaning: 'comí' },
+            { kanji: '食べませんでした', kana: 'たべませんでした', romaji: 'tabemasen deshita', meaning: 'no comí' }
+          ],
           sentenceExamples: [
             { text: '日本語を勉強します。', translation: 'Estudio japonés.' },
-            { text: '明日行きます。', translation: 'Iré mañana.' }
+            { text: '昨日、本を読みませんでした。', translation: 'Ayer no leí un libro.' }
           ]
         },
         {
-          title: 'Forma Ta (た形)',
-          badge: 'Pasado',
-          explanation: 'Expresa acciones completadas en el pasado (informal).',
+          title: 'Formales especiales',
+          badge: 'Formal',
+          explanation: 'Formas formales adicionales para expresar deseos, invitaciones, permisos y acciones en progreso.',
+          wordExamples: [
+            { kanji: '食べたいです', kana: 'たべたいです', romaji: 'tabetai desu', meaning: 'quiero comer' },
+            { kanji: '食べましょう', kana: 'たべましょう', romaji: 'tabemashou', meaning: 'comamos' },
+            { kanji: '食べています', kana: 'たべています', romaji: 'tabete imasu', meaning: 'estoy comiendo' }
+          ],
           sentenceExamples: [
-            { text: '昨日、友達に会った。', translation: 'Ayer vi a un amigo.' },
-            { text: '朝ごはんを食べた。', translation: 'Desayuné.' }
+            { text: '一緒に映画を見ましょう。', translation: 'Vamos a ver una película juntos.' },
+            { text: '今、ご飯を食べています。', translation: 'Ahora estoy comiendo.' }
           ]
         },
         {
-          title: 'Forma Te (て形)',
-          badge: 'Versátil',
-          explanation: 'Una de las formas más importantes. Se usa para conectar verbos, hacer peticiones y formar el progresivo.',
+          title: 'Informales (普通形)',
+          badge: 'Informal',
+          explanation: 'Las formas informales se usan con amigos, familia o en situaciones casuales. Son más directas y cortas.',
+          wordExamples: [
+            { kanji: '食べる', kana: 'たべる', romaji: 'taberu', meaning: 'como/comeré' },
+            { kanji: '食べない', kana: 'たべない', romaji: 'tabenai', meaning: 'no como' },
+            { kanji: '食べた', kana: 'たべた', romaji: 'tabeta', meaning: 'comí' },
+            { kanji: '食べなかった', kana: 'たべなかった', romaji: 'tabenakatta', meaning: 'no comí' }
+          ],
+          sentenceExamples: [
+            { text: '今日、映画を見る。', translation: 'Hoy veo una película.' },
+            { text: '昨日、本を読まなかった。', translation: 'Ayer no leí un libro.' }
+          ]
+        },
+        {
+          title: 'Informales especiales',
+          badge: 'Informal',
+          explanation: 'Formas informales para deseos, peticiones, invitaciones casuales y acciones en progreso.',
+          wordExamples: [
+            { kanji: '食べたい', kana: 'たべたい', romaji: 'tabetai', meaning: 'quiero comer' },
+            { kanji: '食べて', kana: 'たべて', romaji: 'tabete', meaning: 'come/por favor' },
+            { kanji: '食べないで', kana: 'たべないで', romaji: 'tabenaide', meaning: 'no comas' },
+            { kanji: '食べている', kana: 'たべている', romaji: 'tabete iru', meaning: 'estoy comiendo' }
+          ],
           sentenceExamples: [
             { text: 'ご飯を食べて、寝る。', translation: 'Como y luego duermo.' },
-            { text: '今、勉強している。', translation: 'Ahora estoy estudiando.' },
-            { text: '手伝ってください。', translation: 'Por favor ayúdame.' }
-          ]
-        },
-        {
-          title: 'Forma Nai (ない形)',
-          badge: 'Negativa',
-          explanation: 'Forma negativa informal del presente/futuro.',
-          sentenceExamples: [
-            { text: '今日は行かない。', translation: 'Hoy no voy.' },
-            { text: 'お酒を飲まない。', translation: 'No bebo alcohol.' }
-          ]
-        },
-        {
-          title: 'Forma Mashita (ました形)',
-          badge: 'Pasado Formal',
-          explanation: 'Pasado cortés. Combina cortesía con tiempo pasado.',
-          sentenceExamples: [
-            { text: '昨日、東京に行きました。', translation: 'Ayer fui a Tokio.' },
-            { text: '映画を見ました。', translation: 'Vi una película.' }
+            { text: '今、ご飯を食べている。', translation: 'Ahora estoy comiendo.' }
           ]
         }
       ]
@@ -202,15 +215,29 @@
         {
           title: 'Conjugando verbos Ichidan',
           badge: 'Fácil',
-          explanation: 'Los verbos Ichidan son los más simples de conjugar.',
+          explanation: 'Los verbos Ichidan son los más simples de conjugar. Solo quita る y añade el sufijo.',
           steps: [
             { step: '1. Identifica el verbo', example: '食べる (taberu) - comer' },
             { step: '2. Quita る', example: '食べ (tabe)' },
-            { step: '3. Añade el sufijo', examples: [
-              'ます → 食べます (tabemasu) - como/comeré',
+            { step: '3. Añade el sufijo formal', examples: [
+              'Formales (ます形):',
+              'ます → 食べます (tabemasu) - como',
+              'ません → 食べません (tabemasen) - no como',
+              'ました → 食べました (tabemashita) - comí',
+              'ませんでした → 食べませんでした (tabemasen deshita) - no comí'
+            ]},
+            { step: '4. Añade el sufijo informal', examples: [
+              'Informales (普通形):',
+              'る → 食べる (taberu) - como/comeré',
+              'ない → 食べない (tabenai) - no como',
               'た → 食べた (tabeta) - comí',
-              'て → 食べて (tabete) - comiendo/y comer',
-              'ない → 食べない (tabenai) - no como'
+              'なかった → 食べなかった (tabenakatta) - no comí'
+            ]},
+            { step: '5. Formas especiales', examples: [
+              'Deseo: たいです/たい → 食べたいです/食べたい',
+              'Invitación: ましょう → 食べましょう',
+              'Petición: て → 食べて',
+              'Progresivo: ています/ている → 食べています/食べている'
             ]}
           ]
         },
@@ -220,13 +247,22 @@
           explanation: 'Los verbos Godan requieren cambiar la vocal final según reglas específicas.',
           steps: [
             { step: '1. Identifica el verbo', example: '行く (iku) - ir' },
-            { step: '2. Cambia la terminación -u', examples: [
+            { step: '2. Cambia la terminación -u para formas formales', examples: [
               'く → き + ます → 行きます (ikimasu)',
-              'く → いた → 行った (itta)',
-              'く → いて → 行って (itte)',
-              'く → かない → 行かない (ikanai)'
+              'く → き + ません → 行きません (ikimasen)',
+              'く → き + ました → 行きました (ikimashita)',
+              'く → き + ませんでした → 行きませんでした (ikimasen deshita)'
             ]},
-            { step: '3. Atención a irregularidades', note: 'Los verbos que terminan en -ku/-gu/-su/-tsu/-nu/-bu/-mu/-ru tienen cambios específicos.' }
+            { step: '3. Cambia para formas informales', examples: [
+              'く → か + ない → 行かない (ikanai)',
+              'く → いた → 行った (itta)',
+              'く → いなかった → 行かなかった (ikanakatta)'
+            ]},
+            { step: '4. Forma te especial', examples: [
+              'く → いて → 行って (itte)',
+              'Formas especiales con て: 行きたい/行きたいです, 行こう, 行っている/行っています'
+            ]},
+            { step: '5. Atención a irregularidades', note: 'Los verbos que terminan en -gu/-su/-tsu/-nu/-bu/-mu/-ru tienen cambios específicos en la forma te.' }
           ]
         },
         {
@@ -237,19 +273,17 @@
             {
               verb: 'する (suru) - hacer',
               forms: [
-                { form: 'ます形', result: 'します (shimasu)' },
-                { form: 'た形', result: 'した (shita)' },
-                { form: 'て形', result: 'して (shite)' },
-                { form: 'ない形', result: 'しない (shinai)' }
+                { form: 'Formales', result: 'します/しません/しました/しませんでした' },
+                { form: 'Informales', result: 'する/しない/した/しなかった' },
+                { form: 'Especiales', result: 'したい/したいです/しよう/して/しないで/している/しています' }
               ]
             },
             {
               verb: '来る (kuru) - venir',
               forms: [
-                { form: 'ます形', result: 'きます (kimasu)' },
-                { form: 'た形', result: 'きた (kita)' },
-                { form: 'て形', result: 'きて (kite)' },
-                { form: 'ない形', result: 'こない (konai)' }
+                { form: 'Formales', result: 'きます/きません/きました/きませんでした' },
+                { form: 'Informales', result: 'くる/こない/きた/こなかった' },
+                { form: 'Especiales', result: 'きたい/きたいです/きよう/きて/こないで/きている/きています' }
               ]
             }
           ]
@@ -264,51 +298,51 @@
       intro: 'Estrategias efectivas para dominar las conjugaciones verbales.',
       tips: [
         {
-          title: 'Empieza con lo básico',
+          title: 'Domina la dualidad formal/informal',
           icon: '🎯',
-          description: 'Domina primero la forma diccionario y la forma ます. Estas dos formas son fundamentales.',
+          description: 'Aprende siempre las formas en pares: formal (ます形) e informal (普通形). Por ejemplo: 食べます/食べる, 食べません/食べない.',
+          priority: 'Alta'
+        },
+        {
+          title: 'Prioriza las 9 formas esenciales',
+          icon: '🔥',
+          description: 'Para JLPT N5, enfócate en: presente formal/informal, negativo formal/informal, pasado formal/informal, deseo, invitación y progresivo.',
           priority: 'Alta'
         },
         {
           title: 'Practica la forma て',
           icon: '🔗',
-          description: 'La forma て es extremadamente versátil. Úsala para conectar acciones: 朝起きて、顔を洗って、朝ごはんを食べます。',
+          description: 'La forma て es clave para peticiones (食べて), progresivo (食べている/食べています) y conectar acciones. Úsala: 朝起きて、顔を洗って、朝ごはんを食べます.',
           priority: 'Alta'
         },
         {
-          title: 'Agrupa verbos similares',
+          title: 'Memoriza patrones por tipo',
           icon: '📋',
-          description: 'Los verbos que terminan igual se conjugan igual. Por ejemplo: 書く, 聞く, 歩く todos siguen el mismo patrón.',
+          description: 'Ichidan: solo quita る. Godan: cambia vocal final. Irregulares: memorizar する y 来る. Agrupa verbos por tipo para practicar.',
           priority: 'Media'
         },
         {
-          title: 'Usa flashcards',
+          title: 'Usa flashcards por categoría',
           icon: '🎴',
-          description: 'Crea tarjetas con el verbo en un lado y sus conjugaciones en el otro. Practica diariamente.',
+          description: 'Crea tarjetas separadas: una cara con formas formales, otra con informales. Practica ambas direcciones.',
           priority: 'Alta'
-        },
-        {
-          title: 'Escucha y repite',
-          icon: '🔊',
-          description: 'Usa el botón de audio para escuchar la pronunciación correcta. La práctica auditiva refuerza la memoria.',
-          priority: 'Media'
         },
         {
           title: 'Contexto real',
           icon: '📖',
-          description: 'Lee los ejemplos de cada verbo en el diccionario. Ver los verbos en contexto ayuda a recordar su uso.',
+          description: 'Usa las 18 formas en frases reales. Por ejemplo: 食べたいです vs 食べたい, 食べてください vs 食べて.',
           priority: 'Alta'
         },
         {
           title: 'Errores comunes',
           icon: '⚠️',
-          description: 'No confundas Ichidan con Godan. Verbos como 帰る (kaeru) parecen Ichidan pero son Godan.',
+          description: 'No mezcles formal/informal incorrectamente. 食べますない (incorrecto) → 食べません (correcto). 食べるません (incorrecto) → 食べません (correcto).',
           priority: 'Media'
         },
         {
           title: 'Practica todos los días',
           icon: '📅',
-          description: 'Dedica 10-15 minutos diarios. La consistencia es más importante que largas sesiones esporádicas.',
+          description: 'Dedica 10-15 minutos diarios. Alterna entre formas formales e informales para mantener el equilibrio.',
           priority: 'Alta'
         }
       ]

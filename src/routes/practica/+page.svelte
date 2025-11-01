@@ -80,15 +80,39 @@
 		return Array.from(statsMap.values());
 	}
 
-	// Función para obtener colores según el tipo de forma
+	// Función para obtener colores según el tipo de forma (actualizado JLPT N5)
 	function getFormColor(key: string) {
 		switch(key) {
+			// Diccionario (gris)
 			case 'dictionary': return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: 'Diccionario' };
-			case 'masu': return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Formal' };
-			case 'masuPast': return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Pasado Formal' };
-			case 'plainPast': return { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-200', label: 'Pasado' };
-			case 'te': return { bg: 'bg-purple-500/10', border: 'border-purple-500/40', text: 'text-purple-200', label: 'Versátil' };
-			case 'plainNegative': return { bg: 'bg-red-500/10', border: 'border-red-500/40', text: 'text-red-200', label: 'Negativa' };
+			
+			// Formales (azul)
+			case 'masuPresent': 
+			case 'masuPresentNegative': 
+			case 'masuPast': 
+			case 'masuPastNegative': 
+			case 'invitation': 
+			case 'desireFormal': 
+			case 'permission': 
+			case 'prohibition': 
+			case 'progressiveFormal': 
+				return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Formal' };
+			
+			// Pasado (naranja)
+			case 'plainPast': 
+			case 'plainPastNegative': 
+				return { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-200', label: 'Pasado' };
+			
+			// Versátil (púrpura)
+			case 'request': 
+			case 'progressiveInformal': 
+				return { bg: 'bg-purple-500/10', border: 'border-purple-500/40', text: 'text-purple-200', label: 'Versátil' };
+			
+			// Negativa (rojo)
+			case 'plainNegative': 
+			case 'negativeRequest': 
+				return { bg: 'bg-red-500/10', border: 'border-red-500/40', text: 'text-red-200', label: 'Negativa' };
+			
 			default: return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: '' };
 		}
 	}
@@ -115,7 +139,7 @@
 		{
 			id: 'conjugation',
 			title: 'Estudio de conjugación',
-			description: 'Aprende formas verbales',
+			description: 'Aprende las 18 formas JLPT N5 (formales e informales)',
 			icon: '📝',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Medio',
@@ -133,7 +157,7 @@
 		{
 			id: 'conjugation-quiz',
 			title: 'Quiz de conjugación',
-			description: 'Elige la conjugación correcta',
+			description: 'Elige la forma JLPT N5 correcta',
 			icon: '🎯',
 			color: 'from-indigo-500 to-purple-500',
 			difficulty: 'Difícil',
@@ -142,7 +166,7 @@
 		{
 			id: 'inverse-conjugation-quiz',
 			title: 'Quiz de conjugación inversa',
-			description: 'Elige la traducción correcta de la conjugación',
+			description: 'Identifica el significado de la forma JLPT N5',
 			icon: '🔄',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Difícil',
@@ -320,32 +344,47 @@
 	function generateConjugationQuiz() {
 		if (!currentVerb) return;
 		
-		// Formas con información de formalidad
+		// Formas JLPT N5 con información de formalidad
 		const formsWithFormality = [
-			{ form: 'ます', formality: 'formal' },
-			{ form: 'ました', formality: 'formal' },
-			{ form: 'た', formality: 'informal' },
-			{ form: 'て', formality: 'informal' },
-			{ form: 'ない', formality: 'informal' }
+			// Formales (ます形)
+			{ key: 'masuPresent', formality: 'formal', label: 'Presente formal' },
+			{ key: 'masuPresentNegative', formality: 'formal', label: 'Presente negativo formal' },
+			{ key: 'masuPast', formality: 'formal', label: 'Pasado formal' },
+			{ key: 'masuPastNegative', formality: 'formal', label: 'Pasado negativo formal' },
+			{ key: 'invitation', formality: 'formal', label: 'Invitación formal' },
+			{ key: 'desireFormal', formality: 'formal', label: 'Deseo formal' },
+			{ key: 'permission', formality: 'formal', label: 'Permiso' },
+			{ key: 'prohibition', formality: 'formal', label: 'Prohibición' },
+			{ key: 'progressiveFormal', formality: 'formal', label: 'Progresivo formal' },
+			
+			// Informales (普通形)
+			{ key: 'dictionary', formality: 'informal', label: 'Diccionario' },
+			{ key: 'plainNegative', formality: 'informal', label: 'Negativo informal' },
+			{ key: 'plainPast', formality: 'informal', label: 'Pasado informal' },
+			{ key: 'plainPastNegative', formality: 'informal', label: 'Pasado negativo informal' },
+			{ key: 'desireInformal', formality: 'informal', label: 'Deseo informal' },
+			{ key: 'invitationInformal', formality: 'informal', label: 'Invitación informal' },
+			{ key: 'request', formality: 'informal', label: 'Petición' },
+			{ key: 'negativeRequest', formality: 'informal', label: 'Negación de acción' },
+			{ key: 'progressiveInformal', formality: 'informal', label: 'Progresivo informal' }
 		];
 		
 		const selected = formsWithFormality[Math.floor(Math.random() * formsWithFormality.length)];
-		conjugationForm = selected.form;
+		conjugationForm = selected.label;
 		conjugationFormality = selected.formality;
 		
-		const selectedConjugation = currentConjugations.find(c => c.label.includes(selected.form));
+		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada
 		conjugationTranslation = selectedConjugation?.translation || currentVerb['meaning-es'];
 		
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
-		// Esto hace el ejercicio más desafiante
-		const otherForms = formsWithFormality.filter(f => f.form !== selected.form);
+		const otherForms = formsWithFormality.filter(f => f.key !== selected.key);
 		const wrongAnswers: string[] = [];
 		
 		for (const formObj of otherForms) {
-			const conj = currentConjugations.find(c => c.label.includes(formObj.form));
+			const conj = currentConjugations.find(c => c.key === formObj.key);
 			if (conj && conj.kana !== correctConjugation && !wrongAnswers.includes(conj.kana)) {
 				wrongAnswers.push(conj.kana);
 			}
@@ -358,31 +397,47 @@
 	function generateInverseConjugationQuiz() {
 		if (!currentVerb) return;
 		
-		// Formas con información de formalidad
+		// Formas JLPT N5 con información de formalidad
 		const formsWithFormality = [
-			{ form: 'ます', formality: 'formal' },
-			{ form: 'ました', formality: 'formal' },
-			{ form: 'た', formality: 'informal' },
-			{ form: 'て', formality: 'informal' },
-			{ form: 'ない', formality: 'informal' }
+			// Formales (ます形)
+			{ key: 'masuPresent', formality: 'formal', label: 'Presente formal' },
+			{ key: 'masuPresentNegative', formality: 'formal', label: 'Presente negativo formal' },
+			{ key: 'masuPast', formality: 'formal', label: 'Pasado formal' },
+			{ key: 'masuPastNegative', formality: 'formal', label: 'Pasado negativo formal' },
+			{ key: 'invitation', formality: 'formal', label: 'Invitación formal' },
+			{ key: 'desireFormal', formality: 'formal', label: 'Deseo formal' },
+			{ key: 'permission', formality: 'formal', label: 'Permiso' },
+			{ key: 'prohibition', formality: 'formal', label: 'Prohibición' },
+			{ key: 'progressiveFormal', formality: 'formal', label: 'Progresivo formal' },
+			
+			// Informales (普通形)
+			{ key: 'dictionary', formality: 'informal', label: 'Diccionario' },
+			{ key: 'plainNegative', formality: 'informal', label: 'Negativo informal' },
+			{ key: 'plainPast', formality: 'informal', label: 'Pasado informal' },
+			{ key: 'plainPastNegative', formality: 'informal', label: 'Pasado negativo informal' },
+			{ key: 'desireInformal', formality: 'informal', label: 'Deseo informal' },
+			{ key: 'invitationInformal', formality: 'informal', label: 'Invitación informal' },
+			{ key: 'request', formality: 'informal', label: 'Petición' },
+			{ key: 'negativeRequest', formality: 'informal', label: 'Negación de acción' },
+			{ key: 'progressiveInformal', formality: 'informal', label: 'Progresivo informal' }
 		];
 		
 		const selected = formsWithFormality[Math.floor(Math.random() * formsWithFormality.length)];
-		conjugationForm = selected.form;
+		conjugationForm = selected.label;
 		conjugationFormality = selected.formality;
 		
-		const selectedConjugation = currentConjugations.find(c => c.label.includes(selected.form));
+		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada (esta será la respuesta correcta)
 		conjugationTranslation = selectedConjugation?.translation || currentVerb['meaning-es'];
 		
 		// Generar opciones incorrectas usando traducciones de OTRAS CONJUGACIONES DEL MISMO VERBO
-		const otherForms = formsWithFormality.filter(f => f.form !== selected.form);
+		const otherForms = formsWithFormality.filter(f => f.key !== selected.key);
 		const wrongAnswers: string[] = [];
 		
 		for (const formObj of otherForms) {
-			const conj = currentConjugations.find(c => c.label.includes(formObj.form));
+			const conj = currentConjugations.find(c => c.key === formObj.key);
 			if (conj && conj.translation !== conjugationTranslation && !wrongAnswers.includes(conj.translation)) {
 				wrongAnswers.push(conj.translation);
 			}
@@ -446,7 +501,7 @@
 			let textToSpeak: string | undefined;
 
 			if (currentMode === 'inverse-conjugation-quiz') {
-				const selectedConjugation = currentConjugations.find((c) => c.label.includes(conjugationForm));
+				const selectedConjugation = currentConjugations.find((c) => c.label === conjugationForm);
 				textToSpeak = selectedConjugation?.kana || currentVerb!.kana;
 			} else {
 				textToSpeak = currentVerb!.kanji || currentVerb!.kana;
@@ -554,7 +609,7 @@
 		if (!currentVerb || selectedAnswer) return;
 		
 		selectedAnswer = answer;
-		const correctAnswer = currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
+		const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
 		const correct = answer === correctAnswer;
 		
 		// Guardar mastery score previo
@@ -608,7 +663,7 @@
 		if (!currentVerb || selectedAnswer) return;
 		
 		selectedAnswer = answer;
-		const selectedConjugation = currentConjugations.find(c => c.label.includes(conjugationForm));
+		const selectedConjugation = currentConjugations.find(c => c.label === conjugationForm);
 		const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
 		const correct = answer === correctAnswer;
 		
@@ -1180,13 +1235,13 @@
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 									: selectedAnswer === option
 										? (() => {
-											const correctAnswer = currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
+											const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
 											return option === correctAnswer
 												? 'border-green-500 bg-green-500/20 text-green-400'
 												: 'border-red-500 bg-red-500/20 text-red-400';
 										})()
 										: (() => {
-											const correctAnswer = currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana;
+											const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
 											return option === correctAnswer
 												? 'border-green-500 bg-green-500/20 text-green-400'
 												: 'border-slate-800 bg-slate-900/50 text-slate-500';
@@ -1242,7 +1297,7 @@
 				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
 					<p class="text-sm text-slate-400 mb-4">¿Qué significa esta conjugación?</p>
 					<div class="text-5xl font-bold text-white mb-3">
-						{currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb.kana}
+						{currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana}
 					</div>
 					<div class="text-lg text-indigo-400 mb-2">Verbo: {currentVerb.kanji} ({currentVerb['meaning-es']})</div>
 					<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50 mb-4">
@@ -1251,7 +1306,7 @@
 						</span>
 					</div>
 					<button
-						onclick={() => speak(currentConjugations.find(c => c.label.includes(conjugationForm))?.kana || currentVerb!.kana)}
+						onclick={() => speak(currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb!.kana)}
 						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
@@ -1261,7 +1316,7 @@
 				<!-- Options -->
 				<div class="grid gap-3">
 					{#each options as option}
-						{@const selectedConjugation = currentConjugations.find(c => c.label.includes(conjugationForm))}
+						{@const selectedConjugation = currentConjugations.find(c => c.label === conjugationForm)}
 						<button
 							onclick={() => handleInverseConjugationQuizAnswer(option)}
 							disabled={selectedAnswer !== null}
@@ -1344,7 +1399,7 @@
 				{#if !showAnswer}
 					<div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center">
 						<p class="text-slate-300 mb-8">
-							Piensa en las conjugaciones principales de este verbo (forma ます, forma た, forma て, etc.)
+							Piensa en las conjugaciones JLPT N5 de este verbo (formales ます形 e informales 普通形)
 						</p>
 						<button
 							onclick={() => showAnswer = true}

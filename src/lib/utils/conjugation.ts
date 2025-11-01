@@ -2,12 +2,27 @@ import type { Verb } from '$lib/types/verb';
 import { getSpanishConjugation } from '$lib/data/spanish_conjugations';
 
 export type ConjugationFormKey =
-  | 'dictionary'
-  | 'masu'
-  | 'masuPast'
-  | 'plainPast'
-  | 'plainNegative'
-  | 'te';
+  // Formal (ます形)
+  | 'masuPresent'        // Presente afirmativo formal
+  | 'masuPresentNegative' // Presente negativo formal  
+  | 'masuPast'           // Pasado afirmativo formal
+  | 'masuPastNegative'   // Pasado negativo formal
+  | 'invitation'         // ～ましょう / ～ませんか
+  | 'desireFormal'       // ～たいです
+  | 'permission'         // ～てもいいです
+  | 'prohibition'        // ～てはいけません
+  | 'progressiveFormal'  // ～ています
+  
+  // Informal (普通形)
+  | 'dictionary'         // Presente/futuro afirmativo informal
+  | 'plainNegative'      // Presente/futuro negativo informal
+  | 'plainPast'          // Pasado afirmativo informal
+  | 'plainPastNegative'  // Pasado negativo informal
+  | 'desireInformal'     // ～たい
+  | 'invitationInformal' // ～よう
+  | 'request'            // ～て
+  | 'negativeRequest'    // ～ないで
+  | 'progressiveInformal'// ～ている;
 
 export interface ConjugationForm {
   key: ConjugationFormKey;
@@ -62,12 +77,27 @@ function handleGodanExceptionTa(form: string, verb: Verb): string {
 function conjugateIchidan(kana: string) {
   const stem = kana.slice(0, -1);
   return {
-    dictionary: kana,
-    masu: `${stem}ます`,
+    // Formales (ます形)
+    masuPresent: `${stem}ます`,
+    masuPresentNegative: `${stem}ません`,
     masuPast: `${stem}ました`,
-    plainPast: `${stem}た`,
+    masuPastNegative: `${stem}ませんでした`,
+    invitation: `${stem}ましょう`,
+    desireFormal: `${stem}たいです`,
+    permission: `${stem}てもいいです`,
+    prohibition: `${stem}てはいけません`,
+    progressiveFormal: `${stem}ています`,
+    
+    // Informales (普通形)
+    dictionary: kana,
     plainNegative: `${stem}ない`,
-    te: `${stem}て`
+    plainPast: `${stem}た`,
+    plainPastNegative: `${stem}なかった`,
+    desireInformal: `${stem}たい`,
+    invitationInformal: `${stem}よう`,
+    request: `${stem}て`,
+    negativeRequest: `${stem}ないで`,
+    progressiveInformal: `${stem}ている`
   };
 }
 
@@ -85,12 +115,27 @@ function conjugateGodan(verb: Verb) {
   const taForm = handleGodanExceptionTa(`${stem}${rule.ta}`, verb);
 
   return {
-    dictionary: kana,
-    masu: `${stem}${rule.masu}ます`,
+    // Formales (ます形)
+    masuPresent: `${stem}${rule.masu}ます`,
+    masuPresentNegative: `${stem}${rule.masu}ません`,
     masuPast: `${stem}${rule.masu}ました`,
-    plainPast: taForm,
+    masuPastNegative: `${stem}${rule.masu}ませんでした`,
+    invitation: `${stem}${rule.masu}ましょう`,
+    desireFormal: `${stem}${rule.masu}たいです`,
+    permission: `${stem}${rule.te}もいいです`,
+    prohibition: `${stem}${rule.te}はいけません`,
+    progressiveFormal: `${stem}${rule.te}います`,
+    
+    // Informales (普通形)
+    dictionary: kana,
     plainNegative: `${stem}${rule.nai}ない`,
-    te: teForm
+    plainPast: taForm,
+    plainPastNegative: `${stem}${rule.nai}なかった`,
+    desireInformal: `${stem}${rule.masu}たい`,
+    invitationInformal: `${stem}${rule.masu}よう`,
+    request: teForm,
+    negativeRequest: `${stem}${rule.nai}ないで`,
+    progressiveInformal: `${stem}${rule.te}いる`
   };
 }
 
@@ -99,23 +144,53 @@ function conjugateIrregular(verb: Verb) {
 
   if (kana === 'する') {
     return {
-      dictionary: 'する',
-      masu: 'します',
+      // Formales (ます形)
+      masuPresent: 'します',
+      masuPresentNegative: 'しません',
       masuPast: 'しました',
-      plainPast: 'した',
+      masuPastNegative: 'しませんでした',
+      invitation: 'しましょう',
+      desireFormal: 'したいです',
+      permission: 'してもいいです',
+      prohibition: 'してはいけません',
+      progressiveFormal: 'しています',
+      
+      // Informales (普通形)
+      dictionary: 'する',
       plainNegative: 'しない',
-      te: 'して'
+      plainPast: 'した',
+      plainPastNegative: 'しなかった',
+      desireInformal: 'したい',
+      invitationInformal: 'しよう',
+      request: 'して',
+      negativeRequest: 'しないで',
+      progressiveInformal: 'している'
     };
   }
 
   if (kana === 'くる' || kana === '来る') {
     return {
-      dictionary: 'くる',
-      masu: 'きます',
+      // Formales (ます形)
+      masuPresent: 'きます',
+      masuPresentNegative: 'きません',
       masuPast: 'きました',
-      plainPast: 'きた',
+      masuPastNegative: 'きませんでした',
+      invitation: 'きましょう',
+      desireFormal: 'きたいです',
+      permission: 'きてもいいです',
+      prohibition: 'きてはいけません',
+      progressiveFormal: 'きています',
+      
+      // Informales (普通形)
+      dictionary: 'くる',
       plainNegative: 'こない',
-      te: 'きて'
+      plainPast: 'きた',
+      plainPastNegative: 'こなかった',
+      desireInformal: 'きたい',
+      invitationInformal: 'こよう',
+      request: 'きて',
+      negativeRequest: 'こないで',
+      progressiveInformal: 'きている'
     };
   }
 
@@ -134,26 +209,48 @@ function getTranslation(kanji: string, key: ConjugationFormKey, fallbackMeaning:
   }
   
   switch (key) {
-    case 'dictionary':
-      return spanishConj.base;
-    
-    case 'masu':
-      return spanishConj.masu;
-    
+    // Formales (ます形)
+    case 'masuPresent':
+      return spanishConj.masuPresent;
+    case 'masuPresentNegative':
+      return spanishConj.masuPresentNegative;
     case 'masuPast':
-      return spanishConj.mashita;
+      return spanishConj.masuPast;
+    case 'masuPastNegative':
+      return spanishConj.masuPastNegative;
+    case 'invitation':
+      return spanishConj.invitation;
+    case 'desireFormal':
+      return spanishConj.desireFormal;
+    case 'permission':
+      return spanishConj.permission;
+    case 'prohibition':
+      return spanishConj.prohibition;
+    case 'progressiveFormal':
+      return spanishConj.progressiveFormal;
     
-    case 'plainPast':
-      return spanishConj.ta;
-    
+    // Informales (普通形)
+    case 'dictionary':
+      return spanishConj.dictionary;
     case 'plainNegative':
-      return spanishConj.nai;
-    
-    case 'te':
-      return spanishConj.te;
+      return spanishConj.plainNegative;
+    case 'plainPast':
+      return spanishConj.plainPast;
+    case 'plainPastNegative':
+      return spanishConj.plainPastNegative;
+    case 'desireInformal':
+      return spanishConj.desireInformal;
+    case 'invitationInformal':
+      return spanishConj.invitationInformal;
+    case 'request':
+      return spanishConj.request;
+    case 'negativeRequest':
+      return spanishConj.negativeRequest;
+    case 'progressiveInformal':
+      return spanishConj.progressiveInformal;
     
     default:
-      return spanishConj.base;
+      return spanishConj.dictionary;
   }
 }
 
@@ -172,47 +269,134 @@ export function conjugateVerb(verb: Verb): ConjugationForm[] {
   const kanji = verb.kanji;
 
   const entries: ConjugationForm[] = [
+    // Formales (ます形)
     {
-      key: 'dictionary',
-      label: 'Forma diccionario (辞書形)',
-      kana: forms.dictionary,
-      description: `Uso neutro. Se traduce como "${meaning}".`,
-      translation: getTranslation(kanji, 'dictionary', meaning)
+      key: 'masuPresent',
+      label: 'Presente afirmativo formal (ます)',
+      kana: forms.masuPresent,
+      description: `Forma cortés en presente: "${meaning}"`,
+      translation: getTranslation(kanji, 'masuPresent', meaning)
     },
     {
-      key: 'masu',
-      label: 'Forma formal presente (ます形)',
-      kana: forms.masu,
-      description: `Modo formal en presente. Equivale a "${meaning}" con trato respetuoso.`,
-      translation: getTranslation(kanji, 'masu', meaning)
+      key: 'masuPresentNegative',
+      label: 'Presente negativo formal (ません)',
+      kana: forms.masuPresentNegative,
+      description: `Forma cortés negativa: "no ${meaning}"`,
+      translation: getTranslation(kanji, 'masuPresentNegative', meaning)
     },
     {
       key: 'masuPast',
-      label: 'Forma formal pasada (ました形)',
+      label: 'Pasado afirmativo formal (ました)',
       kana: forms.masuPast,
-      description: `Pasado formal: "${meaning}" en pasado con trato respetuoso.`,
+      description: `Pasado cortés: "${meaning}" en pasado`,
       translation: getTranslation(kanji, 'masuPast', meaning)
     },
     {
-      key: 'plainPast',
-      label: 'Forma pasada informal (た形)',
-      kana: forms.plainPast,
-      description: `Pasado casual. Aproximadamente "${meaning}" en pasado.`,
-      translation: getTranslation(kanji, 'plainPast', meaning)
+      key: 'masuPastNegative',
+      label: 'Pasado negativo formal (ませんでした)',
+      kana: forms.masuPastNegative,
+      description: `Pasado cortés negativo: "no ${meaning}" en pasado`,
+      translation: getTranslation(kanji, 'masuPastNegative', meaning)
+    },
+    {
+      key: 'invitation',
+      label: 'Invitación (ましょう / ～ませんか)',
+      kana: forms.invitation,
+      description: `Para invitar o sugerir: "¿${meaning}?"`,
+      translation: getTranslation(kanji, 'invitation', meaning)
+    },
+    {
+      key: 'desireFormal',
+      label: 'Deseo (たいです)',
+      kana: forms.desireFormal,
+      description: `Expresar deseo: "quiero ${meaning}"`,
+      translation: getTranslation(kanji, 'desireFormal', meaning)
+    },
+    {
+      key: 'permission',
+      label: 'Permiso (てもいいです)',
+      kana: forms.permission,
+      description: `Pedir permiso: "¿puedo ${meaning}?"`,
+      translation: getTranslation(kanji, 'permission', meaning)
+    },
+    {
+      key: 'prohibition',
+      label: 'Prohibición (てはいけません)',
+      kana: forms.prohibition,
+      description: `Prohibir algo: "no se puede ${meaning}"`,
+      translation: getTranslation(kanji, 'prohibition', meaning)
+    },
+    {
+      key: 'progressiveFormal',
+      label: 'Progresivo (ています)',
+      kana: forms.progressiveFormal,
+      description: `Acción en progreso: "estoy ${meaning}"`,
+      translation: getTranslation(kanji, 'progressiveFormal', meaning)
+    },
+    
+    // Informales (普通形)
+    {
+      key: 'dictionary',
+      label: 'Presente/futuro informal (辞書形)',
+      kana: forms.dictionary,
+      description: `Forma básica: "${meaning}"`,
+      translation: getTranslation(kanji, 'dictionary', meaning)
     },
     {
       key: 'plainNegative',
-      label: 'Forma negativa informal (ない形)',
+      label: 'Presente/futuro negativo informal (ない)',
       kana: forms.plainNegative,
-      description: `Negación casual. Se entiende como "no ${meaning}".`,
+      description: `Negación casual: "no ${meaning}"`,
       translation: getTranslation(kanji, 'plainNegative', meaning)
     },
     {
-      key: 'te',
-      label: 'Forma て (て形)',
-      kana: forms.te,
-      description: 'Usada para conectar acciones, solicitudes o progresivo.',
-      translation: getTranslation(kanji, 'te', meaning)
+      key: 'plainPast',
+      label: 'Pasado afirmativo informal (た)',
+      kana: forms.plainPast,
+      description: `Pasado casual: "${meaning}" en pasado`,
+      translation: getTranslation(kanji, 'plainPast', meaning)
+    },
+    {
+      key: 'plainPastNegative',
+      label: 'Pasado negativo informal (なかった)',
+      kana: forms.plainPastNegative,
+      description: `Pasado casual negativo: "no ${meaning}" en pasado`,
+      translation: getTranslation(kanji, 'plainPastNegative', meaning)
+    },
+    {
+      key: 'desireInformal',
+      label: 'Deseo informal (たい)',
+      kana: forms.desireInformal,
+      description: `Deseo casual: "quiero ${meaning}"`,
+      translation: getTranslation(kanji, 'desireInformal', meaning)
+    },
+    {
+      key: 'invitationInformal',
+      label: 'Invitación informal (よう)',
+      kana: forms.invitationInformal,
+      description: `Invitación casual: "vamos a ${meaning}"`,
+      translation: getTranslation(kanji, 'invitationInformal', meaning)
+    },
+    {
+      key: 'request',
+      label: 'Petición (て)',
+      kana: forms.request,
+      description: `Petición casual: "${meaning}" por favor`,
+      translation: getTranslation(kanji, 'request', meaning)
+    },
+    {
+      key: 'negativeRequest',
+      label: 'Negación de acción (ないで)',
+      kana: forms.negativeRequest,
+      description: `Pedir que no se haga: "no ${meaning}"`,
+      translation: getTranslation(kanji, 'negativeRequest', meaning)
+    },
+    {
+      key: 'progressiveInformal',
+      label: 'Progresivo informal (ている)',
+      kana: forms.progressiveInformal,
+      description: `Acción en progreso casual: "estoy ${meaning}"`,
+      translation: getTranslation(kanji, 'progressiveInformal', meaning)
     }
   ];
 
