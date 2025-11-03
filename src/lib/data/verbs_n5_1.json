@@ -1,5 +1,5 @@
 [
-    {"kanji":"なる", "kana":"なる", "romaji":"naru", "meaning-es":"convertirse, llegar a ser", "freq":"high", "type": "irregular", "examples":[{"ja":"子供が大人になる。","es":"El niño crecerá."},{"ja":"医者になりたいです。","es":"Quiero ser médico."}]},
+    {"kanji":"なる", "kana":"なる", "romaji":"naru", "meaning-es":"convertirse, llegar a ser", "freq":"high", "type": "godan", "examples":[{"ja":"子供が大人になる。","es":"El niño crecerá."},{"ja":"医者になりたいです。","es":"Quiero ser médico."}]},
     {"kanji":"泳ぐ", "kana":"およぐ", "romaji":"oyogu", "meaning-es":"nadar", "freq":"high", "type": "godan", "examples":[{"ja":"彼は泳ぐ。","es":"Él nada."},{"ja":"海で泳ぎます。","es":"Nado en el mar."}]},
   {"kanji":"する", "kana":"する", "romaji":"suru", "meaning-es":"hacer", "freq":"high", "type": "irregular", "examples":[{"ja":"料理をする。","es":"Hacer la comida."},{"ja":"何をしますか。","es":"¿Qué hace?"}]},
   {"kanji":"くれる", "kana":"くれる", "romaji":"kureru", "meaning-es":"dar", "freq":"medium", "type": "godan", "examples":[{"ja":"友達にプレゼントをくれます。","es":"Dar un regalo a un amigo."},{"ja":"彼が本をくれました。","es":"Él me dio un libro."}]},
