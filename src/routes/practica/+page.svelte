@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { userProfile } from '$lib/stores/userProgress';
+	import { userProfile, getLocalDateString } from '$lib/stores/userProgress';
 	import { speak } from '$lib/utils/tts';
 	import { conjugateVerb } from '$lib/utils/conjugation';
 	import type { Verb } from '$lib/types/verb';
@@ -249,7 +249,7 @@
 		startTimer();
 		
 		// Implementar algoritmo de repetición espaciada
-		const today = new Date().toISOString().split('T')[0];
+		const today = getLocalDateString();
 		
 		// Calcular prioridad de cada verbo
 		const verbsWithPriority = verbs.map(verb => {

@@ -1,6 +1,14 @@
 import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 
+// Helper para obtener la fecha local en formato YYYY-MM-DD usando la zona horaria del cliente
+export function getLocalDateString(date: Date = new Date()): string {
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, '0');
+	const day = String(date.getDate()).padStart(2, '0');
+	return `${year}-${month}-${day}`;
+}
+
 export interface DailyProgress {
 	date: string;
 	practiceCount: number;
@@ -130,7 +138,7 @@ function createUserStore() {
 			return { ...profile, xp: newXP, level: newLevel };
 		}),
 		recordPractice: (verbId: string, correct: boolean) => update(profile => {
-			const today = new Date().toISOString().split('T')[0];
+			const today = getLocalDateString();
 			const studiedVerb = profile.studiedVerbs[verbId] || {
 				lastStudied: today,
 				timesReviewed: 0,
@@ -187,11 +195,11 @@ function createUserStore() {
 			
 			const nextDate = new Date();
 			nextDate.setDate(nextDate.getDate() + intervalDays);
-			studiedVerb.nextReviewDate = nextDate.toISOString().split('T')[0];
+			studiedVerb.nextReviewDate = getLocalDateString(nextDate);
 
 			let newStreak = 1;
 			if (profile.lastStudyDate) {
-				const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+				const yesterday = getLocalDateString(new Date(Date.now() - 86400000));
 				if (profile.lastStudyDate === today) {
 					newStreak = profile.streak;
 				} else if (profile.lastStudyDate === yesterday) {
@@ -260,7 +268,7 @@ function createUserStore() {
 				const blob = new Blob([json], { type: 'application/json' });
 				const url = URL.createObjectURL(blob);
 				const a = document.createElement('a');
-				const timestamp = new Date().toISOString().split('T')[0];
+				const timestamp = getLocalDateString();
 				a.href = url;
 				a.download = `japaverbs-backup-${timestamp}.json`;
 				document.body.appendChild(a);
