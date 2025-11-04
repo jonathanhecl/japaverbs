@@ -12,8 +12,8 @@
 	let verbs = $derived(() => getCurrentVerbs());
 
 	const TYPE_ORDER: Record<string, number> = {
-		ichidan: 0,
-		godan: 1,
+		godan: 0,
+		ichidan: 1,
 		irregular: 2
 	};
 
@@ -134,20 +134,20 @@
 						Todos ({stats().total})
 					</button>
 					<button
-						onclick={() => (selectedType = 'ichidan')}
-						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
-							? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40'
-							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-emerald-500'}"
-					>
-						Ichidan · 一段 ({stats().ichidan})
-					</button>
-					<button
 						onclick={() => (selectedType = 'godan')}
 						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
 							? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40'
 							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-blue-500'}"
 					>
-						Godan · 五段 ({stats().godan})
+						Grupo 1 · Godan · 五段 ({stats().godan})
+					</button>
+					<button
+						onclick={() => (selectedType = 'ichidan')}
+						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
+							? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40'
+							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-emerald-500'}"
+					>
+						Grupo 2 · Ichidan · 一段 ({stats().ichidan})
 					</button>
 					<button
 						onclick={() => (selectedType = 'irregular')}
@@ -155,7 +155,7 @@
 							? 'bg-purple-600 text-white shadow-lg shadow-purple-500/40'
 							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-purple-500'}"
 					>
-						Irregular ({stats().irregular})
+						Irregulares ({stats().irregular})
 					</button>
 				</div>
 				
