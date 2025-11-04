@@ -1,0 +1,842 @@
+{
+  "住む": {
+    "meaning": "vivir, residir",
+    "examples": [
+      {"ja": "東京に住んでいます。", "es": "Vivo en Tokio."},
+      {"ja": "日本に住みたいです。", "es": "Quiero vivir en Japón."}
+    ]
+  },
+  "働く": {
+    "meaning": "trabajar",
+    "examples": [
+      {"ja": "会社で働きます。", "es": "Trabajo en una empresa."},
+      {"ja": "毎日働いています。", "es": "Trabajo todos los días."}
+    ]
+  },
+  "結婚する": {
+    "meaning": "casarse",
+    "examples": [
+      {"ja": "来年結婚します。", "es": "Me casaré el próximo año."},
+      {"ja": "友達が結婚しました。", "es": "Mi amigo se casó."}
+    ]
+  },
+  "電話する": {
+    "meaning": "llamar por teléfono",
+    "examples": [
+      {"ja": "母に電話します。", "es": "Llamaré a mi madre."},
+      {"ja": "明日電話してください。", "es": "Por favor llame mañana."}
+    ]
+  },
+  "練習する": {
+    "meaning": "practicar",
+    "examples": [
+      {"ja": "漢字を練習します。", "es": "Practico kanji."},
+      {"ja": "毎日練習しています。", "es": "Practico todos los días."}
+    ]
+  },
+  "散歩する": {
+    "meaning": "pasear",
+    "examples": [
+      {"ja": "公園を散歩します。", "es": "Paseo por el parque."},
+      {"ja": "犬と散歩します。", "es": "Paseo con mi perro."}
+    ]
+  },
+  "入れる": {
+    "meaning": "poner, meter",
+    "examples": [
+      {"ja": "コーヒーを入れます。", "es": "Preparo café."},
+      {"ja": "鞄に本を入れます。", "es": "Pongo el libro en la bolsa."}
+    ]
+  },
+  "出す": {
+    "meaning": "sacar, enviar",
+    "examples": [
+      {"ja": "手紙を出します。", "es": "Envío una carta."},
+      {"ja": "宿題を出してください。", "es": "Por favor entregue la tarea."}
+    ]
+  },
+  "押す": {
+    "meaning": "empujar, presionar",
+    "examples": [
+      {"ja": "ボタンを押します。", "es": "Presiono el botón."},
+      {"ja": "ドアを押してください。", "es": "Por favor empuje la puerta."}
+    ]
+  },
+  "引く": {
+    "meaning": "tirar, jalar",
+    "examples": [
+      {"ja": "ドアを引きます。", "es": "Jalo la puerta."},
+      {"ja": "線を引いてください。", "es": "Por favor trace una línea."}
+    ]
+  },
+  "困る": {
+    "meaning": "estar en problemas",
+    "examples": [
+      {"ja": "雨で困りました。", "es": "Tuve problemas por la lluvia."},
+      {"ja": "お金がなくて困っています。", "es": "Estoy en problemas porque no tengo dinero."}
+    ]
+  },
+  "笑う": {
+    "meaning": "reír",
+    "examples": [
+      {"ja": "友だちと笑います。", "es": "Río con mis amigos."},
+      {"ja": "彼はよく笑います。", "es": "Él ríe mucho."}
+    ]
+  },
+  "泣く": {
+    "meaning": "llorar",
+    "examples": [
+      {"ja": "子どもが泣きます。", "es": "El niño llora."},
+      {"ja": "赤ちゃんが泣いています。", "es": "El bebé está llorando."}
+    ]
+  },
+  "降る": {
+    "meaning": "caer (lluvia, nieve)",
+    "examples": [
+      {"ja": "雨が降ります。", "es": "Llueve."},
+      {"ja": "明日雪が降るでしょう。", "es": "Mañana probablemente nevará."}
+    ]
+  },
+  "晴れる": {
+    "meaning": "despejarse",
+    "examples": [
+      {"ja": "空が晴れます。", "es": "El cielo se despeja."},
+      {"ja": "明日は晴れるでしょう。", "es": "Mañana estará despejado."}
+    ]
+  },
+  "曇る": {
+    "meaning": "nublarse",
+    "examples": [
+      {"ja": "空が曇ります。", "es": "El cielo se nubla."},
+      {"ja": "今日は曇っています。", "es": "Hoy está nublado."}
+    ]
+  },
+  "吹く": {
+    "meaning": "soplar",
+    "examples": [
+      {"ja": "風が吹きます。", "es": "Sopla el viento."},
+      {"ja": "強い風が吹いています。", "es": "Sopla un viento fuerte."}
+    ]
+  },
+  "開く": {
+    "meaning": "abrir (libro, negocio)",
+    "examples": [
+      {"ja": "店を開きます。", "es": "Abro la tienda."},
+      {"ja": "本を開いてください。", "es": "Por favor abra el libro."}
+    ]
+  },
+  "閉じる": {
+    "meaning": "cerrar (ojos, libro)",
+    "examples": [
+      {"ja": "本を閉じます。", "es": "Cierro el libro."},
+      {"ja": "目を閉じてください。", "es": "Por favor cierre los ojos."}
+    ]
+  },
+  "貸す": {
+    "meaning": "prestar",
+    "examples": [
+      {"ja": "友だちにお金を貸します。", "es": "Presto dinero a mi amigo."},
+      {"ja": "ペンを貸してください。", "es": "Por favor présteme un bolígrafo."}
+    ]
+  },
+  "借りる": {
+    "meaning": "pedir prestado",
+    "examples": [
+      {"ja": "本を借ります。", "es": "Pido prestado un libro."},
+      {"ja": "図書館で本を借りました。", "es": "Pedí prestado un libro en la biblioteca."}
+    ]
+  },
+  "返す": {
+    "meaning": "devolver",
+    "examples": [
+      {"ja": "本を返します。", "es": "Devuelvo el libro."},
+      {"ja": "明日返してください。", "es": "Por favor devúelvalo mañana."}
+    ]
+  },
+  "乗せる": {
+    "meaning": "poner sobre, subir algo",
+    "examples": [
+      {"ja": "荷物を車に乗せます。", "es": "Subo el equipaje al auto."},
+      {"ja": "机の上に本を乗せます。", "es": "Pongo el libro sobre el escritorio."}
+    ]
+  },
+  "送る": {
+    "meaning": "enviar",
+    "examples": [
+      {"ja": "メールを送ります。", "es": "Envío un correo."},
+      {"ja": "荷物を送りました。", "es": "Envié el paquete."}
+    ]
+  },
+  "渡す": {
+    "meaning": "entregar",
+    "examples": [
+      {"ja": "先生にノートを渡します。", "es": "Entrego el cuaderno al profesor."},
+      {"ja": "書類を渡してください。", "es": "Por favor entregue los documentos."}
+    ]
+  },
+  "渡る": {
+    "meaning": "cruzar",
+    "examples": [
+      {"ja": "橋を渡ります。", "es": "Cruzo el puente."},
+      {"ja": "道を渡るとき注意してください。", "es": "Por favor tenga cuidado al cruzar la calle."}
+    ]
+  },
+  "上げる": {
+    "meaning": "dar (a otra persona), levantar",
+    "examples": [
+      {"ja": "プレゼントをあげます。", "es": "Doy un regalo."},
+      {"ja": "手を上げてください。", "es": "Por favor levante la mano."}
+    ]
+  },
+  "もらう": {
+    "meaning": "recibir",
+    "examples": [
+      {"ja": "プレゼントをもらいました。", "es": "Recibí un regalo."},
+      {"ja": "友達から手紙をもらいました。", "es": "Recibí una carta de mi amigo."}
+    ]
+  },
+  "頼む": {
+    "meaning": "pedir, encargar",
+    "examples": [
+      {"ja": "友だちに助けを頼みます。", "es": "Pido ayuda a mi amigo."},
+      {"ja": "仕事を頼みました。", "es": "Encargué un trabajo."}
+    ]
+  },
+  "登る": {
+    "meaning": "subir (montaña, escalera)",
+    "examples": [
+      {"ja": "山に登ります。", "es": "Subo la montaña."},
+      {"ja": "富士山に登りたいです。", "es": "Quiero escalar el Monte Fuji."}
+    ]
+  },
+  "帰る": {
+    "meaning": "volver a casa",
+    "examples": [
+      {"ja": "家へ帰ります。", "es": "Vuelvo a casa."},
+      {"ja": "何時に帰りますか。", "es": "¿A qué hora vuelves?"}
+    ]
+  },
+  "見せる": {
+    "meaning": "mostrar",
+    "examples": [
+      {"ja": "写真を見せます。", "es": "Muestro la foto."},
+      {"ja": "パスポートを見せてください。", "es": "Por favor muestre su pasaporte."}
+    ]
+  },
+  "選ぶ": {
+    "meaning": "elegir",
+    "examples": [
+      {"ja": "メニューを選びます。", "es": "Elijo el menú."},
+      {"ja": "好きな色を選んでください。", "es": "Por favor elija su color favorito."}
+    ]
+  },
+  "思う": {
+    "meaning": "pensar, creer",
+    "examples": [
+      {"ja": "いいと思います。", "es": "Creo que es bueno."},
+      {"ja": "どう思いますか。", "es": "¿Qué piensas?"}
+    ]
+  },
+  "怒る": {
+    "meaning": "enojarse",
+    "examples": [
+      {"ja": "先生が怒りました。", "es": "El profesor se enojó."},
+      {"ja": "怒らないでください。", "es": "Por favor no se enoje."}
+    ]
+  },
+  "持って行く": {
+    "meaning": "llevar",
+    "examples": [
+      {"ja": "かばんを持って行きます。", "es": "Llevo la bolsa."},
+      {"ja": "弁当を持って行きました。", "es": "Llevé el bento."}
+    ]
+  },
+  "持って来る": {
+    "meaning": "traer",
+    "examples": [
+      {"ja": "本を持って来ます。", "es": "Traigo el libro."},
+      {"ja": "明日持って来てください。", "es": "Por favor tráigalo mañana."}
+    ]
+  },
+  "終える": {
+    "meaning": "terminar (algo)",
+    "examples": [
+      {"ja": "宿題を終えます。", "es": "Termino la tarea."},
+      {"ja": "仕事を終えました。", "es": "Terminé el trabajo."}
+    ]
+  },
+  "探す": {
+    "meaning": "buscar",
+    "examples": [
+      {"ja": "仕事を探します。", "es": "Busco trabajo."},
+      {"ja": "鍵を探しています。", "es": "Estoy buscando las llaves."}
+    ]
+  },
+  "見つける": {
+    "meaning": "encontrar",
+    "examples": [
+      {"ja": "いい店を見つけました。", "es": "Encontré una buena tienda."},
+      {"ja": "鍵を見つけました。", "es": "Encontré las llaves."}
+    ]
+  },
+  "止まる": {
+    "meaning": "detenerse",
+    "examples": [
+      {"ja": "車が止まります。", "es": "El auto se detiene."},
+      {"ja": "信号で止まりました。", "es": "Me detuve en el semáforo."}
+    ]
+  },
+  "止める": {
+    "meaning": "detener (algo)",
+    "examples": [
+      {"ja": "車を止めます。", "es": "Detengo el auto."},
+      {"ja": "ここに車を止めてください。", "es": "Por favor detenga el auto aquí."}
+    ]
+  },
+  "消える": {
+    "meaning": "apagarse, desaparecer",
+    "examples": [
+      {"ja": "電気が消えました。", "es": "La luz se apagó."},
+      {"ja": "星が消えました。", "es": "La estrella desapareció."}
+    ]
+  },
+  "消す": {
+    "meaning": "apagar, borrar",
+    "examples": [
+      {"ja": "テレビを消します。", "es": "Apago la televisión."},
+      {"ja": "電気を消してください。", "es": "Por favor apague la luz."}
+    ]
+  },
+  "曲がる": {
+    "meaning": "doblar, girar",
+    "examples": [
+      {"ja": "右へ曲がります。", "es": "Giro a la derecha."},
+      {"ja": "次の角を左に曲がってください。", "es": "Por favor gire a la izquierda en la próxima esquina."}
+    ]
+  },
+  "咲く": {
+    "meaning": "florecer",
+    "examples": [
+      {"ja": "花が咲きます。", "es": "Las flores florecen."},
+      {"ja": "春に桜が咲きます。", "es": "Los cerezos florecen en primavera."}
+    ]
+  },
+  "死ぬ": {
+    "meaning": "morir",
+    "examples": [
+      {"ja": "魚が死にました。", "es": "El pez murió."},
+      {"ja": "植物が死にました。", "es": "La planta murió."}
+    ]
+  },
+  "生まれる": {
+    "meaning": "nacer",
+    "examples": [
+      {"ja": "赤ちゃんが生まれました。", "es": "Nació un bebé."},
+      {"ja": "日本で生まれました。", "es": "Nací en Japón."}
+    ]
+  },
+  "座る": {
+    "meaning": "sentarse",
+    "examples": [
+      {"ja": "ここに座ります。", "es": "Me siento aquí."},
+      {"ja": "どうぞ座ってください。", "es": "Por favor siéntese."}
+    ]
+  },
+  "呼ぶ": {
+    "meaning": "llamar",
+    "examples": [
+      {"ja": "先生を呼びます。", "es": "Llamo al profesor."},
+      {"ja": "名前を呼んでください。", "es": "Por favor llame mi nombre."}
+    ]
+  },
+  "勉強する": {
+    "meaning": "estudiar",
+    "examples": [
+      {"ja": "毎日勉強します。", "es": "Estudio todos los días."},
+      {"ja": "日本語を勉強しています。", "es": "Estoy estudiando japonés."}
+    ]
+  },
+  "運転する": {
+    "meaning": "conducir",
+    "examples": [
+      {"ja": "車を運転します。", "es": "Conduzco el auto."},
+      {"ja": "運転できますか。", "es": "¿Puede conducir?"}
+    ]
+  },
+  "質問する": {
+    "meaning": "preguntar",
+    "examples": [
+      {"ja": "先生に質問します。", "es": "Pregunto al profesor."},
+      {"ja": "質問がありますか。", "es": "¿Tiene alguna pregunta?"}
+    ]
+  },
+  "説明する": {
+    "meaning": "explicar",
+    "examples": [
+      {"ja": "意味を説明します。", "es": "Explico el significado."},
+      {"ja": "もう一度説明してください。", "es": "Por favor explíquelo una vez más."}
+    ]
+  },
+  "運ぶ": {
+    "meaning": "llevar, transportar",
+    "examples": [
+      {"ja": "荷物を運びます。", "es": "Transporto el equipaje."},
+      {"ja": "箱を運んでください。", "es": "Por favor lleve la caja."}
+    ]
+  },
+  "始まる": {
+    "meaning": "empezar (intransitivo)",
+    "examples": [
+      {"ja": "授業が始まります。", "es": "La clase empieza."},
+      {"ja": "何時に始まりますか。", "es": "¿A qué hora empieza?"}
+    ]
+  },
+  "覚える": {
+    "meaning": "memorizar",
+    "examples": [
+      {"ja": "単語を覚えます。", "es": "Memorizo vocabulario."},
+      {"ja": "名前を覚えていますか。", "es": "¿Recuerda el nombre?"}
+    ]
+  },
+  "忘れる": {
+    "meaning": "olvidar",
+    "examples": [
+      {"ja": "名前を忘れました。", "es": "Olvidé el nombre."},
+      {"ja": "忘れないでください。", "es": "Por favor no lo olvide."}
+    ]
+  },
+  "撮る": {
+    "meaning": "tomar (foto, video)",
+    "examples": [
+      {"ja": "写真を撮ります。", "es": "Tomo una foto."},
+      {"ja": "一緒に写真を撮りましょう。", "es": "Tomemos una foto juntos."}
+    ]
+  },
+  "置く": {
+    "meaning": "colocar, poner",
+    "examples": [
+      {"ja": "机の上に本を置きます。", "es": "Pongo el libro sobre el escritorio."},
+      {"ja": "ここに置いてください。", "es": "Por favor póngalo aquí."}
+    ]
+  },
+  "頑張る": {
+    "meaning": "esforzarse",
+    "examples": [
+      {"ja": "テストを頑張ります。", "es": "Me esfuerzo en el examen."},
+      {"ja": "頑張ってください。", "es": "Por favor esfuércese."}
+    ]
+  },
+  "なる": {
+    "meaning": "convertirse, llegar a ser",
+    "examples": [
+      {"ja": "子供が大人になる。", "es": "El niño crecerá."},
+      {"ja": "医者になりたいです。", "es": "Quiero ser médico."}
+    ]
+  },
+  "泳ぐ": {
+    "meaning": "nadar",
+    "examples": [
+      {"ja": "彼は泳ぐ。", "es": "Él nada."},
+      {"ja": "海で泳ぎます。", "es": "Nado en el mar."}
+    ]
+  },
+  "する": {
+    "meaning": "hacer",
+    "examples": [
+      {"ja": "料理をする。", "es": "Hacer la comida."},
+      {"ja": "何をしますか。", "es": "¿Qué hace?"}
+    ]
+  },
+  "くれる": {
+    "meaning": "dar",
+    "examples": [
+      {"ja": "友達にプレゼントをくれます。", "es": "Dar un regalo a un amigo."},
+      {"ja": "彼が本をくれました。", "es": "Él me dio un libro."}
+    ]
+  },
+  "行く": {
+    "meaning": "ir",
+    "examples": [
+      {"ja": "学校へ行きます。", "es": "Voy a la escuela."},
+      {"ja": "明日旅行に行きます。", "es": "Mañana iré de viaje."}
+    ]
+  },
+  "来る": {
+    "meaning": "venir",
+    "examples": [
+      {"ja": "友だちが来ます。", "es": "Viene un amigo."},
+      {"ja": "明日来てください。", "es": "Por favor venga mañana."}
+    ]
+  },
+  "見る": {
+    "meaning": "ver, mirar",
+    "examples": [
+      {"ja": "映画を見ます。", "es": "Veo una película."},
+      {"ja": "テレビを見ます。", "es": "Veo televisión."}
+    ]
+  },
+  "食べる": {
+    "meaning": "comer",
+    "examples": [
+      {"ja": "パンを食べます。", "es": "Como pan."},
+      {"ja": "朝ごはんを食べました。", "es": "Comí el desayuno."}
+    ]
+  },
+  "飲む": {
+    "meaning": "beber",
+    "examples": [
+      {"ja": "水を飲みます。", "es": "Bebo agua."},
+      {"ja": "コーヒーを飲みますか。", "es": "¿Bebe café?"}
+    ]
+  },
+  "言う": {
+    "meaning": "decir",
+    "examples": [
+      {"ja": "「こんにちは」と言います。", "es": "Digo 'hola'."},
+      {"ja": "何と言いましたか。", "es": "¿Qué dijo?"}
+    ]
+  },
+  "話す": {
+    "meaning": "hablar",
+    "examples": [
+      {"ja": "日本語を話します。", "es": "Hablo japonés."},
+      {"ja": "友達と話します。", "es": "Hablo con mi amigo."}
+    ]
+  },
+  "聞く": {
+    "meaning": "escuchar, preguntar",
+    "examples": [
+      {"ja": "音楽を聞きます。", "es": "Escucho música."},
+      {"ja": "先生に聞きます。", "es": "Pregunto al profesor."}
+    ]
+  },
+  "読む": {
+    "meaning": "leer",
+    "examples": [
+      {"ja": "本を読みます。", "es": "Leo un libro."},
+      {"ja": "毎日新聞を読みます。", "es": "Leo el periódico todos los días."}
+    ]
+  },
+  "書く": {
+    "meaning": "escribir",
+    "examples": [
+      {"ja": "手紙を書きます。", "es": "Escribo una carta."},
+      {"ja": "名前を書いてください。", "es": "Por favor escriba su nombre."}
+    ]
+  },
+  "買う": {
+    "meaning": "comprar",
+    "examples": [
+      {"ja": "りんごを買います。", "es": "Compro manzanas."},
+      {"ja": "スーパーで買います。", "es": "Compro en el supermercado."}
+    ]
+  },
+  "売る": {
+    "meaning": "vender",
+    "examples": [
+      {"ja": "魚を売ります。", "es": "Vendo pescado."},
+      {"ja": "車を売りました。", "es": "Vendí el auto."}
+    ]
+  },
+  "使う": {
+    "meaning": "usar",
+    "examples": [
+      {"ja": "ペンを使います。", "es": "Uso un bolígrafo."},
+      {"ja": "パソコンを使えますか。", "es": "¿Puede usar una computadora?"}
+    ]
+  },
+  "作る": {
+    "meaning": "hacer, crear",
+    "examples": [
+      {"ja": "ケーキを作ります。", "es": "Hago un pastel."},
+      {"ja": "料理を作りました。", "es": "Hice comida."}
+    ]
+  },
+  "会う": {
+    "meaning": "encontrarse, reunirse",
+    "examples": [
+      {"ja": "友だちに会います。", "es": "Me encuentro con amigos."},
+      {"ja": "明日会いましょう。", "es": "Encontrémonos mañana."}
+    ]
+  },
+  "休む": {
+    "meaning": "descansar, faltar",
+    "examples": [
+      {"ja": "今日は休みます。", "es": "Hoy descanso."},
+      {"ja": "学校を休みました。", "es": "Falté a la escuela."}
+    ]
+  },
+  "歩く": {
+    "meaning": "caminar",
+    "examples": [
+      {"ja": "公園を歩きます。", "es": "Camino por el parque."},
+      {"ja": "駅まで歩きました。", "es": "Caminé hasta la estación."}
+    ]
+  },
+  "走る": {
+    "meaning": "correr",
+    "examples": [
+      {"ja": "道を走ります。", "es": "Corro por el camino."},
+      {"ja": "毎朝走ります。", "es": "Corro cada mañana."}
+    ]
+  },
+  "立つ": {
+    "meaning": "ponerse de pie",
+    "examples": [
+      {"ja": "先生が立ちます。", "es": "El profesor se pone de pie."},
+      {"ja": "立ってください。", "es": "Por favor póngase de pie."}
+    ]
+  },
+  "寝る": {
+    "meaning": "dormir, acostarse",
+    "examples": [
+      {"ja": "十時に寝ます。", "es": "Me acuesto a las diez."},
+      {"ja": "よく寝ました。", "es": "Dormí bien."}
+    ]
+  },
+  "起きる": {
+    "meaning": "levantarse, despertarse",
+    "examples": [
+      {"ja": "六時に起きます。", "es": "Me levanto a las seis."},
+      {"ja": "早く起きました。", "es": "Me levanté temprano."}
+    ]
+  },
+  "開ける": {
+    "meaning": "abrir (algo)",
+    "examples": [
+      {"ja": "ドアを開けます。", "es": "Abro la puerta."},
+      {"ja": "窓を開けてください。", "es": "Por favor abra la ventana."}
+    ]
+  },
+  "閉める": {
+    "meaning": "cerrar (algo)",
+    "examples": [
+      {"ja": "窓を閉めます。", "es": "Cierro la ventana."},
+      {"ja": "ドアを閉めてください。", "es": "Por favor cierre la puerta."}
+    ]
+  },
+  "入る": {
+    "meaning": "entrar",
+    "examples": [
+      {"ja": "部屋に入ります。", "es": "Entro a la habitación."},
+      {"ja": "入ってください。", "es": "Por favor entre."}
+    ]
+  },
+  "出る": {
+    "meaning": "salir",
+    "examples": [
+      {"ja": "家を出ます。", "es": "Salgo de casa."},
+      {"ja": "七時に出ました。", "es": "Salí a las siete."}
+    ]
+  },
+  "持つ": {
+    "meaning": "tener, sostener",
+    "examples": [
+      {"ja": "かばんを持ちます。", "es": "Sostengo la bolsa."},
+      {"ja": "これを持ってください。", "es": "Por favor sostenga esto."}
+    ]
+  },
+  "待つ": {
+    "meaning": "esperar",
+    "examples": [
+      {"ja": "友だちを待ちます。", "es": "Espero a mis amigos."},
+      {"ja": "ここで待ってください。", "es": "Por favor espere aquí."}
+    ]
+  },
+  "分かる": {
+    "meaning": "entender",
+    "examples": [
+      {"ja": "日本語が分かります。", "es": "Entiendo japonés."},
+      {"ja": "分かりました。", "es": "Entendí."}
+    ]
+  },
+  "分ける": {
+    "meaning": "dividir",
+    "examples": [
+      {"ja": "ケーキを分けます。", "es": "Divido el pastel."},
+      {"ja": "みんなで分けましょう。", "es": "Dividámoslo entre todos."}
+    ]
+  },
+  "教える": {
+    "meaning": "enseñar",
+    "examples": [
+      {"ja": "英語を教えます。", "es": "Enseño inglés."},
+      {"ja": "道を教えてください。", "es": "Por favor enséñeme el camino."}
+    ]
+  },
+  "習う": {
+    "meaning": "aprender",
+    "examples": [
+      {"ja": "日本語を習います。", "es": "Aprendo japonés."},
+      {"ja": "ピアノを習っています。", "es": "Estoy aprendiendo piano."}
+    ]
+  },
+  "考える": {
+    "meaning": "pensar",
+    "examples": [
+      {"ja": "よく考えます。", "es": "Pienso bien."},
+      {"ja": "何を考えていますか。", "es": "¿En qué está pensando?"}
+    ]
+  },
+  "知る": {
+    "meaning": "saber, conocer",
+    "examples": [
+      {"ja": "その人を知っています。", "es": "Conozco a esa persona."},
+      {"ja": "知りません。", "es": "No lo sé."}
+    ]
+  },
+  "会話する": {
+    "meaning": "conversar",
+    "examples": [
+      {"ja": "日本人と会話します。", "es": "Converso con japoneses."},
+      {"ja": "英語で会話しました。", "es": "Conversé en inglés."}
+    ]
+  },
+  "旅行する": {
+    "meaning": "viajar",
+    "examples": [
+      {"ja": "日本へ旅行します。", "es": "Viajo a Japón."},
+      {"ja": "来月旅行します。", "es": "Viajaré el próximo mes."}
+    ]
+  },
+  "仕事する": {
+    "meaning": "trabajar",
+    "examples": [
+      {"ja": "会社で仕事します。", "es": "Trabajo en una empresa."},
+      {"ja": "仕事が終わりました。", "es": "Terminé el trabajo."}
+    ]
+  },
+  "洗う": {
+    "meaning": "lavar",
+    "examples": [
+      {"ja": "手を洗います。", "es": "Me lavo las manos."},
+      {"ja": "車を洗いました。", "es": "Lavé el auto."}
+    ]
+  },
+  "掃除する": {
+    "meaning": "limpiar",
+    "examples": [
+      {"ja": "部屋を掃除します。", "es": "Limpio la habitación."},
+      {"ja": "毎日掃除します。", "es": "Limpio todos los días."}
+    ]
+  },
+  "料理する": {
+    "meaning": "cocinar",
+    "examples": [
+      {"ja": "晩ごはんを料理します。", "es": "Cocino la cena."},
+      {"ja": "料理が好きです。", "es": "Me gusta cocinar."}
+    ]
+  },
+  "遊ぶ": {
+    "meaning": "jugar, divertirse",
+    "examples": [
+      {"ja": "友だちと遊びます。", "es": "Juego con amigos."},
+      {"ja": "公園で遊びました。", "es": "Jugué en el parque."}
+    ]
+  },
+  "始める": {
+    "meaning": "empezar (algo)",
+    "examples": [
+      {"ja": "勉強を始めます。", "es": "Empiezo a estudiar."},
+      {"ja": "仕事を始めました。", "es": "Empecé el trabajo."}
+    ]
+  },
+  "終わる": {
+    "meaning": "terminar",
+    "examples": [
+      {"ja": "映画が終わります。", "es": "La película termina."},
+      {"ja": "授業が終わりました。", "es": "La clase terminó."}
+    ]
+  },
+  "使える": {
+    "meaning": "poder usar",
+    "examples": [
+      {"ja": "このカードが使えます。", "es": "Puedo usar esta tarjeta."},
+      {"ja": "日本語が使えますか。", "es": "¿Puede usar japonés?"}
+    ]
+  },
+  "要る": {
+    "meaning": "necesitar",
+    "examples": [
+      {"ja": "お金が要ります。", "es": "Necesito dinero."},
+      {"ja": "何が要りますか。", "es": "¿Qué necesita?"}
+    ]
+  },
+  "ある": {
+    "meaning": "haber, existir (cosas)",
+    "examples": [
+      {"ja": "机の上に本があります。", "es": "Hay un libro sobre el escritorio."},
+      {"ja": "時間がありますか。", "es": "¿Tiene tiempo?"}
+    ]
+  },
+  "いる": {
+    "meaning": "haber, existir (personas, animales)",
+    "examples": [
+      {"ja": "猫がいます。", "es": "Hay un gato."},
+      {"ja": "家に誰かいますか。", "es": "¿Hay alguien en casa?"}
+    ]
+  },
+  "閉まる": {
+    "meaning": "cerrarse",
+    "examples": [
+      {"ja": "店が閉まります。", "es": "La tienda se cierra."},
+      {"ja": "ドアが閉まりました。", "es": "La puerta se cerró."}
+    ]
+  },
+  "乗る": {
+    "meaning": "subir (a un vehículo)",
+    "examples": [
+      {"ja": "電車に乗ります。", "es": "Subo al tren."},
+      {"ja": "バスに乗りました。", "es": "Subí al autobús."}
+    ]
+  },
+  "降りる": {
+    "meaning": "bajarse",
+    "examples": [
+      {"ja": "バスを降ります。", "es": "Me bajo del autobús."},
+      {"ja": "次の駅で降ります。", "es": "Me bajo en la próxima estación."}
+    ]
+  },
+  "切る": {
+    "meaning": "cortar",
+    "examples": [
+      {"ja": "紙を切ります。", "es": "Corto papel."},
+      {"ja": "野菜を切りました。", "es": "Corté las verduras."}
+    ]
+  },
+  "着る": {
+    "meaning": "vestirse, ponerse (ropa)",
+    "examples": [
+      {"ja": "シャツを着ます。", "es": "Me pongo una camisa."},
+      {"ja": "何を着ますか。", "es": "¿Qué se pondrá?"}
+    ]
+  },
+  "脱ぐ": {
+    "meaning": "quitarse (ropa)",
+    "examples": [
+      {"ja": "靴を脱ぎます。", "es": "Me quito los zapatos."},
+      {"ja": "上着を脱ぎました。", "es": "Me quité el abrigo."}
+    ]
+  },
+  "洗濯する": {
+    "meaning": "lavar la ropa",
+    "examples": [
+      {"ja": "服を洗濯します。", "es": "Lavo la ropa."},
+      {"ja": "毎日洗濯します。", "es": "Lavo la ropa todos los días."}
+    ]
+  },
+  "歌う": {
+    "meaning": "cantar",
+    "examples": [
+      {"ja": "歌を歌います。", "es": "Canto una canción."},
+      {"ja": "カラオケで歌いました。", "es": "Canté en el karaoke."}
+    ]
+  },
+  "弾く": {
+    "meaning": "tocar (instrumento de cuerda)",
+    "examples": [
+      {"ja": "ピアノを弾きます。", "es": "Toco el piano."},
+      {"ja": "ギターを弾いています。", "es": "Estoy tocando la guitarra."}
+    ]
+  }
+}
