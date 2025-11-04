@@ -214,12 +214,23 @@
 								{#each formalForms as form (form.key)}
 									{@const colors = getFormColor(form.key)}
 									<div class="rounded-xl border {colors.border} bg-slate-900/80 p-3">
-										<p class="text-xs font-medium uppercase tracking-wide {colors.text} mb-1">
-											{form.label.split('(')[0].trim()}
-										</p>
-										<p class="text-base font-medium text-white mb-1">{form.kana}</p>
-										<p class="text-xs text-emerald-400 mb-1">→ {form.translation}</p>
-										<p class="text-xs text-slate-400">{form.description}</p>
+										<div class="flex items-start justify-between gap-2">
+											<div class="flex-1 min-w-0">
+												<p class="text-xs font-medium uppercase tracking-wide {colors.text} mb-1">
+													{form.label.split('(')[0].trim()}
+												</p>
+												<p class="text-base font-medium text-white mb-1">{form.kana}</p>
+												<p class="text-xs text-emerald-400 mb-1">→ {form.translation}</p>
+												<p class="text-xs text-slate-400">{form.description}</p>
+											</div>
+											<button
+												onclick={() => speak(form.kana)}
+												class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors text-slate-400 hover:text-white flex-shrink-0"
+												aria-label="Escuchar pronunciación"
+											>
+												🔊
+											</button>
+										</div>
 									</div>
 								{/each}
 							</div>
@@ -236,12 +247,23 @@
 								{#each informalForms as form (form.key)}
 									{@const colors = getFormColor(form.key)}
 									<div class="rounded-xl border {colors.border} bg-slate-900/80 p-3">
-										<p class="text-xs font-medium uppercase tracking-wide {colors.text} mb-1">
-											{form.label.split('(')[0].trim()}
-										</p>
-										<p class="text-base font-medium text-white mb-1">{form.kana}</p>
-										<p class="text-xs text-emerald-400 mb-1">→ {form.translation}</p>
-										<p class="text-xs text-slate-400">{form.description}</p>
+										<div class="flex items-start justify-between gap-2">
+											<div class="flex-1 min-w-0">
+												<p class="text-xs font-medium uppercase tracking-wide {colors.text} mb-1">
+													{form.label.split('(')[0].trim()}
+												</p>
+												<p class="text-base font-medium text-white mb-1">{form.kana}</p>
+												<p class="text-xs text-emerald-400 mb-1">→ {form.translation}</p>
+												<p class="text-xs text-slate-400">{form.description}</p>
+											</div>
+											<button
+												onclick={() => speak(form.kana)}
+												class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors text-slate-400 hover:text-white flex-shrink-0"
+												aria-label="Escuchar pronunciación"
+											>
+												🔊
+											</button>
+										</div>
 									</div>
 								{/each}
 							</div>

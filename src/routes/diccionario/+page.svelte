@@ -155,7 +155,7 @@
 				</button>
 			</div>
 		{:else}
-			<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+			<div class="grid grid-cols-1 gap-6">
 				{#each filteredVerbs() as verb (verb.kanji + verb.kana)}
 					<VerbCard {verb} />
 				{/each}

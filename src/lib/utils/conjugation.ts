@@ -67,7 +67,7 @@ function handleGodanExceptionTe(form: string, verb: VerbWithTranslation): string
   return form;
 }
 
-function handleGodanExceptionTa(form: string, verb: Verb): string {
+function handleGodanExceptionTa(form: string, verb: VerbWithTranslation): string {
   if (verb.kana === 'いく') {
     return form.replace('いた', 'った');
   }
