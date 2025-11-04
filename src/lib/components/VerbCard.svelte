@@ -34,6 +34,32 @@
 		}
 	}
 
+	function getFrequencyColor(freq?: string): string {
+		switch (freq) {
+			case 'high':
+				return 'bg-red-500/20 text-red-400 border-red-500/50';
+			case 'medium':
+				return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/50';
+			case 'low':
+				return 'bg-slate-500/20 text-slate-400 border-slate-500/50';
+			default:
+				return 'bg-slate-500/20 text-slate-400 border-slate-500/50';
+		}
+	}
+
+	function getFrequencyLabel(freq?: string): string {
+		switch (freq) {
+			case 'high':
+				return 'Alta';
+			case 'medium':
+				return 'Media';
+			case 'low':
+				return 'Baja';
+			default:
+				return 'N/A';
+		}
+	}
+
 	const conjugations = conjugateVerb(verb);
 	
 	// Agrupar conjugaciones por categoría según JLPT N5
@@ -148,6 +174,12 @@
 						class="px-2 py-0.5 rounded-full text-xs font-medium border {getVerbTypeColor(verb.type)}"
 					>
 						{getVerbTypeLabel(verb.type)}
+					</span>
+					
+					<span
+						class="px-2 py-0.5 rounded-full text-xs font-medium border {getFrequencyColor(verb.freq)}"
+					>
+						🔥 {getFrequencyLabel(verb.freq)}
 					</span>
 					
 					{#if verbProgress}

@@ -2,18 +2,33 @@
 	import VerbCard from '$lib/components/VerbCard.svelte';
 	import type { VerbWithTranslation } from '$lib/types/verb';
 	import { getCurrentVerbs } from '$lib/data/verbs';
+	import { userProfile, getMasteryPercentage } from '$lib/stores/userProgress';
 
 	let searchQuery = $state('');
 	let selectedType = $state<string>('all');
+	let sortBy = $state<string>('type'); // 'type', 'frequency', 'mastery'
 
 	// Obtener verbos actualizados
 	let verbs = $derived(() => getCurrentVerbs());
 
 	const TYPE_ORDER: Record<string, number> = {
-	ichidan: 0,
-	godan: 1,
-	irregular: 2
-};
+		ichidan: 0,
+		godan: 1,
+		irregular: 2
+	};
+
+	const FREQUENCY_ORDER: Record<string, number> = {
+		high: 0,
+		medium: 1,
+		low: 2,
+		undefined: 3
+	};
+
+	const SORT_OPTIONS = [
+		{ value: 'type', label: 'Tipo de verbo' },
+		{ value: 'frequency', label: 'Frecuencia' },
+		{ value: 'mastery', label: 'Progreso de aprendizaje' }
+	];
 
 	const filteredVerbs = $derived(() => {
 		let result = verbs();
@@ -36,11 +51,24 @@
 		}
 
 		const sortedResult = [...result].sort((a, b) => {
-			const orderDifference = (TYPE_ORDER[a.type] ?? Number.POSITIVE_INFINITY) - (TYPE_ORDER[b.type] ?? Number.POSITIVE_INFINITY);
-			if (orderDifference !== 0) {
-				return orderDifference;
+			// Sort by selected criteria
+			if (sortBy === 'frequency') {
+				const freqDiff = (FREQUENCY_ORDER[a.freq ?? 'undefined'] ?? 3) - (FREQUENCY_ORDER[b.freq ?? 'undefined'] ?? 3);
+				if (freqDiff !== 0) return freqDiff;
+			} else if (sortBy === 'mastery') {
+				const aMastery = getMasteryPercentage($userProfile.studiedVerbs[a.kanji]?.masteryScore ?? 0);
+				const bMastery = getMasteryPercentage($userProfile.studiedVerbs[b.kanji]?.masteryScore ?? 0);
+				const masteryDiff = bMastery - aMastery; // Higher mastery first
+				if (masteryDiff !== 0) return masteryDiff;
+			} else {
+				// Default: sort by type
+				const orderDifference = (TYPE_ORDER[a.type] ?? Number.POSITIVE_INFINITY) - (TYPE_ORDER[b.type] ?? Number.POSITIVE_INFINITY);
+				if (orderDifference !== 0) {
+					return orderDifference;
+				}
 			}
 
+			// Fallback: sort by romaji alphabetically
 			return a.romaji.localeCompare(b.romaji);
 		});
 
@@ -95,39 +123,55 @@
 			</div>
 
 			<!-- Filter Buttons -->
-			<div class="flex flex-wrap gap-3">
-				<button
-					onclick={() => (selectedType = 'all')}
-					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'all'
-						? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40'
-						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-indigo-500'}"
-				>
-					Todos ({stats().total})
-				</button>
-				<button
-					onclick={() => (selectedType = 'ichidan')}
-					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
-						? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40'
-						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-emerald-500'}"
-				>
-					Ichidan · 一段 ({stats().ichidan})
-				</button>
-				<button
-					onclick={() => (selectedType = 'godan')}
-					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
-						? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40'
-						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-blue-500'}"
-				>
-					Godan · 五段 ({stats().godan})
-				</button>
-				<button
-					onclick={() => (selectedType = 'irregular')}
-					class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'irregular'
-						? 'bg-purple-600 text-white shadow-lg shadow-purple-500/40'
-						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-purple-500'}"
-				>
-					Irregular ({stats().irregular})
-				</button>
+			<div class="flex flex-col sm:flex-row gap-3">
+				<div class="flex flex-wrap gap-3 flex-1">
+					<button
+						onclick={() => (selectedType = 'all')}
+						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'all'
+							? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40'
+							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-indigo-500'}"
+					>
+						Todos ({stats().total})
+					</button>
+					<button
+						onclick={() => (selectedType = 'ichidan')}
+						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'ichidan'
+							? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40'
+							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-emerald-500'}"
+					>
+						Ichidan · 一段 ({stats().ichidan})
+					</button>
+					<button
+						onclick={() => (selectedType = 'godan')}
+						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'godan'
+							? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40'
+							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-blue-500'}"
+					>
+						Godan · 五段 ({stats().godan})
+					</button>
+					<button
+						onclick={() => (selectedType = 'irregular')}
+						class="px-6 py-3 rounded-xl font-medium transition-all {selectedType === 'irregular'
+							? 'bg-purple-600 text-white shadow-lg shadow-purple-500/40'
+							: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-purple-500'}"
+					>
+						Irregular ({stats().irregular})
+					</button>
+				</div>
+				
+				<!-- Sort Dropdown -->
+				<div class="flex items-center gap-2">
+					<label for="sort-select" class="text-sm text-slate-400">Ordenar por:</label>
+					<select
+						id="sort-select"
+						bind:value={sortBy}
+						class="px-4 py-3 rounded-xl border border-slate-800 bg-slate-950/70 text-white text-sm focus:border-indigo-500 focus:outline-none"
+					>
+						{#each SORT_OPTIONS as option}
+							<option value={option.value}>{option.label}</option>
+						{/each}
+					</select>
+				</div>
 			</div>
 		</div>
 
