@@ -2,8 +2,7 @@
 	import { getCurrentVerbs } from '$lib/data/verbs';
 	import type { VerbWithTranslation } from '$lib/types/verb';
 	import { userProfile } from '$lib/stores/userProgress';
-	import LanguageSelector from '$lib/components/LanguageSelector.svelte';
-
+	
 	// Obtener verbos actualizados según el idioma
 	let verbs = $derived<VerbWithTranslation[]>(getCurrentVerbs());
 
@@ -83,15 +82,12 @@
 	<div class="relative overflow-hidden rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/60">
 		<div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(129,140,248,0.25),transparent_45%)]"></div>
 		<div class="relative mx-auto flex max-w-3xl flex-col gap-8 px-6 py-12 text-center">
-			<div class="flex justify-between items-start">
-				<div class="space-y-3 text-left">
-					<p class="text-sm uppercase tracking-[0.35em] text-indigo-300">JapaVerbs</p>
-					<h1 class="text-4xl font-bold leading-tight text-white sm:text-5xl">こんにちは, aprende verbos japoneses</h1>
-					<p class="text-base text-slate-300 sm:text-lg">
-						Tu hub interactivo para dominar verbos japoneses desde el móvil o escritorio
-					</p>
-				</div>
-				<LanguageSelector />
+			<div class="space-y-3 text-left">
+				<p class="text-sm uppercase tracking-[0.35em] text-indigo-300">JapaVerbs</p>
+				<h1 class="text-4xl font-bold leading-tight text-white sm:text-5xl">こんにちは, aprende verbos japoneses</h1>
+				<p class="text-base text-slate-300 sm:text-lg">
+					Tu hub interactivo para dominar verbos japoneses desde el móvil o escritorio
+				</p>
 			</div>
 
 			<div class="grid grid-cols-2 gap-3 sm:grid-cols-4">

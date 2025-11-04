@@ -30,7 +30,7 @@
 	</main>
 
 	<!-- Bottom Navigation -->
-	<nav class="fixed inset-x-0 bottom-0 z-50 border-t border-slate-800 bg-slate-950/95 backdrop-blur-lg shadow-[0_-10px_25px_rgba(15,23,42,0.6)] pb-4">
+	<nav class="fixed inset-x-0 bottom-0 z-[60] border-t border-slate-800 bg-slate-950 backdrop-blur-lg shadow-[0_-10px_25px_rgba(15,23,42,0.8)] pb-4">
 		<div class="mx-auto flex max-w-3xl">
 			{#each navItems as item}
 				<a
