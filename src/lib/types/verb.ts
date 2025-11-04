@@ -3,14 +3,28 @@ export interface VerbExample {
 	es: string;
 }
 
-export interface Verb {
+export interface VerbTranslation {
+	meaning: string;
+	examples: VerbExample[];
+}
+
+export interface VerbBase {
 	kanji: string;
 	kana: string;
 	romaji: string;
 	type: 'godan' | 'ichidan' | 'irregular';
-	'meaning-es': string;
 	freq?: 'high' | 'medium' | 'low';
+}
+
+export interface Verb extends VerbBase {
+	'meaning-es': string;
 	examples: VerbExample[];
+	transitivity?: 'transitive' | 'intransitive' | 'both';
+	tags?: string[];
+}
+
+export interface VerbWithTranslation extends VerbBase {
+	translation: VerbTranslation;
 	transitivity?: 'transitive' | 'intransitive' | 'both';
 	tags?: string[];
 }

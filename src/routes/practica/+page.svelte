@@ -2,20 +2,21 @@
 	import { userProfile, getLocalDateString } from '$lib/stores/userProgress';
 	import { speak } from '$lib/utils/tts';
 	import { conjugateVerb } from '$lib/utils/conjugation';
-	import type { Verb } from '$lib/types/verb';
-	import verbs from '$lib/data/verbs';
+	import type { VerbWithTranslation } from '$lib/types/verb';
+	import { getCurrentVerbs } from '$lib/data/verbs';
+	import { languageStore } from '$lib/stores/language';
 
 	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'results';
 
 	interface VerbResult {
-		verb: Verb;
+		verb: VerbWithTranslation;
 		correct: boolean;
 		previousMastery: number;
 		newMastery: number;
 	}
 
 	interface VerbStats {
-		verb: Verb;
+		verb: VerbWithTranslation;
 		correctCount: number;
 		incorrectCount: number;
 		previousMastery: number;
@@ -25,12 +26,12 @@
 	let currentMode = $state<GameMode>('menu');
 	let selectedGame = $state<GameMode>('flashcards');
 	let questionsPerSession = $state(10);
-	let currentVerb = $state<Verb | null>(null);
+	let currentVerb = $state<VerbWithTranslation | null>(null);
 	let questionCount = $state(0);
 	let correctCount = $state(0);
 	let showAnswer = $state(false);
 	let selectedAnswer = $state<string | null>(null);
-	let gameVerbs = $state<Verb[]>([]);
+	let gameVerbs = $state<VerbWithTranslation[]>([]);
 	let currentIndex = $state(0);
 	let options = $state<string[]>([]);
 	let feedback = $state('');
@@ -48,6 +49,9 @@
 	let timerSeconds = $state(0);
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
 	let currentConjugations = $state<any[]>([]);
+
+	// Obtener verbos actualizados según el idioma
+	let verbs = $derived<VerbWithTranslation[]>(getCurrentVerbs());
 
 	// Reactive derived value for verb statistics
 	const verbStats = $derived(() => getVerbStats());
@@ -345,11 +349,11 @@
 	function generateOptions() {
 		if (!currentVerb) return;
 		
-		const correctAnswer = currentVerb['meaning-es'];
+		const correctAnswer = currentVerb.translation.meaning;
 		const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
 		const wrongAnswers = shuffleArray(otherVerbs)
 			.slice(0, 3)
-			.map(v => v['meaning-es']);
+			.map(v => v.translation.meaning);
 		
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
@@ -390,7 +394,7 @@
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada
-		conjugationTranslation = selectedConjugation?.translation || currentVerb['meaning-es'];
+		conjugationTranslation = selectedConjugation?.translation || currentVerb.translation.meaning;
 		
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
 		const otherForms = formsWithFormality.filter(f => f.key !== selected.key);
@@ -443,7 +447,7 @@
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada (esta será la respuesta correcta)
-		conjugationTranslation = selectedConjugation?.translation || currentVerb['meaning-es'];
+		conjugationTranslation = selectedConjugation?.translation || currentVerb.translation.meaning;
 		
 		// Generar opciones incorrectas usando traducciones de OTRAS CONJUGACIONES DEL MISMO VERBO
 		const otherForms = formsWithFormality.filter(f => f.key !== selected.key);
@@ -501,9 +505,9 @@
 	// Auto-reproducir ejemplo cuando se voltea la tarjeta en flashcards
 	$effect(() => {
 		if (showAnswer && currentVerb && !autoPlayedExample && currentMode === 'flashcards') {
-			if (currentVerb.examples && currentVerb.examples.length > 0) {
+			if (currentVerb.translation.examples && currentVerb.translation.examples.length > 0) {
 				setTimeout(() => {
-					speak(currentVerb!.examples[0].ja);
+					speak(currentVerb!.translation.examples[0].ja);
 					autoPlayedExample = true;
 				}, 500);
 			}
@@ -592,7 +596,7 @@
 		if (!currentVerb || selectedAnswer) return;
 		
 		selectedAnswer = answer;
-		const correct = answer === currentVerb['meaning-es'];
+		const correct = answer === currentVerb.translation.meaning;
 		
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -625,7 +629,7 @@
 				loadNextQuestion();
 			}, 1000);
 		} else {
-			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb['meaning-es']}`;
+			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb.translation.meaning}`;
 			showErrorOverlay = true;
 			
 			userProfile.recordPractice(currentVerb.kanji, false);
@@ -702,7 +706,7 @@
 		
 		selectedAnswer = answer;
 		const selectedConjugation = currentConjugations.find(c => c.label === conjugationForm);
-		const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
+		const correctAnswer = selectedConjugation?.translation || currentVerb.translation.meaning;
 		const correct = answer === correctAnswer;
 		
 		// Guardar mastery score previo
@@ -1074,17 +1078,17 @@
 						<!-- Back -->
 						<div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl border-2 border-green-500 bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-8 flex flex-col items-center justify-center text-center">
 							<div class="text-4xl font-bold text-white mb-8">
-								{currentVerb['meaning-es']}
+								{currentVerb.translation.meaning}
 							</div>
-							{#if currentVerb.examples.length > 0}
+							{#if currentVerb.translation.examples.length > 0}
 								<div class="space-y-3 w-full">
 									<div class="relative text-sm text-slate-300 bg-slate-900/50 rounded-xl p-4 border border-slate-800">
-										<p class="font-japanese mb-2">{currentVerb.examples[0].ja}</p>
-										<p class="text-slate-400 mb-3">{currentVerb.examples[0].es}</p>
+										<p class="font-japanese mb-2">{currentVerb.translation.examples[0].ja}</p>
+										<p class="text-slate-400 mb-3">{currentVerb.translation.examples[0].es}</p>
 										<button
 											onclick={(e) => {
 												e.stopPropagation();
-												speak(currentVerb!.examples[0].ja);
+												speak(currentVerb!.translation.examples[0].ja);
 											}}
 											class="absolute top-3 right-3 p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg"
 											type="button"
@@ -1183,10 +1187,10 @@
 								selectedAnswer === null
 								? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 								: selectedAnswer === option
-									? option === currentVerb['meaning-es']
+									? option === currentVerb.translation.meaning
 										? 'border-green-500 bg-green-500/20 text-green-400'
 										: 'border-red-500 bg-red-500/20 text-red-400'
-									: option === currentVerb['meaning-es']
+									: option === currentVerb.translation.meaning
 										? 'border-green-500 bg-green-500/20 text-green-400'
 										: 'border-slate-800 bg-slate-900/50 text-slate-500'
 							}"
@@ -1258,10 +1262,10 @@
 								selectedAnswer === null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
 									: selectedAnswer === option
-										? option === currentVerb['meaning-es']
+										? option === currentVerb.translation.meaning
 											? 'border-green-500 bg-green-500/20 text-green-400'
 											: 'border-red-500 bg-red-500/20 text-red-400'
-										: option === currentVerb['meaning-es']
+										: option === currentVerb.translation.meaning
 											? 'border-green-500 bg-green-500/20 text-green-400'
 											: 'border-slate-800 bg-slate-900/50 text-slate-500'
 							}"
@@ -1318,7 +1322,7 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}, {conjugationTranslation}</div>
+					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}, {conjugationTranslation}</div>
 					<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50 mb-4">
 						<span class="text-sm font-medium text-purple-300">
 							{conjugationFormality === 'formal' ? 'Formal' : 'Informal'}
@@ -1407,7 +1411,7 @@
 					<div class="text-5xl font-bold text-white mb-3">
 						{currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana}
 					</div>
-					<div class="text-lg text-indigo-400 mb-2">Verbo: {currentVerb.kanji} ({currentVerb['meaning-es']})</div>
+					<div class="text-lg text-indigo-400 mb-2">Verbo: {currentVerb.kanji} ({currentVerb.translation.meaning})</div>
 					<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple-500/20 border border-purple-500/50 mb-4">
 						<span class="text-sm font-medium text-purple-300">
 							{conjugationFormality === 'formal' ? 'Formal' : 'Informal'}
@@ -1433,13 +1437,13 @@
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-purple-500'
 									: selectedAnswer === option
 										? (() => {
-											const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
+											const correctAnswer = selectedConjugation?.translation || currentVerb.translation.meaning;
 											return option === correctAnswer
 												? 'border-green-500 bg-green-500/20 text-green-400'
 												: 'border-red-500 bg-red-500/20 text-red-400';
 										})()
 										: (() => {
-											const correctAnswer = selectedConjugation?.translation || currentVerb['meaning-es'];
+											const correctAnswer = selectedConjugation?.translation || currentVerb.translation.meaning;
 											return option === correctAnswer
 												? 'border-green-500 bg-green-500/20 text-green-400'
 												: 'border-slate-800 bg-slate-900/50 text-slate-500';
@@ -1498,7 +1502,7 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}</div>
+					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}</div>
 					<button
 						onclick={() => (currentVerb && speak(currentVerb.kanji || currentVerb.kana))}
 						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
@@ -1583,7 +1587,7 @@
 						{currentVerb.kanji}
 					</div>
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-2">{currentVerb['meaning-es']}</div>
+					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}</div>
 					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-purple-500/20 text-purple-400 border-purple-500/50">
 						{currentVerb.type === 'godan' ? 'Godan' : currentVerb.type === 'ichidan' ? 'Ichidan' : 'Irregular'}
 					</span>
