@@ -9,10 +9,13 @@ import { languageStore } from '$lib/stores/language';
 const translationCache = new Map<SupportedLanguage, Record<string, VerbTranslation>>();
 
 // Cargar traducción en español por defecto
+console.log('📚 Cargando traducciones en español por defecto...');
 translationCache.set('es', spanishTranslations);
+console.log('✅ Traducciones en español cacheadas:', Object.keys(spanishTranslations).length, 'entradas');
 
 // Combinar ambos archivos JSON en un solo array de verbos base
 const baseVerbs: VerbBase[] = [...verbsPart0, ...verbsPart1] as VerbBase[];
+console.log('📝 Verbos base cargados:', baseVerbs.length, 'verbos');
 
 /**
  * Carga las traducciones para un idioma específico
@@ -53,11 +56,13 @@ function combineVerbsWithTranslations(
 	base: VerbBase[], 
 	translations: Record<string, VerbTranslation>
 ): VerbWithTranslation[] {
-	return base.map(verb => {
+	console.log('🔗 Combinando', base.length, 'verbos base con', Object.keys(translations).length, 'traducciones');
+	
+	const result = base.map(verb => {
 		const translation = translations[verb.kanji];
 		
 		if (!translation) {
-			console.warn(`No se encontró traducción para el verbo: ${verb.kanji}`);
+			console.warn(`⚠️ No se encontró traducción para el verbo: ${verb.kanji}`);
 			// Devolver verbo con traducción vacía
 			return {
 				...verb,
@@ -73,6 +78,9 @@ function combineVerbsWithTranslations(
 			translation
 		};
 	});
+	
+	console.log('✅ Combinación completada:', result.length, 'verbos con traducciones');
+	return result;
 }
 
 /**

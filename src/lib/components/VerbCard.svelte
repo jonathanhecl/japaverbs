@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { speak } from '$lib/utils/tts';
-	import type { Verb } from '$lib/types/verb';
+	import type { VerbWithTranslation } from '$lib/types/verb';
 	import { conjugateVerb } from '$lib/utils/conjugation';
 	import { userProfile, getMasteryPercentage, getMasteryLevel } from '$lib/stores/userProgress';
 
-	let { verb }: { verb: Verb } = $props();
+	let { verb }: { verb: VerbWithTranslation } = $props();
 	let isExpanded = $state(false);
 	let hasAutoPlayed = $state(false);
 
@@ -140,7 +140,7 @@
 				</div>
 				
 				<!-- Significado -->
-				<p class="text-base text-indigo-300 font-medium mb-2">{verb['meaning-es']}</p>
+				<p class="text-base text-indigo-300 font-medium mb-2">{verb.translation.meaning}</p>
 				
 				<!-- Tags y Progreso -->
 				<div class="flex flex-wrap items-center gap-2">
@@ -251,11 +251,11 @@
 			</div>
 
 			<!-- Ejemplos -->
-			{#if verb.examples && verb.examples.length > 0}
+			{#if verb.translation.examples && verb.translation.examples.length > 0}
 				<div>
 					<h3 class="font-semibold text-sm text-slate-400 uppercase tracking-wide mb-2">Ejemplos</h3>
 					<div class="space-y-2">
-						{#each verb.examples as example, i}
+						{#each verb.translation.examples as example, i}
 							<div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
 								<div class="flex items-start gap-2">
 									<span class="text-slate-500 font-mono text-xs mt-1">{i + 1}.</span>

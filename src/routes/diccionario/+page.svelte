@@ -1,10 +1,13 @@
 <script lang="ts">
 	import VerbCard from '$lib/components/VerbCard.svelte';
-	import type { Verb } from '$lib/types/verb';
-	import verbs from '$lib/data/verbs';
+	import type { VerbWithTranslation } from '$lib/types/verb';
+	import { getCurrentVerbs } from '$lib/data/verbs';
 
 	let searchQuery = $state('');
 	let selectedType = $state<string>('all');
+
+	// Obtener verbos actualizados
+	let verbs = $derived(() => getCurrentVerbs());
 
 	const TYPE_ORDER: Record<string, number> = {
 	ichidan: 0,
@@ -13,7 +16,7 @@
 };
 
 	const filteredVerbs = $derived(() => {
-		let result = verbs;
+		let result = verbs();
 
 		// Filter by search query
 		if (searchQuery.trim()) {
@@ -23,7 +26,7 @@
 					verb.kanji.includes(query) ||
 					verb.kana.includes(query) ||
 					verb.romaji.toLowerCase().includes(query) ||
-					verb['meaning-es'].toLowerCase().includes(query)
+					verb.translation.meaning.toLowerCase().includes(query)
 			);
 		}
 
@@ -44,12 +47,12 @@
 		return sortedResult;
 	});
 
-	const stats = $derived({
-		total: verbs.length,
-		godan: verbs.filter((v) => v.type === 'godan').length,
-		ichidan: verbs.filter((v) => v.type === 'ichidan').length,
-		irregular: verbs.filter((v) => v.type === 'irregular').length
-	});
+	const stats = $derived(() => ({
+		total: verbs().length,
+		godan: verbs().filter((v) => v.type === 'godan').length,
+		ichidan: verbs().filter((v) => v.type === 'ichidan').length,
+		irregular: verbs().filter((v) => v.type === 'irregular').length
+	}));
 </script>
 
 <section class="space-y-8 pb-10">
@@ -63,7 +66,7 @@
 					<p class="text-xs uppercase tracking-[0.25em] text-indigo-200">Centro de referencia</p>
 					<h1 class="mt-1 text-3xl font-bold text-white">Diccionario de verbos japoneses</h1>
 					<p class="mt-1 text-sm text-slate-300 max-w-xl">
-						Explora {stats.total} verbos JLPT N5 con filtros rápidos, ejemplos claros y el mismo sistema de colores que en la guía de verbos.
+						Explora {stats().total} verbos JLPT N5 con filtros rápidos, ejemplos claros y el mismo sistema de colores que en la guía de verbos.
 					</p>
 				</div>
 			</div>
@@ -99,7 +102,7 @@
 						? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/40'
 						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-indigo-500'}"
 				>
-					Todos ({stats.total})
+					Todos ({stats().total})
 				</button>
 				<button
 					onclick={() => (selectedType = 'ichidan')}
@@ -107,7 +110,7 @@
 						? 'bg-emerald-600 text-white shadow-lg shadow-emerald-500/40'
 						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-emerald-500'}"
 				>
-					Ichidan · 一段 ({stats.ichidan})
+					Ichidan · 一段 ({stats().ichidan})
 				</button>
 				<button
 					onclick={() => (selectedType = 'godan')}
@@ -115,7 +118,7 @@
 						? 'bg-blue-600 text-white shadow-lg shadow-blue-500/40'
 						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-blue-500'}"
 				>
-					Godan · 五段 ({stats.godan})
+					Godan · 五段 ({stats().godan})
 				</button>
 				<button
 					onclick={() => (selectedType = 'irregular')}
@@ -123,7 +126,7 @@
 						? 'bg-purple-600 text-white shadow-lg shadow-purple-500/40'
 						: 'border border-slate-800 bg-slate-950/70 text-slate-300 hover:border-purple-500'}"
 				>
-					Irregular ({stats.irregular})
+					Irregular ({stats().irregular})
 				</button>
 			</div>
 		</div>
@@ -131,7 +134,7 @@
 		<!-- Results Count -->
 		<div>
 			<p class="text-sm text-slate-400">
-				Mostrando <span class="font-semibold text-indigo-400">{filteredVerbs().length}</span> de <span class="font-semibold">{stats.total}</span> verbos
+				Mostrando <span class="font-semibold text-indigo-400">{filteredVerbs().length}</span> de <span class="font-semibold">{stats().total}</span> verbos
 			</p>
 		</div>
 

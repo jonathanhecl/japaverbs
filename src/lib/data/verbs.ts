@@ -7,8 +7,17 @@ let loadedVerbs: VerbWithTranslation[] = [];
 
 // Función asíncrona para inicializar los verbos
 async function initializeVerbs() {
-	await preloadTranslations('es');
-	loadedVerbs = await getVerbsWithTranslations('es');
+	console.log('🔄 Inicializando verbos en español...');
+	try {
+		await preloadTranslations('es');
+		loadedVerbs = await getVerbsWithTranslations('es');
+		console.log('✅ Verbos cargados:', loadedVerbs.length, 'verbos');
+		if (loadedVerbs.length === 0) {
+			console.error('❌ ERROR: No se cargaron verbos. Revisar JSONs.');
+		}
+	} catch (error) {
+		console.error('❌ ERROR al inicializar verbos:', error);
+	}
 }
 
 // Inicializar inmediatamente
@@ -22,6 +31,10 @@ languageStore.subscribe(async (language) => {
 
 // Exportar función para obtener verbos actualizados
 export function getCurrentVerbs(): VerbWithTranslation[] {
+	console.log('📊 getCurrentVerbs() llamado, devuelve:', loadedVerbs.length, 'verbos');
+	if (loadedVerbs.length === 0) {
+		console.warn('⚠️ ADVERTENCIA: getCurrentVerbs() devuelve array vacío');
+	}
 	return loadedVerbs;
 }
 
