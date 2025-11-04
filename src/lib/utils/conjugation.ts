@@ -1,4 +1,4 @@
-import type { Verb } from '$lib/types/verb';
+import type { Verb, VerbWithTranslation } from '$lib/types/verb';
 import { getSpanishConjugation } from '$lib/data/spanish_conjugations';
 
 export type ConjugationFormKey =
@@ -60,7 +60,7 @@ const GODAN_RULES: Record<GodanEnding, {
   す: { nai: 'さ', masu: 'し', te: 'して', ta: 'した' }
 };
 
-function handleGodanExceptionTe(form: string, verb: Verb): string {
+function handleGodanExceptionTe(form: string, verb: VerbWithTranslation): string {
   if (verb.kana === 'いく') {
     return form.replace('いて', 'って');
   }
@@ -101,7 +101,7 @@ function conjugateIchidan(kana: string) {
   };
 }
 
-function conjugateGodan(verb: Verb) {
+function conjugateGodan(verb: VerbWithTranslation) {
   const kana = verb.kana;
   const ending = kana.slice(-1) as GodanEnding;
   const stem = kana.slice(0, -1);
@@ -139,7 +139,7 @@ function conjugateGodan(verb: Verb) {
   };
 }
 
-function conjugateIrregular(verb: Verb) {
+function conjugateIrregular(verb: VerbWithTranslation) {
   const kana = verb.kana;
 
   if (kana === 'する') {
@@ -205,7 +205,7 @@ function getTranslation(kanji: string, key: ConjugationFormKey, fallbackMeaning:
   
   if (!spanishConj) {
     // Fallback al significado básico si no hay conjugación en el JSON
-    return fallbackMeaning.split('(')[0].trim().toLowerCase();
+    return fallbackMeaning ? fallbackMeaning.split('(')[0].trim().toLowerCase() : '';
   }
   
   switch (key) {
@@ -254,7 +254,7 @@ function getTranslation(kanji: string, key: ConjugationFormKey, fallbackMeaning:
   }
 }
 
-export function conjugateVerb(verb: Verb): ConjugationForm[] {
+export function conjugateVerb(verb: VerbWithTranslation): ConjugationForm[] {
   let forms: ReturnType<typeof conjugateIchidan>;
 
   if (verb.type === 'ichidan') {
@@ -265,7 +265,7 @@ export function conjugateVerb(verb: Verb): ConjugationForm[] {
     forms = conjugateIrregular(verb);
   }
 
-  const meaning = verb['meaning-es'];
+  const meaning = verb.translation.meaning;
   const kanji = verb.kanji;
 
   const entries: ConjugationForm[] = [
