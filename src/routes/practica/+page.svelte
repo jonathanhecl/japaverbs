@@ -505,7 +505,9 @@
 	// Auto-reproducir ejemplo cuando se voltea la tarjeta en flashcards
 	$effect(() => {
 		if (showAnswer && currentVerb && !autoPlayedExample && currentMode === 'flashcards') {
-			if (currentVerb.translation.examples && currentVerb.translation.examples.length > 0) {
+			const hasExamples = currentVerb.translation.examples?.length > 0;
+
+			if (hasExamples) {
 				setTimeout(() => {
 					speak(currentVerb!.translation.examples[0].ja);
 					autoPlayedExample = true;
@@ -513,9 +515,10 @@
 			}
 			
 			// Auto-leer verbo si está habilitado (además del ejemplo)
-			if (autoReadVerbs) {
+			if (autoReadVerbs && !hasExamples) {
 				setTimeout(() => {
 					speak(currentVerb!.kanji || currentVerb!.kana);
+					autoPlayedExample = true;
 				}, 1200);
 			}
 		}
