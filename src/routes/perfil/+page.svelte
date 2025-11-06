@@ -2,7 +2,7 @@
 	import { userProfile } from '$lib/stores/userProgress';
 	import { onMount } from 'svelte';
 	import type { Verb } from '$lib/types/verb';
-	import verbs from '$lib/data/verbs';
+	import { getCurrentVerbs } from '$lib/data/verbs';
 	import BackupManager from '$lib/components/BackupManager.svelte';
 
 	let profile = $state($userProfile);
@@ -41,7 +41,22 @@
 
 	// Calcular verbos masterizados (mastery score = 5) vs pendientes
 	const verbStats = $derived(() => {
+		const verbs = getCurrentVerbs();
 		const totalVerbs = verbs.length;
+		
+		// Proteger contra división por cero
+		if (totalVerbs === 0) {
+			return {
+				total: 0,
+				mastered: 0,
+				inProgress: 0,
+				notStarted: 0,
+				masteredPercent: 0,
+				inProgressPercent: 0,
+				studiedPercent: 0
+			};
+		}
+		
 		let masteredCount = 0;
 		let inProgressCount = 0;
 		let notStartedCount = 0;
@@ -68,7 +83,7 @@
 		};
 	});
 
-	const achievements = [
+	const achievements = $derived([
 		{ id: 'first_practice', title: 'Primer paso', icon: '🎯', description: 'Completa tu primera práctica', unlocked: profile.totalPractices >= 1 },
 		{ id: 'practice_10', title: 'Dedicado', icon: '📚', description: 'Completa 10 prácticas', unlocked: profile.totalPractices >= 10 },
 		{ id: 'practice_50', title: 'Estudiante serio', icon: '🎓', description: 'Completa 50 prácticas', unlocked: profile.totalPractices >= 50 },
@@ -77,7 +92,7 @@
 		{ id: 'accuracy_80', title: 'Precisión', icon: '🎯', description: 'Alcanza 80% de precisión', unlocked: accuracy >= 80 && profile.totalQuestions >= 20 },
 		{ id: 'level_5', title: 'Nivel 5', icon: '🏆', description: 'Alcanza el nivel 5', unlocked: profile.level >= 5 },
 		{ id: 'verbs_20', title: 'Explorador', icon: '🗺️', description: 'Estudia 20 verbos diferentes', unlocked: Object.keys(profile.studiedVerbs).length >= 20 }
-	];
+	]);
 </script>
 
 <svelte:head>
@@ -101,7 +116,6 @@
 								onkeydown={(e) => e.key === 'Enter' && saveName()}
 								class="bg-slate-900 border-2 border-indigo-500 rounded-xl px-3 py-2 text-xl font-bold text-white focus:outline-none"
 								placeholder="Tu nombre"
-								autofocus
 							/>
 							<div class="flex gap-2 mt-2">
 								<button

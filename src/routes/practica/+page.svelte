@@ -873,6 +873,14 @@
 		
 		const accuracy = Math.round((correctCount / questionCount) * 100);
 		
+		// Actualizar estadísticas globales de la sesión
+		userProfile.update(profile => ({
+			...profile,
+			totalPractices: profile.totalPractices + 1,
+			totalCorrect: profile.totalCorrect + correctCount,
+			totalQuestions: profile.totalQuestions + questionCount
+		}));
+		
 		// Check for achievements
 		if (questionCount >= 10 && accuracy === 100) {
 			userProfile.addAchievement('perfect_game');
@@ -1754,7 +1762,7 @@
 											<span class="text-orange-400 text-lg">⚠️</span>
 										{/if}
 									</div>
-									<p class="text-sm text-indigo-300">{stats.verb['meaning-es']}</p>
+									<p class="text-sm text-indigo-300">{stats.verb.translation.meaning}</p>
 									
 									{#if hasCurrentSessionError}
 										<p class="text-xs text-orange-400 mt-1 flex items-center gap-1">
