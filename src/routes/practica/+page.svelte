@@ -144,7 +144,7 @@
 		{
 			id: 'multiple-choice',
 			title: 'Opción múltiple',
-			description: 'Elige la traducción correcta',
+			description: 'Elige la traducción correcta (verbo -> significado)',
 			icon: '✅',
 			color: 'from-green-500 to-emerald-500',
 			difficulty: 'Medio',
@@ -152,8 +152,8 @@
 		},
 		{
 			id: 'listening',
-			title: 'Comprensión auditiva',
-			description: 'Identifica el verbo que escuchas',
+			title: 'Opción múltiple (solo escucha)',
+			description: 'Identifica el verbo que escuchas (verbo -> significado)',
 			icon: '🔊',
 			color: 'from-orange-500 to-red-500',
 			difficulty: 'Medio',
@@ -161,9 +161,9 @@
 		},
 		{
 			id: 'conjugation',
-			title: 'Estudio de conjugación',
-			description: 'Aprende las 18 formas JLPT N5 (formales e informales)',
-			icon: '📝',
+			title: 'Tarjetas de conjugación',
+			description: 'Aprende las conjugaciones con tarjetas interactivas',
+			icon: '🎴',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Medio',
 			order: 5
@@ -171,7 +171,7 @@
 		{
 			id: 'conjugation-quiz',
 			title: 'Quiz de conjugación',
-			description: 'Elige la forma JLPT N5 correcta',
+			description: 'Elige la conjugación correcta desde el verbo diccionario',
 			icon: '🎯',
 			color: 'from-indigo-500 to-purple-500',
 			difficulty: 'Difícil',
@@ -180,7 +180,7 @@
 		{
 			id: 'inverse-conjugation-quiz',
 			title: 'Quiz de conjugación inversa',
-			description: 'Identifica el significado de la forma JLPT N5',
+			description: 'Identifica el tipo de conjugación desde el verbo conjugado',
 			icon: '🔄',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Difícil',
