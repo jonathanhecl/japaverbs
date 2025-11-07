@@ -137,7 +137,7 @@ function createUserStore() {
 			const newLevel = Math.floor(newXP / 100) + 1;
 			return { ...profile, xp: newXP, level: newLevel };
 		}),
-		recordPractice: (verbId: string, correct: boolean) => update(profile => {
+		recordPractice: (verbId: string, correct: boolean, incrementSessionCount: boolean = true) => update(profile => {
 			const today = getLocalDateString();
 			const studiedVerb = profile.studiedVerbs[verbId] || {
 				lastStudied: today,
@@ -229,7 +229,7 @@ function createUserStore() {
 			return {
 				...profile,
 				studiedVerbs: { ...profile.studiedVerbs, [verbId]: studiedVerb },
-				totalPractices: profile.totalPractices + 1,
+				totalPractices: incrementSessionCount ? profile.totalPractices + 1 : profile.totalPractices,
 				totalCorrect: profile.totalCorrect + (correct ? 1 : 0),
 				totalQuestions: profile.totalQuestions + 1,
 				lastStudyDate: today,

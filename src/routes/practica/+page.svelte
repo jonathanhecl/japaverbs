@@ -49,6 +49,7 @@
 	let timerSeconds = $state(0);
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
 	let currentConjugations = $state<any[]>([]);
+	let isRetrySession = $state(false);
 
 	// Lista completa de tipos de conjugaciones con información descriptiva
 	const conjugationTypes = [
@@ -395,10 +396,11 @@
 		return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 	}
 
-	function startGame(mode: GameMode) {
+	function startGame(mode: GameMode, isRetry: boolean = false) {
 		currentMode = mode;
 		completedGameMode = mode;
 		sessionResults = []; // Reiniciar resultados de la sesión
+		isRetrySession = isRetry; // Guardar si es una sesión de reintento
 		
 		// Iniciar timer si está habilitado
 		startTimer();
@@ -669,7 +671,7 @@
 			userProfile.addXP(5);
 		}
 		
-		userProfile.recordPractice(currentVerb.kanji, knew);
+		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession);
 		
 		// Guardar resultado
 		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -697,7 +699,7 @@
 			feedbackHint = '';
 			correctCount++;
 			userProfile.addXP(10);
-			userProfile.recordPractice(currentVerb.kanji, true);
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
 			
 			// Auto-leer verbo si está habilitado
 			if (autoReadVerbs) {
@@ -724,7 +726,7 @@
 			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb.translation.meaning}`;
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false);
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -758,7 +760,7 @@
 		if (correct) {
 			correctCount++;
 			userProfile.addXP(15);
-			userProfile.recordPractice(currentVerb.kanji, true);
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -779,7 +781,7 @@
 			feedbackHint = '';
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false);
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -819,7 +821,7 @@
 		if (correct) {
 			correctCount++;
 			userProfile.addXP(15);
-			userProfile.recordPractice(currentVerb.kanji, true);
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -842,7 +844,7 @@
 			}
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false);
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -892,7 +894,7 @@
 		if (correct) {
 			correctCount++;
 			feedback = '¡Correcto!';
-			userProfile.recordPractice(currentVerb.kanji, true);
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -913,7 +915,7 @@
 			feedbackHint = correctExplanation;
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false);
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -949,7 +951,7 @@
 			}
 		}
 		
-		userProfile.recordPractice(currentVerb.kanji, knew);
+		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession);
 		
 		// Guardar resultado
 		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -988,7 +990,7 @@
 	}
 	
 	function retryGame() {
-		startGame(completedGameMode);
+		startGame(completedGameMode, true);
 	}
 
 	function exitGame() {
