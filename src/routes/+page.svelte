@@ -52,8 +52,8 @@
 		},
 		{
 			icon: '🎮',
-			title: '4 modos de juego',
-			description: 'Flashcards, opción múltiple, conjugación y audio'
+			title: 'Multiples modos de práctica',
+			description: 'Flashcards, opción múltiple, conjugación con audio'
 		},
 		{
 			icon: '📊',
