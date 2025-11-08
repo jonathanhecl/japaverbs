@@ -163,10 +163,19 @@
 				<div class="flex items-baseline gap-2 mb-1">
 					<h2 class="text-2xl font-bold text-white truncate">{verb.kanji}</h2>
 					<span class="text-lg text-slate-300">{verb.kana}</span>
+					<button
+						onclick={handleSpeak}
+						class="p-2 rounded-full hover:bg-slate-800 transition-colors text-xl"
+						aria-label="Reproducir audio"
+					>
+						🔊
+					</button>
 				</div>
 				
 				<!-- Significado -->
 				<p class="text-base text-indigo-300 font-medium mb-2">{verb.translation.meaning}</p>
+
+				
 				
 				<!-- Tags y Progreso -->
 				<div class="flex flex-wrap items-center gap-2">
@@ -204,38 +213,9 @@
 	<!-- Vista expandida (solo visible cuando isExpanded = true) -->
 	{#if isExpanded}
 		<div class="border-t border-slate-800 p-4 space-y-4 animate-slideDown">
-			<!-- Romaji y Audio -->
-			<div class="flex items-center gap-3">
-				<span class="text-sm text-slate-400">{verb.romaji}</span>
-				<button
-					onclick={handleSpeak}
-					class="p-2 rounded-full hover:bg-slate-800 transition-colors text-xl"
-					aria-label="Reproducir audio"
-				>
-					🔊
-				</button>
-			</div>
-
-			<!-- Conjugaciones JLPT N5 -->
+			<!-- Conjugaciones -->
 			<div>
-				<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-3">Conjugaciones JLPT N5</h3>
-				
-				<!-- Forma Básica -->
-				{#if basicForm.length}
-					<div class="mb-4">
-						{#each basicForm as form (form.key)}
-							{@const colors = getFormColor(form.key)}
-							<div class="rounded-xl border {colors.border} {colors.bg} p-4">
-								<div class="flex items-center justify-between mb-2">
-									<p class="text-xs font-semibold uppercase tracking-wide {colors.text}">{colors.label}</p>
-								</div>
-								<p class="text-lg font-medium text-white mb-1">{form.kana}</p>
-								<p class="text-sm text-emerald-400 mb-2">→ {form.translation}</p>
-								<p class="text-xs text-slate-400">{form.description}</p>
-							</div>
-						{/each}
-					</div>
-				{/if}
+				<h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400 mb-3">Conjugaciones</h3>
 
 				<!-- Formas Formales (ます形) -->
 				{#if formalForms.length}

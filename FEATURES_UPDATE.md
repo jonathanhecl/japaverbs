@@ -51,7 +51,7 @@ interface UserProfile {
 
 ---
 
-## 🎮 Sistema de Práctica (4 Modos de Juego)
+## 🎮 Sistema de Práctica (Multiples Modos de Práctica)
 
 ### 1. Tarjetas de Memoria (Flashcards)
 - ✅ Tarjetas con animación de volteo 3D
