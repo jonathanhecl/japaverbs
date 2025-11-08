@@ -23,6 +23,17 @@
 		newMastery: number;
 	}
 
+	type ConjugationFormality = 'formal' | 'informal';
+
+	interface ConjugationType {
+		key: string;
+		formality: ConjugationFormality;
+		name: string;
+		shortName: string;
+		description: string;
+		example: string;
+	}
+
 	let currentMode = $state<GameMode>('menu');
 	let selectedGame = $state<GameMode>('flashcards');
 	let questionsPerSession = $state(10);
@@ -48,11 +59,19 @@
 	let showTimer = $state(false);
 	let timerSeconds = $state(0);
 	let timerInterval: ReturnType<typeof setInterval> | null = null;
-	let currentConjugations = $state<any[]>([]);
+	interface ConjugationEntry {
+		key: string;
+		label: string;
+		kana: string;
+		description: string;
+		translation: string;
+	}
+
+	let currentConjugations = $state<ConjugationEntry[]>([]);
 	let isRetrySession = $state(false);
 
 	// Lista completa de tipos de conjugaciones con información descriptiva
-	const conjugationTypes = [
+	const conjugationTypes: ConjugationType[] = [
 		// Formales (ます形) - Situaciones corteses y formales
 		{ 
 			key: 'masuPresent', 
@@ -271,6 +290,29 @@
 				return { bg: 'bg-red-500/10', border: 'border-red-500/40', text: 'text-red-200', label: 'Negativa' };
 			
 			default: return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: '' };
+		}
+	}
+
+	function getFormalityStyles(formality?: ConjugationFormality) {
+		switch (formality) {
+			case 'formal':
+				return {
+					container: 'border border-blue-500/40 bg-blue-500/10',
+					title: 'text-white',
+					description: 'text-blue-200'
+				};
+			case 'informal':
+				return {
+					container: 'border border-slate-600/40 bg-slate-700/10',
+					title: 'text-white',
+					description: 'text-slate-300'
+				};
+			default:
+				return {
+					container: 'border border-indigo-500/50 bg-gradient-to-r from-indigo-500/20 to-purple-500/20',
+					title: 'text-white',
+					description: 'text-indigo-300'
+				};
 		}
 	}
 
@@ -1426,6 +1468,7 @@
 
 			{#if currentVerb}
 				{@const conjugationType = conjugationTypes.find(t => t.name === conjugationForm)}
+				{@const formalityStyles = getFormalityStyles(conjugationType?.formality)}
 				<!-- Question -->
 				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
 					<p class="text-sm text-slate-400 mb-2">Elige la conjugación correcta desde el verbo diccionario</p>
@@ -1439,12 +1482,12 @@
 					
 					<!-- Tipo de conjugación solicitado -->
 					<div class="max-w-md mx-auto mb-4">
-						<div class="rounded-xl bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/50 p-4">
-							<div class="text-lg font-bold text-white mb-1">
+						<div class={`rounded-xl ${formalityStyles.container} p-4`}>
+							<div class={`text-lg font-bold mb-1 ${formalityStyles.title}`}>
 								{conjugationForm}
 							</div>
 							{#if conjugationType}
-								<div class="text-sm text-indigo-300">
+								<div class={`text-sm ${formalityStyles.description}`}>
 									{conjugationType.description}
 								</div>
 							{/if}
