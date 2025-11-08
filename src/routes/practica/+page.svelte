@@ -1788,14 +1788,14 @@
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
 					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}</div>
 					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-purple-500/20 text-purple-400 border-purple-500/50">
-						{currentVerb.type === 'godan' ? 'Godan' : currentVerb.type === 'ichidan' ? 'Ichidan' : 'Irregular'}
+						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
 					</span>
 				</div>
 
 				{#if !showAnswer}
 					<div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center">
 						<p class="text-slate-300 mb-8">
-							Piensa en las conjugaciones JLPT N5 de este verbo (formales ます形 e informales 普通形)
+							Piensa en las conjugaciones de este verbo
 						</p>
 						<button
 							onclick={() => showAnswer = true}
