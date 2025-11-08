@@ -1214,6 +1214,9 @@
 							</div>
 							<div class="text-2xl text-slate-300 mb-2">{currentVerb.kana}</div>
 							<div class="text-lg text-slate-400">{currentVerb.romaji}</div>
+							<span class="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold border border-purple-500/50 bg-purple-500/20 text-purple-300">
+								{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+							</span>
 							<button
 								onclick={(e) => {
 									e.stopPropagation();
@@ -1229,9 +1232,12 @@
 
 						<!-- Back -->
 						<div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl border-2 border-green-500 bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-8 flex flex-col items-center justify-center text-center">
-							<div class="text-4xl font-bold text-white mb-8">
+							<div class="text-4xl font-bold text-white mb-4">
 								{currentVerb.translation.meaning}
 							</div>
+							<span class="mb-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+								{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+							</span>
 							{#if currentVerb.translation.examples.length > 0}
 								<div class="space-y-3 w-full">
 									<div class="relative text-sm text-slate-300 bg-slate-900/50 rounded-xl p-4 border border-slate-800">
@@ -1319,8 +1325,11 @@
 					<div class="text-5xl font-bold text-white mb-3">
 						{currentVerb.kanji}
 					</div>
-					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
+					<div class="text-2xl text-slate-300 mb-2">{currentVerb.kana}</div>
 					<div class="text-lg text-slate-400">{currentVerb.romaji}</div>
+					<span class="mt-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					</span>
 					<button
 						onclick={() => speak(currentVerb!.kanji || currentVerb!.kana)}
 						class="mt-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
@@ -1412,14 +1421,14 @@
 							disabled={selectedAnswer !== null}
 							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
 								selectedAnswer === null
-									? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
-									: selectedAnswer === option
-										? option === currentVerb.translation.meaning
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-red-500 bg-red-500/20 text-red-400'
-										: option === currentVerb.translation.meaning
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-slate-800 bg-slate-900/50 text-slate-500'
+								? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
+								: selectedAnswer === option
+									? option === currentVerb.translation.meaning
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-red-500 bg-red-500/20 text-red-400'
+									: option === currentVerb.translation.meaning
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'
 							}"
 						>
 							{option}
@@ -1479,6 +1488,9 @@
 					</div>
 					<div class="text-xl text-slate-300 mb-1">{currentVerb.kana}</div>
 					<div class="text-base text-slate-400 mb-4">({currentVerb.translation.meaning})</div>
+					<span class="mb-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					</span>
 					
 					<!-- Tipo de conjugación solicitado -->
 					<div class="max-w-md mx-auto mb-4">
@@ -1510,20 +1522,20 @@
 							disabled={selectedAnswer !== null}
 							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
 								selectedAnswer === null
-									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
-									: selectedAnswer === option
-										? (() => {
-											const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
-											return option === correctAnswer
-												? 'border-green-500 bg-green-500/20 text-green-400'
-												: 'border-red-500 bg-red-500/20 text-red-400';
-										})()
-										: (() => {
-											const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
-											return option === correctAnswer
-												? 'border-green-500 bg-green-500/20 text-green-400'
-												: 'border-slate-800 bg-slate-900/50 text-slate-500';
-										})()
+								? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
+								: selectedAnswer === option
+									? (() => {
+										const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
+										return option === correctAnswer
+											? 'border-green-500 bg-green-500/20 text-green-400'
+											: 'border-red-500 bg-red-500/20 text-red-400';
+									})()
+									: (() => {
+										const correctAnswer = currentConjugations.find(c => c.label === conjugationForm)?.kana || currentVerb.kana;
+										return option === correctAnswer
+											? 'border-green-500 bg-green-500/20 text-green-400'
+											: 'border-slate-800 bg-slate-900/50 text-slate-500';
+									})()
 							}"
 						>
 							<div class="text-2xl font-medium">{option}</div>
@@ -1586,6 +1598,9 @@
 						Verbo base: <span class="text-slate-300">{currentVerb.kanji}</span> 
 						<span class="text-slate-500">({currentVerb.translation.meaning})</span>
 					</div>
+					<span class="mb-3 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					</span>
 					
 					{#if conjugationTranslation}
 						<div class="text-base text-indigo-300 mb-4">
