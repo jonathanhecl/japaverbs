@@ -39,7 +39,7 @@ export interface UserProfile {
 		timesReviewed: number; 
 		correctCount: number;
 		incorrectCount: number;
-		masteryScore: number; // -5 (muy difícil) a +5 (dominado)
+		masteryScore: number; // -5 (muy difícil) a +10 (dominado completo)
 		nextReviewDate: string; // Fecha para próxima revisión espaciada
 	}>;
 	dailyHistory: DailyProgress[];
@@ -137,7 +137,7 @@ function createUserStore() {
 			const newLevel = Math.floor(newXP / 100) + 1;
 			return { ...profile, xp: newXP, level: newLevel };
 		}),
-		recordPractice: (verbId: string, correct: boolean, incrementSessionCount: boolean = true) => update(profile => {
+		recordPractice: (verbId: string, correct: boolean, incrementSessionCount: boolean = true, difficultyMultiplier: number = 1) => update(profile => {
 			const today = getLocalDateString();
 			const studiedVerb = profile.studiedVerbs[verbId] || {
 				lastStudied: today,
@@ -151,47 +151,54 @@ function createUserStore() {
 			studiedVerb.timesReviewed++;
 			studiedVerb.lastStudied = today;
 			
-			// Sistema de puntuación simplificado:
-			// Cada respuesta correcta suma +1 punto
-			// Al llegar a 4 puntos = Dominio completo
-			// Errores restan según nivel actual (ver abajo)
+			// Sistema de puntuación diferenciado por dificultad:
+			// difficultyMultiplier varía según el tipo de práctica:
+			// - Flashcards básicas: 0.5 (más fácil, menos puntos)
+			// - Verb Type Quiz: 0.75
+			// - Multiple Choice/Listening: 1.0 (estándar)
+			// - Conjugation Flashcards: 1.5
+			// - Conjugation Quiz/Inverse: 2.0 (más difícil, más puntos)
+			// Al llegar a 10 puntos = Dominio completo
 			if (correct) {
 				studiedVerb.correctCount++;
-				// Incrementar mastery score hasta máximo 5
-				studiedVerb.masteryScore = Math.min(5, studiedVerb.masteryScore + 1);
+				// Incrementar mastery score hasta máximo 10, aplicando el multiplicador de dificultad
+				const pointsGained = difficultyMultiplier;
+				studiedVerb.masteryScore = Math.min(10, studiedVerb.masteryScore + pointsGained);
 			} else {
 				studiedVerb.incorrectCount++;
-				// Lógica de penalización según nivel actual
-				if (studiedVerb.masteryScore >= 4) {
-					// Error desde dominio (4-5): baja a 2 (la mitad)
-					studiedVerb.masteryScore = 2;
-				} else if (studiedVerb.masteryScore >= 1) {
-					// Segundo error: baja a cero
-					studiedVerb.masteryScore = 0;
+				// Lógica de penalización más indulgente según nivel actual
+				if (studiedVerb.masteryScore >= 8) {
+					// Error desde dominio alto (8-10): baja 2 puntos (a nivel 6)
+					studiedVerb.masteryScore = Math.max(6, studiedVerb.masteryScore - 2);
+				} else if (studiedVerb.masteryScore >= 4) {
+					// Error desde nivel medio (4-7): baja 1 punto
+					studiedVerb.masteryScore = Math.max(0, studiedVerb.masteryScore - 1);
+				} else if (studiedVerb.masteryScore >= 0) {
+					// Error en nivel bajo (0-3): baja 0.5 puntos (más indulgente al aprender)
+					studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 0.5);
 				} else {
-					// Tercer error o más: negativo para repaso inmediato
+					// Error en nivel negativo: baja 1 punto (necesita repaso urgente)
 					studiedVerb.masteryScore = Math.max(-5, studiedVerb.masteryScore - 1);
 				}
 			}
 
 			// Calcular próxima fecha de revisión usando repetición espaciada
-			// Intervalos basados en mastery score:
+			// Intervalos basados en mastery score (escala de -5 a 10):
 			// -5 a -3: 0 días (revisar inmediatamente)
 			// -2 a -1: 1 día
-			// 0: 2 días
-			// 1: 3 días
-			// 2: 5 días
-			// 3: 8 días
-			// 4: 13 días
-			// 5: 21 días
+			// 0-1: 2 días
+			// 2-3: 4 días
+			// 4-5: 7 días
+			// 6-7: 14 días
+			// 8-9: 21 días
+			// 10: 30 días (máximo dominio)
 			const intervalDays = studiedVerb.masteryScore <= -3 ? 0 :
-				studiedVerb.masteryScore === -2 ? 1 :
-				studiedVerb.masteryScore === -1 ? 1 :
-				studiedVerb.masteryScore === 0 ? 2 :
-				studiedVerb.masteryScore === 1 ? 3 :
-				studiedVerb.masteryScore === 2 ? 5 :
-				studiedVerb.masteryScore === 3 ? 8 :
-				studiedVerb.masteryScore === 4 ? 13 : 21;
+				studiedVerb.masteryScore <= -1 ? 1 :
+				studiedVerb.masteryScore <= 1 ? 2 :
+				studiedVerb.masteryScore <= 3 ? 4 :
+				studiedVerb.masteryScore <= 5 ? 7 :
+				studiedVerb.masteryScore <= 7 ? 14 :
+				studiedVerb.masteryScore <= 9 ? 21 : 30;
 			
 			const nextDate = new Date();
 			nextDate.setDate(nextDate.getDate() + intervalDays);
@@ -286,17 +293,19 @@ function createUserStore() {
 export const userProfile = createUserStore();
 
 // Helper para calcular porcentaje de dominio de un verbo
-// masteryScore va de -5 a +5, lo convertimos a 0-100%
+// masteryScore va de -5 a +10, lo convertimos a 0-100%
 export function getMasteryPercentage(masteryScore: number): number {
-	return Math.round(((masteryScore + 5) / 10) * 100);
+	return Math.round(((masteryScore + 5) / 15) * 100);
 }
 
-// Helper para obtener el nivel de dominio
+// Helper para obtener el nivel de dominio (escala de -5 a 10)
 export function getMasteryLevel(masteryScore: number): { label: string; color: string } {
 	if (masteryScore <= -3) return { label: 'Muy difícil', color: 'text-red-400' };
 	if (masteryScore <= -1) return { label: 'Difícil', color: 'text-orange-400' };
-	if (masteryScore === 0) return { label: 'Nuevo', color: 'text-slate-400' };
-	if (masteryScore <= 2) return { label: 'Aprendiendo', color: 'text-yellow-400' };
-	if (masteryScore <= 3) return { label: 'Bueno', color: 'text-blue-400' };
+	if (masteryScore <= 1) return { label: 'Nuevo', color: 'text-slate-400' };
+	if (masteryScore <= 3) return { label: 'Aprendiendo', color: 'text-yellow-400' };
+	if (masteryScore <= 5) return { label: 'Progresando', color: 'text-yellow-300' };
+	if (masteryScore <= 7) return { label: 'Bueno', color: 'text-blue-400' };
+	if (masteryScore <= 9) return { label: 'Casi dominado', color: 'text-green-300' };
 	return { label: 'Dominado', color: 'text-green-400' };
 }

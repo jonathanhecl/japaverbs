@@ -473,10 +473,11 @@
 				// Listo para revisión: base de 500
 				priority = 500;
 				// Agregar bonus según dificultad (más difícil = más prioridad)
-				priority += (5 - masteryScore) * 50; // -5 score = +500, +5 score = +0
+				// Nueva escala: -5 a 10, entonces usamos (10 - masteryScore) * 30
+				priority += (10 - masteryScore) * 30; // -5 score = +450, +10 score = +0
 			} else {
 				// No es momento de revisión, pero verbos difíciles aún tienen prioridad
-				priority = Math.max(0, (5 - masteryScore) * 20); // -5 score = +200, +5 score = +0
+				priority = Math.max(0, (10 - masteryScore) * 15); // -5 score = +225, +10 score = +0
 			}
 			
 			return { verb, priority };
@@ -713,7 +714,8 @@
 			userProfile.addXP(5);
 		}
 		
-		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession);
+		// Flashcards básicas: multiplicador 0.5 (fácil)
+		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession, 0.5);
 		
 		// Guardar resultado
 		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -741,7 +743,8 @@
 			feedbackHint = '';
 			correctCount++;
 			userProfile.addXP(10);
-			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
+			// Multiple Choice: multiplicador 1.0 (estándar)
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 1.0);
 			
 			// Auto-leer verbo si está habilitado
 			if (autoReadVerbs) {
@@ -768,7 +771,8 @@
 			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb.translation.meaning}`;
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
+			// Multiple Choice error: multiplicador 1.0 (estándar)
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 1.0);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -801,8 +805,9 @@
 		
 		if (correct) {
 			correctCount++;
-			userProfile.addXP(15);
-			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
+			userProfile.addXP(20);
+			// Conjugation Quiz: multiplicador 2.0 (difícil)
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -823,7 +828,8 @@
 			feedbackHint = '';
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
+			// Conjugation Quiz error: multiplicador 2.0 (difícil)
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -862,8 +868,9 @@
 		
 		if (correct) {
 			correctCount++;
-			userProfile.addXP(15);
-			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
+			userProfile.addXP(20);
+			// Inverse Conjugation Quiz: multiplicador 2.0 (difícil)
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -886,7 +893,8 @@
 			}
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
+			// Inverse Conjugation Quiz error: multiplicador 2.0 (difícil)
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -936,7 +944,9 @@
 		if (correct) {
 			correctCount++;
 			feedback = '¡Correcto!';
-			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession);
+			userProfile.addXP(8);
+			// Verb Type Quiz: multiplicador 0.75 (medio-fácil)
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 0.75);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -957,7 +967,8 @@
 			feedbackHint = correctExplanation;
 			showErrorOverlay = true;
 			
-			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession);
+			// Verb Type Quiz error: multiplicador 0.75 (medio-fácil)
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 0.75);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
@@ -993,7 +1004,8 @@
 			}
 		}
 		
-		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession);
+		// Conjugation Flashcards: multiplicador 1.5 (medio-alto)
+		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession, 1.5);
 		
 		// Guardar resultado
 		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
