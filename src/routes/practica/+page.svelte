@@ -544,7 +544,11 @@
 		feedbackHint = '';
 		autoPlayedExample = false;
 		autoReadTriggered = false;
-		questionCount++;
+		
+		// No incrementar questionCount en verb-matching, se maneja en validateMatchingPage
+		if (currentMode !== 'verb-matching') {
+			questionCount++;
+		}
 		
 		// Update conjugations when verb changes
 		if (currentVerb) {
@@ -692,7 +696,7 @@
 
 	// Auto-leer verbos cuando está habilitado
 	$effect(() => {
-		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'verb-matching' || autoReadTriggered) {
+		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'verb-matching' || currentMode === 'results' || autoReadTriggered) {
 			return;
 		}
 
@@ -2313,7 +2317,7 @@
 					onclick={retryGame}
 					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
 				>
-					🔄 Reintentar
+					🔄 Volver a hacer
 				</button>
 			</div>
 
