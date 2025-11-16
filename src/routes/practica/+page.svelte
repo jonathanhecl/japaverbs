@@ -6,7 +6,7 @@
 	import { getCurrentVerbs } from '$lib/data/verbs';
 	import { languageStore } from '$lib/stores/language';
 
-	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'verb-matching' | 'results';
+	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'meaning-to-verb' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'verb-matching' | 'results';
 
 	interface VerbResult {
 		verb: VerbWithTranslation;
@@ -356,22 +356,31 @@
 			order: 3
 		},
 		{
+			id: 'meaning-to-verb',
+			title: 'Opción múltiple inversa',
+			description: 'Elige el verbo correcto desde el significado (significado -> verbo)',
+			icon: '🔄',
+			color: 'from-cyan-500 to-blue-500',
+			difficulty: 'Medio',
+			order: 4
+		},
+		{
 			id: 'verb-matching',
 			title: 'Emparejamiento',
 			description: 'Conecta cada verbo con su significado correcto',
 			icon: '🔗',
 			color: 'from-teal-500 to-cyan-500',
 			difficulty: 'Medio',
-			order: 4
+			order: 5
 		},
 		{
 			id: 'listening',
 			title: 'Opción múltiple (solo escucha)',
 			description: 'Identifica el verbo que escuchas (verbo -> significado)',
-			icon: '🔊',
+			icon: '👂',
 			color: 'from-orange-500 to-red-500',
 			difficulty: 'Medio',
-			order: 5
+			order: 6
 		},
 		{
 			id: 'conjugation',
@@ -557,6 +566,8 @@
 
 		if (currentMode === 'multiple-choice' || currentMode === 'listening') {
 			generateOptions();
+		} else if (currentMode === 'meaning-to-verb') {
+			generateMeaningToVerbOptions();
 		} else if (currentMode === 'conjugation-quiz') {
 			generateConjugationQuiz();
 		} else if (currentMode === 'inverse-conjugation-quiz') {
@@ -576,6 +587,19 @@
 		const wrongAnswers = shuffleArray(otherVerbs)
 			.slice(0, 3)
 			.map(v => v.translation.meaning);
+		
+		options = shuffleArray([correctAnswer, ...wrongAnswers]);
+	}
+
+	function generateMeaningToVerbOptions() {
+		if (!currentVerb) return;
+		
+		// The correct answer is the verb itself (kanji + kana)
+		const correctAnswer = `${currentVerb.kanji} (${currentVerb.kana})`;
+		const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
+		const wrongAnswers = shuffleArray(otherVerbs)
+			.slice(0, 3)
+			.map(v => `${v.kanji} (${v.kana})`);
 		
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
@@ -696,7 +720,7 @@
 
 	// Auto-leer verbos cuando está habilitado
 	$effect(() => {
-		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'verb-matching' || currentMode === 'results' || autoReadTriggered) {
+		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'verb-matching' || currentMode === 'results' || currentMode === 'meaning-to-verb' || autoReadTriggered) {
 			return;
 		}
 
@@ -771,14 +795,12 @@
 			userProfile.addXP(10);
 			// Multiple Choice: multiplicador 1.0 (estándar)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 1.0);
-			
 			// Auto-leer verbo si está habilitado
 			if (autoReadVerbs) {
 				setTimeout(() => {
 					speak(currentVerb!.kanji || currentVerb!.kana);
 				}, 300);
 			}
-			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -787,7 +809,6 @@
 				previousMastery,
 				newMastery
 			});
-			
 			// Mostrar botón verde por 1 segundo antes de pasar al siguiente
 			setTimeout(() => {
 				currentIndex++;
@@ -796,10 +817,61 @@
 		} else {
 			feedback = `Incorrecto. La respuesta correcta es: ${currentVerb.translation.meaning}`;
 			showErrorOverlay = true;
-			
 			// Multiple Choice error: multiplicador 1.0 (estándar)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 1.0);
-			
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: false,
+				previousMastery,
+				newMastery
+			});
+			// El overlay se cerrará al tocar en cualquier parte
+		}
+	}
+
+	function handleMeaningToVerbAnswer(answer: string) {
+		if (!currentVerb || selectedAnswer) return;
+		
+		selectedAnswer = answer;
+		const correctAnswer = `${currentVerb.kanji} (${currentVerb.kana})`;
+		const correct = answer === correctAnswer;
+		
+		// Guardar mastery score previo
+		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+		const queueSpeakAnswer = () => {
+			setTimeout(() => {
+				speak(currentVerb!.kanji || currentVerb!.kana);
+			}, 300);
+		};
+		
+		if (correct) {
+			feedbackHint = '';
+			correctCount++;
+			userProfile.addXP(10);
+			// Meaning to Verb: multiplicador 1.0 (medio, estándar)
+			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 1.0);
+			queueSpeakAnswer();
+			// Guardar resultado
+			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
+			sessionResults.push({
+				verb: currentVerb,
+				correct: true,
+				previousMastery,
+				newMastery
+			});
+			// Mostrar botón verde por 1 segundo antes de pasar al siguiente
+			setTimeout(() => {
+				currentIndex++;
+				loadNextQuestion();
+			}, 1000);
+		} else {
+			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
+			showErrorOverlay = true;
+			queueSpeakAnswer();
+			// Meaning to Verb error: multiplicador 1.0 (medio, estándar)
+			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 1.0);
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -821,13 +893,6 @@
 		
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
-		// Leer la respuesta correcta siempre que está habilitada la auto-lectura
-		if (autoReadVerbs) {
-			setTimeout(() => {
-				speak(correctAnswer);
-			}, 300);
-		}
 		
 		if (correct) {
 			correctCount++;
@@ -853,6 +918,13 @@
 			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
 			feedbackHint = '';
 			showErrorOverlay = true;
+			
+			// Reproducir la conjugación correcta cuando hay error
+			if (autoReadVerbs) {
+				setTimeout(() => {
+					speak(correctAnswer);
+				}, 300);
+			}
 			
 			// Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
@@ -885,13 +957,6 @@
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 		
-		// Leer la forma conjugada en japonés siempre que está habilitada la auto-lectura
-		if (autoReadVerbs) {
-			setTimeout(() => {
-				speak(selectedConjugation?.kana || currentVerb!.kana);
-			}, 300);
-		}
-		
 		if (correct) {
 			correctCount++;
 			userProfile.addXP(20);
@@ -918,6 +983,13 @@
 				feedbackHint = conjugationType.description;
 			}
 			showErrorOverlay = true;
+			
+			// Reproducir la forma conjugada correcta cuando hay error
+			if (autoReadVerbs) {
+				setTimeout(() => {
+					speak(selectedConjugation?.kana || currentVerb!.kana);
+				}, 300);
+			}
 			
 			// Inverse Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
@@ -1536,6 +1608,81 @@
 					<button
 						onclick={() => currentMode = 'menu'}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
+					>
+						Volver al menú
+					</button>
+				</div>
+			{/if}
+		</section>
+
+	{:else if currentMode === 'meaning-to-verb'}
+		<!-- Meaning to Verb Game -->
+		<section class="space-y-6">
+			<!-- Header -->
+			<div class="flex items-center justify-between">
+				<button
+					onclick={exitGame}
+					class="text-slate-400 hover:text-white transition-colors"
+				>
+					← Salir
+				</button>
+				<div class="flex items-center gap-4">
+					{#if showTimer}
+						<div class="text-sm text-slate-400 font-mono">
+							⏱️ {formatTime(timerSeconds)}
+						</div>
+					{/if}
+					<div class="text-sm text-slate-400">
+						{currentIndex + 1} / {gameVerbs.length}
+					</div>
+				</div>
+			</div>
+
+			{#if currentVerb}
+				<!-- Question -->
+				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
+					<p class="text-sm text-slate-400 mb-4">¿Qué verbo significa?</p>
+					<div class="text-3xl font-bold text-white mb-4">
+						{currentVerb.translation.meaning}
+					</div>
+					<div class="text-sm text-slate-500 mb-2">
+						Tipo: {currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					</div>
+				</div>
+
+				<!-- Options -->
+				<div class="grid gap-3">
+					{#each options as option}
+						{@const correctAnswer = `${currentVerb.kanji} (${currentVerb.kana})`}
+						<button
+							onclick={() => handleMeaningToVerbAnswer(option)}
+							disabled={selectedAnswer !== null}
+							class="rounded-2xl border-2 p-4 text-lg font-medium transition-all active:scale-95 {
+								selectedAnswer === null
+								? 'border-slate-800 bg-slate-900/70 text-white hover:border-cyan-500'
+								: selectedAnswer === option
+									? option === correctAnswer
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-red-500 bg-red-500/20 text-red-400'
+									: option === correctAnswer
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'
+							}"
+						>
+							<div class="text-xl font-medium">{option}</div>
+						</button>
+					{/each}
+				</div>
+			{:else}
+				<div class="text-center py-20">
+					<div class="text-6xl mb-4">🎉</div>
+					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
+					<p class="text-slate-400 mb-6">
+						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+					</p>
+					<button
+						onclick={() => currentMode = 'menu'}
+						class="rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
 					</button>
