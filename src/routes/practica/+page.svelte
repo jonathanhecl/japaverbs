@@ -1482,9 +1482,9 @@
 					<div class="text-3xl font-bold text-white mb-4">
 						{currentVerb.translation.meaning}
 					</div>
-					<div class="text-sm text-slate-500 mb-2">
-						Tipo: {currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
-					</div>
+					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
+						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					</span>
 				</div>
 
 				<!-- Options -->
