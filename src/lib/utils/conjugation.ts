@@ -113,6 +113,8 @@ function conjugateGodan(verb: VerbWithTranslation) {
 
   const teForm = handleGodanExceptionTe(`${stem}${rule.te}`, verb);
   const taForm = handleGodanExceptionTa(`${stem}${rule.ta}`, verb);
+  // Extraer la raíz de teForm sin て para formas derivadas
+  const teStem = teForm.slice(0, -1);
 
   return {
     // Formales (ます形)
@@ -122,9 +124,9 @@ function conjugateGodan(verb: VerbWithTranslation) {
     masuPastNegative: `${stem}${rule.masu}ませんでした`,
     invitation: `${stem}${rule.masu}ましょう`,
     desireFormal: `${stem}${rule.masu}たいです`,
-    permission: `${stem}${rule.te}もいいです`,
-    prohibition: `${stem}${rule.te}はいけません`,
-    progressiveFormal: `${stem}${rule.te}います`,
+    permission: `${teForm}もいいです`,
+    prohibition: `${teForm}はいけません`,
+    progressiveFormal: `${teForm}います`,
     
     // Informales (普通形)
     dictionary: kana,
@@ -135,7 +137,7 @@ function conjugateGodan(verb: VerbWithTranslation) {
     invitationInformal: `${stem}${rule.masu}よう`,
     request: teForm,
     negativeRequest: `${stem}${rule.nai}ないで`,
-    progressiveInformal: `${stem}${rule.te}いる`
+    progressiveInformal: `${teStem}いる`
   };
 }
 

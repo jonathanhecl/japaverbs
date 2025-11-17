@@ -255,14 +255,14 @@
             ]},
             { step: '3. Cambia para formas informales', examples: [
               'く → か + ない → 行かない (ikanai)',
-              'く → いた → 行った (itta)',
-              'く → いなかった → 行かなかった (ikanakatta)'
+              'く → った → 行った (itta) - Excepción de 行く',
+              'く → か + なかった → 行かなかった (ikanakatta)'
             ]},
             { step: '4. Forma te especial', examples: [
-              'く → いて → 行って (itte)',
-              'Formas especiales con て: 行きたい/行きたいです, 行こう, 行っている/行っています'
+              'く → って → 行って (itte) - Excepción de 行く',
+              'Formas especiales: 行きたい/行きたいです, 行こう, 行っている/行っています'
             ]},
-            { step: '5. Atención a irregularidades', note: 'Los verbos que terminan en -gu/-su/-tsu/-nu/-bu/-mu/-ru tienen cambios específicos en la forma te.' }
+            { step: '5. Atención a irregularidades', note: 'Los verbos que terminan en -ku/-gu/-su/-tsu/-nu/-bu/-mu/-ru tienen cambios específicos en la forma te. 行く es una excepción: su forma te es 行って (no 行いて).' }
           ]
         },
         {
@@ -283,7 +283,7 @@
               forms: [
                 { form: 'Formales', result: 'きます/きません/きました/きませんでした' },
                 { form: 'Informales', result: 'くる/こない/きた/こなかった' },
-                { form: 'Especiales', result: 'きたい/きたいです/きよう/きて/こないで/きている/きています' }
+                { form: 'Especiales', result: 'きたい/きたいです/こよう/きて/こないで/きている/きています' }
               ]
             }
           ]

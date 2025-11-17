@@ -206,7 +206,7 @@
 		{ 
 			key: 'negativeRequest', 
 			formality: 'informal', 
-			name: 'Petición negativa',
+			name: 'Negación de acción',
 			shortName: 'No hagas',
 			description: 'Pedir que no se haga algo',
 			example: 'する → しないで (no hagas)'
@@ -356,7 +356,7 @@
 		{
 			id: 'conjugation-quiz',
 			title: 'Quiz de conjugación',
-			description: 'Elige la conjugación correcta desde el verbo diccionario',
+			description: 'Elige la conjugación correcta desde el verbo diccionario (verbo -> conjugación)',
 			icon: '🎯',
 			color: 'from-indigo-500 to-purple-500',
 			difficulty: 'Difícil',
@@ -365,7 +365,7 @@
 		{
 			id: 'inverse-conjugation-quiz',
 			title: 'Quiz de conjugación inversa',
-			description: 'Identifica el tipo de conjugación desde el verbo conjugado',
+			description: 'Identifica el tipo de conjugación desde el verbo conjugado (conjugación -> verbo)',
 			icon: '🔄',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Difícil',
@@ -577,14 +577,14 @@
 		conjugationForm = selected.name;
 		conjugationFormality = selected.formality;
 		
-		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
+		const selectedConjugation = currentConjugations.find(c => c.label === selected.name);
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada
 		conjugationTranslation = selectedConjugation?.translation || currentVerb.translation.meaning;
 		
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
-		const otherForms = conjugationTypes.filter(f => f.key !== selected.key);
+		const otherForms = conjugationTypes.filter(f => f.key !== selected.key && (selected.key === 'dictionary' || f.key !== 'dictionary'));
 		const wrongAnswers: string[] = [];
 		
 		for (const formObj of otherForms) {
@@ -593,6 +593,20 @@
 				wrongAnswers.push(conj.kana);
 			}
 			if (wrongAnswers.length >= 3) break;
+		}
+		
+		// Si no hay suficientes conjugaciones diferentes, completar con formas de otros verbos
+		if (wrongAnswers.length < 3) {
+			const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
+			for (const verb of otherVerbs) {
+				if (wrongAnswers.length >= 3) break;
+				// Generar conjugaciones en tiempo real para el otro verbo
+				const verbConjugations = conjugateVerb(verb);
+				const verbConj = verbConjugations.find(c => c.key === selected.key);
+				if (verbConj && verbConj.kana !== correctConjugation && !wrongAnswers.includes(verbConj.kana)) {
+					wrongAnswers.push(verbConj.kana);
+				}
+			}
 		}
 		
 		options = shuffleArray([correctConjugation, ...wrongAnswers]);
@@ -606,7 +620,7 @@
 		conjugationForm = selected.name;
 		conjugationFormality = selected.formality;
 		
-		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
+		const selectedConjugation = currentConjugations.find(c => c.label === selected.name);
 		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
 		
 		// Guardar la traducción de la forma seleccionada para mostrar información adicional
@@ -616,7 +630,7 @@
 		const correctAnswer = selected.name;
 		
 		// Generar opciones incorrectas usando NOMBRES de OTRAS CONJUGACIONES
-		const otherForms = conjugationTypes.filter(f => f.key !== selected.key);
+		const otherForms = conjugationTypes.filter(f => f.key !== selected.key && (selected.key === 'dictionary' || f.key !== 'dictionary'));
 		const wrongAnswers: string[] = [];
 		
 		// Mezclar y seleccionar 3 opciones incorrectas
@@ -695,14 +709,13 @@
 			if (currentMode === 'inverse-conjugation-quiz') {
 				const selectedConjugation = currentConjugations.find((c) => c.label === conjugationForm);
 				textToSpeak = selectedConjugation?.kana || currentVerb!.kana;
+				// Reproducir la conjugación específica, no el verbo base
+				speak(textToSpeak);
 			} else {
 				textToSpeak = currentVerb!.kanji || currentVerb!.kana;
-			}
-
-			if (textToSpeak) {
 				speakVerb(currentVerb);
-				autoReadTriggered = true;
 			}
+			autoReadTriggered = true;
 		}, 800);
 
 		return () => clearTimeout(timer);
@@ -865,6 +878,11 @@
 			// Conjugation Quiz: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
 			
+			// Leer la conjugación correcta
+			setTimeout(() => {
+				speak(correctAnswer);
+			}, 300);
+			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -884,12 +902,10 @@
 			feedbackHint = '';
 			showErrorOverlay = true;
 			
-			// Reproducir la conjugación correcta cuando hay error
-			if (autoReadVerbs) {
-				setTimeout(() => {
-					speakVerb(currentVerb);
-				}, 300);
-			}
+			// SIEMPRE reproducir la conjugación correcta cuando hay error
+			setTimeout(() => {
+				speak(correctAnswer);
+			}, 300);
 			
 			// Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
@@ -949,12 +965,7 @@
 			}
 			showErrorOverlay = true;
 			
-			// Reproducir la forma conjugada correcta cuando hay error
-			if (autoReadVerbs) {
-				setTimeout(() => {
-					speakVerb(currentVerb);
-				}, 300);
-			}
+			// NO reproducir audio en el quiz inverso cuando hay error, solo mostrar el mensaje
 			
 			// Inverse Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
@@ -1766,7 +1777,7 @@
 					</div>
 					
 					<button
-						onclick={() => speakVerb(currentVerb)}
+						onclick={() => speak(selectedConjugation?.kana || currentVerb!.kana)}
 						class="p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
