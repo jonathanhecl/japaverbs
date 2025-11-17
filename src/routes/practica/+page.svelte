@@ -6,7 +6,7 @@
 	import { getCurrentVerbs } from '$lib/data/verbs';
 	import { languageStore } from '$lib/stores/language';
 
-	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'meaning-to-verb' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'verb-matching' | 'results';
+	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'meaning-to-verb' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'results';
 
 	interface VerbResult {
 		verb: VerbWithTranslation;
@@ -69,17 +69,6 @@
 
 	let currentConjugations = $state<ConjugationEntry[]>([]);
 	let isRetrySession = $state(false);
-	
-	// Verb Matching state
-	let matchingVerbs = $state<VerbWithTranslation[]>([]);
-	let matchingMeanings = $state<string[]>([]);
-	let selectedMatches = $state<Map<number, number>>(new Map());
-	let selectedVerbIndex = $state<number | null>(null);
-	let matchingCurrentPage = $state(0);
-	let matchingTotalPages = $state(0);
-	let matchingPageVerbs = $state<VerbWithTranslation[]>([]);
-	let matchingPageResults = $state<{ verb: VerbWithTranslation; correct: boolean; selectedMeaning: string; correctMeaning: string }[]>([]);
-	let showingResults = $state(false);
 
 	// Lista completa de tipos de conjugaciones con información descriptiva
 	const conjugationTypes: ConjugationType[] = [
@@ -360,33 +349,6 @@
 			title: 'Opción múltiple inversa',
 			description: 'Elige el verbo correcto desde el significado (significado -> verbo)',
 			icon: '🔄',
-			color: 'from-cyan-500 to-blue-500',
-			difficulty: 'Medio',
-			order: 4
-		},
-		{
-			id: 'verb-matching',
-			title: 'Emparejamiento',
-			description: 'Conecta cada verbo con su significado correcto',
-			icon: '🔗',
-			color: 'from-teal-500 to-cyan-500',
-			difficulty: 'Medio',
-			order: 5
-		},
-		{
-			id: 'listening',
-			title: 'Opción múltiple (solo escucha)',
-			description: 'Identifica el verbo que escuchas (verbo -> significado)',
-			icon: '👂',
-			color: 'from-orange-500 to-red-500',
-			difficulty: 'Medio',
-			order: 6
-		},
-		{
-			id: 'conjugation',
-			title: 'Tarjetas de conjugación',
-			description: 'Aprende las conjugaciones con tarjetas interactivas',
-			icon: '🎴',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Medio',
 			order: 6
@@ -562,10 +524,7 @@
 		autoPlayedExample = false;
 		autoReadTriggered = false;
 		
-		// No incrementar questionCount en verb-matching, se maneja en validateMatchingPage
-		if (currentMode !== 'verb-matching') {
-			questionCount++;
-		}
+		questionCount++;
 		
 		// Update conjugations when verb changes
 		if (currentVerb) {
@@ -582,8 +541,6 @@
 			generateInverseConjugationQuiz();
 		} else if (currentMode === 'verb-type-quiz') {
 			generateVerbTypeQuiz();
-		} else if (currentMode === 'verb-matching') {
-			generateMatchingPage();
 		}
 	}
 
@@ -728,7 +685,7 @@
 
 	// Auto-leer verbos cuando está habilitado
 	$effect(() => {
-		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'verb-matching' || currentMode === 'results' || currentMode === 'meaning-to-verb' || autoReadTriggered) {
+		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'results' || currentMode === 'meaning-to-verb' || autoReadTriggered) {
 			return;
 		}
 
@@ -1014,134 +971,6 @@
 		}
 	}
 
-	function generateMatchingPage() {
-		if (matchingCurrentPage === 0) {
-			// Primera vez: preparar todos los verbos y calcular páginas
-			matchingVerbs = [...gameVerbs];
-			matchingTotalPages = Math.ceil(matchingVerbs.length / 5);
-		}
-		
-		// Obtener verbos para la página actual
-		const startIdx = matchingCurrentPage * 5;
-		const endIdx = Math.min(startIdx + 5, matchingVerbs.length);
-		matchingPageVerbs = matchingVerbs.slice(startIdx, endIdx);
-		
-		// Generar significados mezclados para esta página
-		matchingMeanings = shuffleArray(
-			matchingPageVerbs.map(v => v.translation.meaning)
-		);
-		
-		// Resetear selecciones y resultados
-		selectedMatches = new Map();
-		selectedVerbIndex = null;
-		showingResults = false;
-		matchingPageResults = [];
-	}
-	
-	function handleMatchingVerbClick(verbIndex: number) {
-		if (selectedVerbIndex === verbIndex) {
-			// Deseleccionar si se hace clic de nuevo
-			selectedVerbIndex = null;
-		} else {
-			selectedVerbIndex = verbIndex;
-		}
-	}
-	
-	function handleMatchingMeaningClick(meaningIndex: number) {
-		if (selectedVerbIndex === null) return;
-		
-		// Verificar si este significado ya está emparejado
-		const alreadyMatched = Array.from(selectedMatches.values()).includes(meaningIndex);
-		if (alreadyMatched) {
-			// Encontrar qué verbo tenía este significado y eliminarlo
-			for (const [vIdx, mIdx] of selectedMatches.entries()) {
-				if (mIdx === meaningIndex) {
-					selectedMatches.delete(vIdx);
-					break;
-				}
-			}
-		}
-		
-		// Crear nuevo emparejamiento
-		selectedMatches.set(selectedVerbIndex, meaningIndex);
-		selectedMatches = new Map(selectedMatches); // Trigger reactivity
-		selectedVerbIndex = null;
-	}
-	
-	function validateMatchingPage() {
-		// Verificar que todos los verbos estén emparejados
-		if (selectedMatches.size !== matchingPageVerbs.length) {
-			return;
-		}
-		
-		// Validar cada emparejamiento
-		let pageCorrectCount = 0;
-		matchingPageResults = [];
-		
-		matchingPageVerbs.forEach((verb, verbIdx) => {
-			const meaningIdx = selectedMatches.get(verbIdx);
-			if (meaningIdx === undefined) return;
-			
-			const selectedMeaning = matchingMeanings[meaningIdx];
-			const correctMeaning = verb.translation.meaning;
-			const correct = selectedMeaning === correctMeaning;
-			
-			// Guardar resultado para mostrar con más detalles
-			matchingPageResults.push({ 
-				verb, 
-				correct, 
-				selectedMeaning, 
-				correctMeaning 
-			});
-			
-			// Guardar mastery score previo
-			const previousMastery = $userProfile.studiedVerbs[verb.kanji]?.masteryScore ?? 0;
-			
-			if (correct) {
-				pageCorrectCount++;
-				correctCount++;
-				userProfile.addXP(10);
-			}
-			
-			// Verb Matching: multiplicador 1.0 (medio, estándar)
-			userProfile.recordPractice(verb.kanji, correct, !isRetrySession, 1.0);
-			
-			// Guardar resultado
-			const newMastery = $userProfile.studiedVerbs[verb.kanji]?.masteryScore ?? 0;
-			sessionResults.push({
-				verb,
-				correct,
-				previousMastery,
-				newMastery
-			});
-		});
-		
-		// Ordenar resultados: correctos arriba, incorrectos abajo
-		matchingPageResults.sort((a, b) => {
-			if (a.correct === b.correct) return 0;
-			return a.correct ? -1 : 1;
-		});
-		
-		// Incrementar contador de preguntas (1 por verbo emparejado)
-		questionCount += matchingPageVerbs.length;
-		
-		// Mostrar resultados en lugar de popup
-		showingResults = true;
-	}
-	
-	function proceedToNextPage() {
-		showingResults = false;
-		matchingCurrentPage++;
-		
-		if (matchingCurrentPage < matchingTotalPages) {
-			generateMatchingPage();
-		} else {
-			// Resetear para la próxima vez
-			matchingCurrentPage = 0;
-			finishGame();
-		}
-	}
-	
 	function handleVerbTypeQuizAnswer(answer: string) {
 		if (!currentVerb || selectedAnswer) return;
 		
@@ -1772,263 +1601,7 @@
 				</div>
 			{/if}
 		</section>
-
-	{:else if currentMode === 'verb-matching'}
-		<!-- Verb Matching Game -->
-		<section class="space-y-6">
-			<!-- Header -->
-			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
-					← Salir
-				</button>
-				<div class="flex items-center gap-4">
-					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
-							⏱️ {formatTime(timerSeconds)}
-						</div>
-					{/if}
-					<div class="text-sm text-slate-400">
-						Página {matchingCurrentPage + 1} / {matchingTotalPages}
-					</div>
-				</div>
-			</div>
-
-			<!-- Instrucciones -->
-			<div class="rounded-2xl border border-teal-500/30 bg-teal-500/10 p-4 text-center">
-				<p class="text-sm text-teal-200">
-					🔗 Empareja cada verbo con su significado correcto. Toca un verbo y luego su significado.
-				</p>
-			</div>
-
-			{#if !showingResults}
-				<!-- Botón de validación (arriba para móvil) -->
-				<div class="mb-4">
-					<button
-						onclick={validateMatchingPage}
-						disabled={selectedMatches.size !== matchingPageVerbs.length}
-						class="w-full rounded-2xl border-2 p-4 text-lg font-semibold transition-all active:scale-95 {
-							selectedMatches.size === matchingPageVerbs.length
-								? 'border-teal-500 bg-gradient-to-r from-teal-500 to-cyan-500 text-white hover:shadow-lg hover:shadow-teal-500/50'
-								: 'border-slate-800 bg-slate-900/50 text-slate-500 cursor-not-allowed'
-						}"
-					>
-						{#if matchingCurrentPage < matchingTotalPages - 1}
-							Siguiente página →
-						{:else}
-							✓ Finalizar
-						{/if}
-					</button>
-				</div>
-
-				<!-- Matching Grid -->
-				<div class="grid md:grid-cols-2 gap-6">
-					<!-- Verbos (izquierda) -->
-					<div class="space-y-3">
-						<h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">Verbos</h3>
-						{#each matchingPageVerbs as verb, verbIdx}
-							{@const isSelected = selectedVerbIndex === verbIdx}
-							{@const isMatched = selectedMatches.has(verbIdx)}
-							<div class="relative">
-								<button
-									onclick={() => handleMatchingVerbClick(verbIdx)}
-									class="w-full rounded-xl border-2 p-4 text-left transition-all active:scale-95 {
-										isSelected
-											? 'border-teal-500 bg-teal-500/20 shadow-lg shadow-teal-500/30'
-											: isMatched
-												? 'border-green-500/50 bg-green-500/10'
-												: 'border-slate-800 bg-slate-900/70 hover:border-teal-500/50'
-									}"
-								>
-									<div class="flex items-center justify-between gap-3 pr-12">
-										<div class="flex-1">
-											<div class="text-2xl font-bold text-white mb-1">{verb.kanji}</div>
-											<div class="text-base text-slate-300">{verb.kana}</div>
-											<div class="text-sm text-slate-400">{verb.romaji}</div>
-										</div>
-									</div>
-									{#if isMatched}
-										<div class="mt-2 flex items-center gap-1 text-xs text-green-400">
-											<span>✓</span>
-											<span>Emparejado</span>
-										</div>
-									{/if}
-								</button>
-								<button
-									onclick={(e) => {
-										e.stopPropagation();
-										speakVerb(verb);
-									}}
-									class="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-800 transition-colors text-xl z-10"
-									type="button"
-								>
-									🔊
-								</button>
-							</div>
-						{/each}
-					</div>
-
-					<!-- Significados (derecha) -->
-					<div class="space-y-3">
-						<h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wide mb-2">Significados</h3>
-						{#each matchingMeanings as meaning, meaningIdx}
-							{@const isMatchedToThis = Array.from(selectedMatches.values()).includes(meaningIdx)}
-							<button
-								onclick={() => handleMatchingMeaningClick(meaningIdx)}
-								disabled={selectedVerbIndex === null}
-								class="w-full rounded-xl border-2 p-4 text-left transition-all active:scale-95 {
-									isMatchedToThis
-										? 'border-green-500/50 bg-green-500/10'
-										: selectedVerbIndex !== null
-											? 'border-slate-800 bg-slate-900/70 hover:border-teal-500/50 cursor-pointer'
-											: 'border-slate-800 bg-slate-900/50 text-slate-500 cursor-not-allowed'
-								}"
-							>
-								<div class="text-lg font-medium {isMatchedToThis ? 'text-white' : selectedVerbIndex !== null ? 'text-white' : 'text-slate-500'}">
-									{meaning}
-								</div>
-								{#if isMatchedToThis}
-									<div class="mt-2 flex items-center gap-1 text-xs text-green-400">
-										<span>✓</span>
-										<span>Seleccionado</span>
-									</div>
-								{/if}
-							</button>
-						{/each}
-					</div>
-				</div>
-			{:else}
-				<!-- Botón de continuar (arriba) -->
-				<div class="mb-4">
-					<button
-						onclick={proceedToNextPage}
-						class="w-full rounded-2xl border-2 border-teal-500 bg-gradient-to-r from-teal-500 to-cyan-500 p-4 text-lg font-semibold text-white hover:shadow-lg hover:shadow-teal-500/50 transition-all active:scale-95"
-					>
-						{#if matchingCurrentPage < matchingTotalPages - 1}
-							Continuar →
-						{:else}
-							Ver resultados finales
-						{/if}
-					</button>
-				</div>
-
-				<!-- Resultados en pares -->
-				<div class="space-y-6">
-					<!-- Correctos -->
-					{#if matchingPageResults.some(r => r.correct)}
-						<div class="space-y-3">
-							<h3 class="text-base font-semibold text-green-400 mb-3 flex items-center gap-2">
-								<span>✅</span>
-								<span>Correctos ({matchingPageResults.filter(r => r.correct).length})</span>
-							</h3>
-							<div class="space-y-2">
-								{#each matchingPageResults.filter(r => r.correct) as result}
-									<div class="rounded-xl border border-green-500/20 bg-green-500/5 p-4">
-										<div class="flex items-center justify-between">
-											<div class="flex items-center gap-3">
-												<span class="text-2xl font-bold text-white">{result.verb.kanji}</span>
-												<span class="text-slate-300">{result.verb.kana}</span>
-											</div>
-											<div class="flex items-center gap-3">
-												<div class="text-right">
-													<div class="text-lg font-medium text-green-400">{result.correctMeaning}</div>
-													<div class="text-xs text-green-400">✓ Correcto</div>
-												</div>
-												<button
-													onclick={() => speakVerb(result.verb)}
-													class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-xl"
-													type="button"
-												>
-													🔊
-												</button>
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-						</div>
-					{/if}
-
-					<!-- Incorrectos -->
-					{#if matchingPageResults.some(r => !r.correct)}
-						<div class="space-y-3">
-							<h3 class="text-base font-semibold text-red-400 mb-3 flex items-center gap-2">
-								<span>❌</span>
-								<span>Incorrectos ({matchingPageResults.filter(r => !r.correct).length})</span>
-							</h3>
-							<div class="space-y-2">
-								{#each matchingPageResults.filter(r => !r.correct) as result}
-									<div class="rounded-xl border border-red-500/20 bg-red-500/5 p-4">
-										<div class="flex items-center justify-between mb-2">
-											<div class="flex items-center gap-3">
-												<span class="text-2xl font-bold text-white">{result.verb.kanji}</span>
-												<span class="text-slate-300">{result.verb.kana}</span>
-												<button
-													onclick={() => speakVerb(result.verb)}
-													class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-xl"
-													type="button"
-												>
-													🔊
-												</button>
-											</div>
-										</div>
-										<div class="grid grid-cols-2 gap-4 text-sm">
-											<div>
-												<span class="text-slate-400">Seleccionaste:</span>
-												<div class="text-red-400 font-medium">{result.selectedMeaning}</div>
-											</div>
-											<div>
-												<span class="text-slate-400">Correcto era:</span>
-												<div class="text-green-400 font-medium">{result.correctMeaning}</div>
-											</div>
-										</div>
-									</div>
-								{/each}
-							</div>
-						</div>
-					{/if}
-				</div>
-			{/if}
-
-			<!-- Progreso y botón de validación -->
-			<div class="space-y-3">
-				{#if !showingResults}
-					<div class="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-						<div class="flex items-center justify-between mb-2">
-							<span class="text-sm text-slate-400">Emparejamientos completados</span>
-							<span class="text-sm font-bold text-white">{selectedMatches.size} / {matchingPageVerbs.length}</span>
-						</div>
-						<div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-							<div 
-								class="h-full bg-gradient-to-r from-teal-500 to-cyan-500 transition-all duration-300"
-								style="width: {(selectedMatches.size / matchingPageVerbs.length) * 100}%"
-							></div>
-						</div>
-					</div>
-				{:else}
-					<!-- Botón de continuar (abajo para fácil acceso) -->
-					<div class="rounded-xl border border-slate-800 bg-slate-900/70 p-4">
-						<div class="flex items-center justify-between">
-							<span class="text-sm text-slate-400">
-								{matchingPageResults.filter(r => r.correct).length} / {matchingPageResults.length} correctas
-							</span>
-							<button
-								onclick={proceedToNextPage}
-								class="rounded-xl border-2 border-teal-500 bg-gradient-to-r from-teal-500 to-cyan-500 px-6 py-3 text-sm font-semibold text-white hover:shadow-lg hover:shadow-teal-500/50 transition-all active:scale-95"
-							>
-								{#if matchingCurrentPage < matchingTotalPages - 1}
-									Continuar →
-								{:else}
-									Ver resultados finales
-								{/if}
-							</button>
-						</div>
-					</div>
-				{/if}
-			</div>
-		</section>
+		<!-- End of Listening Game -->
 
 	{:else if currentMode === 'conjugation-quiz'}
 		<!-- Conjugation Quiz Game -->
