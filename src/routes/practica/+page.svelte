@@ -76,7 +76,7 @@
 		{ 
 			key: 'masuPresent', 
 			formality: 'formal', 
-			name: 'Presente formal (ます)',
+			name: 'Presente formal',
 			shortName: 'Presente formal',
 			description: 'Acción que ocurre ahora o habitualmente (formal)',
 			example: 'する → します (hago)'
@@ -84,7 +84,7 @@
 		{ 
 			key: 'masuPresentNegative', 
 			formality: 'formal', 
-			name: 'Presente negativo formal (ません)',
+			name: 'Presente negativo formal',
 			shortName: 'Negativo formal',
 			description: 'Acción que NO ocurre (formal)',
 			example: 'する → しません (no hago)'
@@ -92,7 +92,7 @@
 		{ 
 			key: 'masuPast', 
 			formality: 'formal', 
-			name: 'Pasado formal (ました)',
+			name: 'Pasado formal',
 			shortName: 'Pasado formal',
 			description: 'Acción que ocurrió en el pasado (formal)',
 			example: 'する → しました (hice)'
@@ -100,7 +100,7 @@
 		{ 
 			key: 'masuPastNegative', 
 			formality: 'formal', 
-			name: 'Pasado negativo formal (ませんでした)',
+			name: 'Pasado negativo formal',
 			shortName: 'Pasado negativo formal',
 			description: 'Acción que NO ocurrió en el pasado (formal)',
 			example: 'する → しませんでした (no hice)'
@@ -108,7 +108,7 @@
 		{ 
 			key: 'invitation', 
 			formality: 'formal', 
-			name: 'Invitación (ましょう)',
+			name: 'Invitación',
 			shortName: 'Invitación',
 			description: 'Para invitar o sugerir hacer algo juntos',
 			example: 'する → しましょう (hagamos)'
@@ -116,7 +116,7 @@
 		{ 
 			key: 'desireFormal', 
 			formality: 'formal', 
-			name: 'Deseo formal (たいです)',
+			name: 'Deseo formal',
 			shortName: 'Deseo formal',
 			description: 'Expresar que quieres hacer algo (formal)',
 			example: 'する → したいです (quiero hacer)'
@@ -124,7 +124,7 @@
 		{ 
 			key: 'permission', 
 			formality: 'formal', 
-			name: 'Permiso (てもいいです)',
+			name: 'Permiso',
 			shortName: 'Permiso',
 			description: 'Pedir permiso o indicar que está permitido',
 			example: 'する → してもいいです (puedo hacer)'
@@ -132,7 +132,7 @@
 		{ 
 			key: 'prohibition', 
 			formality: 'formal', 
-			name: 'Prohibición (てはいけません)',
+			name: 'Prohibición',
 			shortName: 'Prohibición',
 			description: 'Indicar que algo está prohibido',
 			example: 'する → してはいけません (no se puede hacer)'
@@ -140,7 +140,7 @@
 		{ 
 			key: 'progressiveFormal', 
 			formality: 'formal', 
-			name: 'Progresivo formal (ています)',
+			name: 'Progresivo formal',
 			shortName: 'Progresivo formal',
 			description: 'Acción en progreso o estado continuo (formal)',
 			example: 'する → しています (estoy haciendo)'
@@ -150,7 +150,7 @@
 		{ 
 			key: 'dictionary', 
 			formality: 'informal', 
-			name: 'Forma diccionario (普通形)',
+			name: 'Forma diccionario',
 			shortName: 'Forma diccionario',
 			description: 'Forma básica del verbo (presente/futuro informal)',
 			example: 'する → する (hacer/haré)'
@@ -158,7 +158,7 @@
 		{ 
 			key: 'plainNegative', 
 			formality: 'informal', 
-			name: 'Negativo informal (ない)',
+			name: 'Negativo informal',
 			shortName: 'Negativo informal',
 			description: 'Acción que NO ocurre (informal)',
 			example: 'する → しない (no hago)'
@@ -166,7 +166,7 @@
 		{ 
 			key: 'plainPast', 
 			formality: 'informal', 
-			name: 'Pasado informal (た)',
+			name: 'Pasado informal',
 			shortName: 'Pasado informal',
 			description: 'Acción que ocurrió en el pasado (informal)',
 			example: 'する → した (hice)'
@@ -174,7 +174,7 @@
 		{ 
 			key: 'plainPastNegative', 
 			formality: 'informal', 
-			name: 'Pasado negativo informal (なかった)',
+			name: 'Pasado negativo informal',
 			shortName: 'Pasado negativo informal',
 			description: 'Acción que NO ocurrió en el pasado (informal)',
 			example: 'する → しなかった (no hice)'
@@ -182,7 +182,7 @@
 		{ 
 			key: 'desireInformal', 
 			formality: 'informal', 
-			name: 'Deseo informal (たい)',
+			name: 'Deseo informal',
 			shortName: 'Deseo informal',
 			description: 'Expresar que quieres hacer algo (informal)',
 			example: 'する → したい (quiero hacer)'
@@ -190,7 +190,7 @@
 		{ 
 			key: 'invitationInformal', 
 			formality: 'informal', 
-			name: 'Invitación informal (よう)',
+			name: 'Invitación informal',
 			shortName: 'Invitación informal',
 			description: 'Sugerir hacer algo juntos (informal)',
 			example: 'する → しよう (hagamos)'
@@ -198,7 +198,7 @@
 		{ 
 			key: 'request', 
 			formality: 'informal', 
-			name: 'Forma て (て)',
+			name: 'Forma て',
 			shortName: 'Forma て',
 			description: 'Para pedir, conectar acciones o dar órdenes suaves',
 			example: 'する → して (haz/haciendo)'
@@ -206,7 +206,7 @@
 		{ 
 			key: 'negativeRequest', 
 			formality: 'informal', 
-			name: 'Petición negativa (ないで)',
+			name: 'Petición negativa',
 			shortName: 'No hagas',
 			description: 'Pedir que no se haga algo',
 			example: 'する → しないで (no hagas)'
@@ -214,7 +214,7 @@
 		{ 
 			key: 'progressiveInformal', 
 			formality: 'informal', 
-			name: 'Progresivo informal (ている)',
+			name: 'Progresivo informal',
 			shortName: 'Progresivo informal',
 			description: 'Acción en progreso o estado continuo (informal)',
 			example: 'する → している (estoy haciendo)'
@@ -1482,9 +1482,6 @@
 					<div class="text-3xl font-bold text-white mb-4">
 						{currentVerb.translation.meaning}
 					</div>
-					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
-						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
-					</span>
 				</div>
 
 				<!-- Options -->
