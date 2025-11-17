@@ -633,11 +633,19 @@
 		conjugationForm = selected.name;
 		conjugationFormality = selected.formality;
 		
-		const selectedConjugation = currentConjugations.find(c => c.label === selected.name);
-		const correctConjugation = selectedConjugation?.kana || currentVerb.kana;
+		// Buscar la conjugación correcta por key (no por label)
+		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
+		
+		// Validación: si no encontramos la conjugación, hay un error grave
+		if (!selectedConjugation) {
+			console.error(`No se encontró conjugación para key: ${selected.key}, verb: ${currentVerb.kanji}`);
+			return;
+		}
+		
+		const correctConjugation = selectedConjugation.kana;
 		
 		// Guardar la traducción de la forma seleccionada para mostrar información adicional
-		conjugationTranslation = selectedConjugation?.translation || currentVerb.translation.meaning;
+		conjugationTranslation = selectedConjugation.translation || currentVerb.translation.meaning;
 		
 		// La respuesta correcta es el NOMBRE del tipo de conjugación
 		const correctAnswer = selected.name;
@@ -653,6 +661,11 @@
 		}
 		
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
+		
+		// Auto-reproducir audio del verbo conjugado al cargar la pregunta
+		setTimeout(() => {
+			speak(correctConjugation);
+		}, 500);
 	}
 
 	function generateVerbTypeQuiz() {
@@ -719,23 +732,24 @@
 			currentMode === 'results' ||
 			currentMode === 'meaning-to-verb' ||
 			currentMode === 'conjugation-quiz' ||
+			currentMode === 'inverse-conjugation-quiz' ||
 			autoReadTriggered
 		) {
 			return;
 		}
 
 		const timer = setTimeout(() => {
-			let textToSpeak: string | undefined;
-
 			if (currentMode === 'inverse-conjugation-quiz') {
-				const selectedConjugation = currentConjugations.find((c) => c.label === conjugationForm);
-				textToSpeak = selectedConjugation?.kana || currentVerb!.kana;
-				// Reproducir la conjugación específica, no el verbo base
-				speak(textToSpeak);
-			} else {
-				textToSpeak = currentVerb!.kanji || currentVerb!.kana;
-				speakVerb(currentVerb);
+				const selectedType = conjugationTypes.find((t) => t.name === conjugationForm);
+				const selectedConjugation = currentConjugations.find((c) => c.key === selectedType?.key);
+				if (selectedConjugation?.kana) {
+					speak(selectedConjugation.kana);
+					autoReadTriggered = true;
+				}
+				return;
 			}
+			const textToSpeak = currentVerb!.kanji || currentVerb!.kana;
+			speak(textToSpeak);
 			autoReadTriggered = true;
 		}, 800);
 
@@ -963,7 +977,7 @@
 		const correct = answer === correctAnswer;
 		
 		// Obtener info adicional de la conjugación seleccionada
-		const selectedConjugation = currentConjugations.find(c => c.label === conjugationForm);
+		const selectedConjugation = currentConjugations.find(c => c.key === conjugationTypes.find(t => t.name === conjugationForm)?.key);
 		const conjugationType = conjugationTypes.find(t => t.name === conjugationForm);
 		
 		// Guardar mastery score previo
@@ -975,6 +989,11 @@
 			// Inverse Conjugation Quiz: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
 			
+			// Reproducir la conjugación correcta antes de pasar al siguiente
+			if (selectedConjugation) {
+				speak(selectedConjugation.kana);
+			}
+			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -984,11 +1003,11 @@
 				newMastery
 			});
 			
-			// Mostrar botón verde por 1 segundo antes de pasar al siguiente
+			// Mostrar botón verde por 1.5 segundos antes de pasar al siguiente
 			setTimeout(() => {
 				currentIndex++;
 				loadNextQuestion();
-			}, 1000);
+			}, 1500);
 		} else {
 			feedback = `Incorrecto. La respuesta correcta es:\n${correctAnswer}`;
 			if (conjugationType) {
@@ -996,7 +1015,12 @@
 			}
 			showErrorOverlay = true;
 			
-			// NO reproducir audio en el quiz inverso cuando hay error, solo mostrar el mensaje
+			// Reproducir la conjugación correcta inmediatamente
+			if (selectedConjugation) {
+				setTimeout(() => {
+					speak(selectedConjugation.kana);
+				}, 200);
+			}
 			
 			// Inverse Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
@@ -1786,75 +1810,83 @@
 			</div>
 
 			{#if currentVerb}
-				{@const selectedConjugation = currentConjugations.find(c => c.label === conjugationForm)}
-				<!-- Question -->
-				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
-					<p class="text-sm text-slate-400 mb-2">Identifica el tipo de conjugación desde el verbo conjugado</p>
+				{@const selectedConjugation = currentConjugations.find(c => c.key === conjugationTypes.find(t => t.name === conjugationForm)?.key)}
+				{@const conjugationType = conjugationTypes.find(t => t.name === conjugationForm)}
+				{@const formalityStyles = getFormalityStyles(conjugationType?.formality)}
+				
+				<!-- Verbo conjugado mostrado -->
+				<div class="rounded-3xl border-2 border-slate-700 bg-slate-900/80 p-6 text-center">
+					<p class="text-xs uppercase tracking-wider text-slate-500 mb-3">Verbo conjugado</p>
 					
-					<!-- Verbo conjugado mostrado -->
-					<div class="text-5xl font-bold text-white mb-3">
-						{selectedConjugation?.kana || currentVerb.kana}
+					<div class="flex items-center justify-center gap-4 mb-3">
+						<div>
+							<div class="text-5xl font-bold text-white mb-2">
+								{selectedConjugation?.kana || currentVerb.kana}
+							</div>
+						</div>
+						
+						<button
+							onclick={() => speak(selectedConjugation?.kana || currentVerb!.kana)}
+							class="flex-shrink-0 p-4 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 text-2xl shadow-lg"
+							aria-label="Reproducir pronunciación"
+						>
+							🔊
+						</button>
 					</div>
 					
 					<!-- Info del verbo base y significado -->
-					<div class="text-base text-slate-400 mb-1">
+					<div class="text-base text-slate-400 mb-3">
 						Verbo base: <span class="text-slate-300">{currentVerb.kanji}</span> 
 						<span class="text-slate-500">({currentVerb.translation.meaning})</span>
 					</div>
-					<span class="mb-3 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+					
+					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
 						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
 					</span>
-					
-					{#if conjugationTranslation}
-						<div class="text-base text-indigo-300 mb-4">
-							Significado: {conjugationTranslation}
-						</div>
-					{/if}
-					
-					<!-- Pregunta clara -->
-					<div class="max-w-md mx-auto mb-4">
-						<div class="rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/50 p-3">
+				</div>
+				
+				<!-- Tipo de conjugación solicitado -->
+				<div class="rounded-3xl border-2 border-indigo-500/50 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 p-6 text-center">
+					<p class="text-xs uppercase tracking-wider text-slate-400 mb-2">¿Qué tipo de conjugación es?</p>
+					<div class="max-w-md mx-auto">
+						<div class="rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/50 p-4">
 							<div class="text-sm font-semibold text-purple-200">
-								¿Qué tipo de conjugación es?
+								Elige el tipo de conjugación correcto
 							</div>
 						</div>
 					</div>
-					
-					<button
-						onclick={() => speak(selectedConjugation?.kana || currentVerb!.kana)}
-						class="p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
-					>
-						🔊
-					</button>
 				</div>
 
-				<!-- Options -->
-				<div class="grid gap-3">
-					{#each options as option}
-						<button
-							onclick={() => handleInverseConjugationQuizAnswer(option)}
-							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
-								selectedAnswer === null
-									? 'border-slate-800 bg-slate-900/70 text-white hover:border-purple-500'
-									: selectedAnswer === option
-										? (() => {
-											const correctAnswer = conjugationForm;
-											return option === correctAnswer
-												? 'border-green-500 bg-green-500/20 text-green-400'
-												: 'border-red-500 bg-red-500/20 text-red-400';
-										})()
-										: (() => {
-											const correctAnswer = conjugationForm;
-											return option === correctAnswer
-												? 'border-green-500 bg-green-500/20 text-green-400'
-												: 'border-slate-800 bg-slate-900/50 text-slate-500';
-										})()
-							}"
-						>
-							<div class="text-base font-medium leading-tight">{option}</div>
-						</button>
-					{/each}
+				<!-- Opciones de respuesta -->
+				<div>
+					<p class="text-sm text-slate-400 mb-3 text-center">Elige el tipo de conjugación correcto:</p>
+					<div class="grid gap-3">
+						{#each options as option}
+							{@const correctAnswer = conjugationForm}
+							{@const isCorrect = option === correctAnswer}
+							{@const isSelected = selectedAnswer === option}
+							<button
+								onclick={() => handleInverseConjugationQuizAnswer(option)}
+								disabled={selectedAnswer !== null}
+								class="rounded-2xl border-2 p-5 transition-all active:scale-95 {
+									selectedAnswer === null
+									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500 hover:bg-slate-800'
+									: isSelected
+										? isCorrect
+											? 'border-green-500 bg-green-500/20 text-green-300 shadow-lg shadow-green-500/20'
+											: 'border-red-500 bg-red-500/20 text-red-300 shadow-lg shadow-red-500/20'
+										: isCorrect
+											? 'border-green-500 bg-green-500/20 text-green-300 shadow-lg shadow-green-500/20'
+											: 'border-slate-800 bg-slate-900/30 text-slate-600'
+								}"
+							>
+								<div class="text-xl font-bold">{option}</div>
+								{#if selectedAnswer !== null && isCorrect}
+									<div class="text-xs text-green-400 mt-2">✓ Respuesta correcta</div>
+								{/if}
+							</button>
+						{/each}
+					</div>
 				</div>
 			{:else}
 				<div class="text-center py-20">
