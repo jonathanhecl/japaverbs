@@ -712,7 +712,15 @@
 
 	// Auto-leer verbos cuando está habilitado
 	$effect(() => {
-		if (!autoReadVerbs || !currentVerb || currentMode === 'listening' || currentMode === 'results' || currentMode === 'meaning-to-verb' || autoReadTriggered) {
+		if (
+			!autoReadVerbs ||
+			!currentVerb ||
+			currentMode === 'listening' ||
+			currentMode === 'results' ||
+			currentMode === 'meaning-to-verb' ||
+			currentMode === 'conjugation-quiz' ||
+			autoReadTriggered
+		) {
 			return;
 		}
 
@@ -901,7 +909,8 @@
 			// Conjugation Quiz: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
 			
-			// No reproducir audio aquí (se reproduce al cargar siguiente pregunta)
+			// Reproducir la conjugación correcta antes de pasar al siguiente
+			speak(correctAnswer);
 			
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
