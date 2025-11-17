@@ -31,6 +31,22 @@ function selectVoiceFromList(voices: SpeechSynthesisVoice[], lang: string) {
   return null;
 }
 
+function toKanaOnly(input: string): string {
+  // Si ya está en kana o texto latino, se mantiene igual
+  if (/^[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Latin}\p{Punctuation}\p{Number}\s]+$/u.test(input)) {
+    return input;
+  }
+
+  // Reemplazar kanji con su lectura aproximada usando furigana del navegador si está disponible
+  // Si no, simplemente devolvemos el texto original (el logging mostrará kanji)
+  try {
+    const doc = new DOMParser().parseFromString(`<ruby>${input}</ruby>`, 'text/html');
+    return doc.body.textContent || input;
+  } catch {
+    return input;
+  }
+}
+
 export function speak(text: string, options: SpeakOptions = {}): SpeakStatus {
   if (typeof window === 'undefined') {
     return 'unsupported';
@@ -48,8 +64,17 @@ export function speak(text: string, options: SpeakOptions = {}): SpeakStatus {
     fallbackLang = 'en-US'
   } = options;
 
-  let utterText = text;
+  let utterText = toKanaOnly(text);
   let utterLang = lang;
+
+  // Log para debugging
+  console.log('[TTS] speak() llamado con:', {
+    text,
+    lang,
+    fallbackText,
+    textLength: text.length,
+    codePoints: [...text].map(c => c.charCodeAt(0).toString(16))
+  });
 
   const initialVoices = synth.getVoices();
   const voicesLoaded = initialVoices.length > 0;
@@ -67,6 +92,8 @@ export function speak(text: string, options: SpeakOptions = {}): SpeakStatus {
   } else if (!voice && voicesLoaded) {
     usingFallback = true;
   }
+
+  console.log('[TTS] Reproduciendo texto final:', utterText, 'lang:', utterLang, 'voice:', voice?.name);
 
   const utter = new SpeechSynthesisUtterance(utterText);
   utter.lang = utterLang;

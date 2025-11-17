@@ -31,7 +31,6 @@ languageStore.subscribe(async (language) => {
 
 // Exportar función para obtener verbos actualizados
 export function getCurrentVerbs(): VerbWithTranslation[] {
-	console.log('📊 getCurrentVerbs() llamado, devuelve:', loadedVerbs.length, 'verbos');
 	if (loadedVerbs.length === 0) {
 		console.warn('⚠️ ADVERTENCIA: getCurrentVerbs() devuelve array vacío');
 	}

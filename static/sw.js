@@ -1,7 +1,7 @@
 const CACHE_VERSION = 'v20251019';
 const CACHE_NAME = `japaverbs-static-${CACHE_VERSION}`;
 const DATA_CACHE_NAME = `japaverbs-data-${CACHE_VERSION}`;
-const DATA_PATHS = ['/verbs_n5_0.json', '/verbs_n5_1.json'];
+const DATA_PATHS = ['/verbs_n5_0_clean.json', '/verbs_n5_1_clean.json'];
 const ASSETS_TO_CACHE = [
   '/',
   '/diccionario',

@@ -540,6 +540,14 @@
 		return shuffled;
 	}
 
+	function speakVerb(verb?: VerbWithTranslation | null) {
+		if (!verb) return;
+		const text = verb.kana || verb.kanji;
+		if (!text) return;
+		console.log('[TTS] Reproduciendo', text, 'desde', verb.kanji || verb.kana);
+		speak(text);
+	}
+
 	function loadNextQuestion() {
 		if (currentIndex >= gameVerbs.length) {
 			finishGame();
@@ -701,7 +709,7 @@
 			// Auto-leer verbo si está habilitado (además del ejemplo)
 			if (autoReadVerbs && !hasExamples) {
 				setTimeout(() => {
-					speak(currentVerb!.kanji || currentVerb!.kana);
+					speakVerb(currentVerb);
 					autoPlayedExample = true;
 				}, 1200);
 			}
@@ -712,7 +720,7 @@
 	$effect(() => {
 		if (currentMode === 'listening' && currentVerb && !autoPlayedExample) {
 			setTimeout(() => {
-				speak(currentVerb!.kanji || currentVerb!.kana);
+				speakVerb(currentVerb);
 				autoPlayedExample = true;
 			}, 500);
 		}
@@ -735,7 +743,7 @@
 			}
 
 			if (textToSpeak) {
-				speak(textToSpeak);
+				speakVerb(currentVerb);
 				autoReadTriggered = true;
 			}
 		}, 800);
@@ -747,7 +755,7 @@
 	$effect(() => {
 		if (autoReadVerbs && showAnswer && currentVerb && currentMode === 'conjugation' && !autoPlayedExample) {
 			setTimeout(() => {
-				speak(currentVerb!.kanji || currentVerb!.kana);
+				speakVerb(currentVerb);
 				autoPlayedExample = true;
 			}, 500);
 		}
@@ -798,7 +806,7 @@
 			// Auto-leer verbo si está habilitado
 			if (autoReadVerbs) {
 				setTimeout(() => {
-					speak(currentVerb!.kanji || currentVerb!.kana);
+					speakVerb(currentVerb);
 				}, 300);
 			}
 			// Guardar resultado
@@ -842,7 +850,7 @@
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 		const queueSpeakAnswer = () => {
 			setTimeout(() => {
-				speak(currentVerb!.kanji || currentVerb!.kana);
+				speakVerb(currentVerb);
 			}, 300);
 		};
 		
@@ -922,7 +930,7 @@
 			// Reproducir la conjugación correcta cuando hay error
 			if (autoReadVerbs) {
 				setTimeout(() => {
-					speak(correctAnswer);
+					speakVerb(currentVerb);
 				}, 300);
 			}
 			
@@ -987,7 +995,7 @@
 			// Reproducir la forma conjugada correcta cuando hay error
 			if (autoReadVerbs) {
 				setTimeout(() => {
-					speak(selectedConjugation?.kana || currentVerb!.kana);
+					speakVerb(currentVerb);
 				}, 300);
 			}
 			
@@ -1163,7 +1171,7 @@
 		// Leer la respuesta correcta siempre que está habilitada la auto-lectura
 		if (autoReadVerbs) {
 			setTimeout(() => {
-				currentVerb && speak(currentVerb.kanji || currentVerb.kana);
+				currentVerb && speakVerb(currentVerb);
 			}, 300);
 		}
 		
@@ -1209,7 +1217,7 @@
 
 	function handleListeningPlay() {
 		if (!currentVerb) return;
-		speak(currentVerb.kanji || currentVerb.kana);
+		speakVerb(currentVerb);
 	}
 
 	function handleConjugationAnswer(knew: boolean) {
@@ -1225,7 +1233,7 @@
 			// Auto-leer verbo si está habilitado
 			if (autoReadVerbs) {
 				setTimeout(() => {
-					speak(currentVerb!.kanji || currentVerb!.kana);
+					speakVerb(currentVerb);
 				}, 300);
 			}
 		}
@@ -1458,7 +1466,7 @@
 							<button
 								onclick={(e) => {
 									e.stopPropagation();
-									speak(currentVerb!.kanji || currentVerb!.kana);
+									speakVerb(currentVerb);
 								}}
 								class="mt-6 p-3 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-2xl"
 								type="button"
@@ -1484,7 +1492,7 @@
 										<button
 											onclick={(e) => {
 												e.stopPropagation();
-												speak(currentVerb!.translation.examples[0].ja);
+												speakVerb(currentVerb);
 											}}
 											class="absolute top-3 right-3 p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg"
 											type="button"
@@ -1565,11 +1573,11 @@
 					</div>
 					<div class="text-2xl text-slate-300 mb-2">{currentVerb.kana}</div>
 					<div class="text-lg text-slate-400">{currentVerb.romaji}</div>
-					<span class="mt-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+					<span class="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold border border-purple-500/50 bg-purple-500/20 text-purple-300">
 						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
 					</span>
 					<button
-						onclick={() => speak(currentVerb!.kanji || currentVerb!.kana)}
+						onclick={() => speakVerb(currentVerb)}
 						class="mt-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
@@ -1851,7 +1859,7 @@
 								<button
 									onclick={(e) => {
 										e.stopPropagation();
-										speak(verb.kanji || verb.kana);
+										speakVerb(verb);
 									}}
 									class="absolute top-4 right-4 p-2 rounded-lg hover:bg-slate-800 transition-colors text-xl z-10"
 									type="button"
@@ -1929,7 +1937,7 @@
 													<div class="text-xs text-green-400">✓ Correcto</div>
 												</div>
 												<button
-													onclick={() => speak(result.verb.kanji || result.verb.kana)}
+													onclick={() => speakVerb(result.verb)}
 													class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-xl"
 													type="button"
 												>
@@ -1958,7 +1966,7 @@
 												<span class="text-2xl font-bold text-white">{result.verb.kanji}</span>
 												<span class="text-slate-300">{result.verb.kana}</span>
 												<button
-													onclick={() => speak(result.verb.kanji || result.verb.kana)}
+													onclick={() => speakVerb(result.verb)}
 													class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-xl"
 													type="button"
 												>
@@ -2058,7 +2066,7 @@
 					</div>
 					<div class="text-xl text-slate-300 mb-1">{currentVerb.kana}</div>
 					<div class="text-base text-slate-400 mb-4">({currentVerb.translation.meaning})</div>
-					<span class="mb-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
+					<span class="mb-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
 						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
 					</span>
 					
@@ -2077,7 +2085,7 @@
 					</div>
 					
 					<button
-						onclick={() => speak(currentVerb!.kanji || currentVerb!.kana)}
+						onclick={() => speakVerb(currentVerb)}
 						class="p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
@@ -2188,7 +2196,7 @@
 					</div>
 					
 					<button
-						onclick={() => speak(selectedConjugation?.kana || currentVerb!.kana)}
+						onclick={() => speakVerb(currentVerb)}
 						class="p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
@@ -2273,7 +2281,7 @@
 					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
 					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}</div>
 					<button
-						onclick={() => (currentVerb && speak(currentVerb.kanji || currentVerb.kana))}
+						onclick={() => speakVerb(currentVerb)}
 						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
 					>
 						🔊
@@ -2294,14 +2302,14 @@
 							disabled={selectedAnswer !== null}
 							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
 								selectedAnswer === null
-									? 'border-slate-800 bg-slate-900/70 text-white hover:border-amber-500'
-									: selectedAnswer === option
-										? option === correctAnswer
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-red-500 bg-red-500/20 text-red-400'
-										: option === correctAnswer
-											? 'border-green-500 bg-green-500/20 text-green-400'
-											: 'border-slate-800 bg-slate-900/50 text-slate-500'
+								? 'border-slate-800 bg-slate-900/70 text-white hover:border-amber-500'
+								: selectedAnswer === option
+									? option === correctAnswer
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-red-500 bg-red-500/20 text-red-400'
+									: option === correctAnswer
+										? 'border-green-500 bg-green-500/20 text-green-400'
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'
 							}"
 						>
 							<div class="text-2xl font-medium">{option}</div>
@@ -2369,7 +2377,7 @@
 						</p>
 						<button
 							onclick={() => showAnswer = true}
-							class="rounded-2xl bg-indigo-600 hover:bg-indigo-700 px-8 py-3 font-semibold text-white transition-colors"
+							class="rounded-2xl bg-indigo-600 hover:bg-indigo-700 px-8 py-3 font-semibold text-white"
 						>
 							Ver conjugaciones
 						</button>
@@ -2391,7 +2399,7 @@
 											<p class="text-sm text-emerald-400">→ {form.translation}</p>
 										</div>
 										<button
-											onclick={() => speak(form.kana)}
+											onclick={() => speakVerb(currentVerb)}
 											class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-base flex-shrink-0"
 											aria-label="Reproducir"
 										>
@@ -2535,10 +2543,10 @@
 									{/if}
 								</div>
 								<button
-									onclick={() => speak(stats.verb.kanji || stats.verb.kana)}
-									class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg flex-shrink-0"
-									aria-label="Reproducir"
-								>
+							onclick={() => speakVerb(stats.verb)}
+							class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg flex-shrink-0"
+							aria-label="Reproducir"
+						>
 									🔊
 								</button>
 							</div>

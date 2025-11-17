@@ -61,6 +61,12 @@
 	}
 
 	const conjugations = conjugateVerb(verb);
+
+	function speakKana(text: string) {
+		if (!text) return 'unsupported';
+		console.log('[TTS][VerbCard] Reproduciendo:', text);
+		return speak(text);
+	}
 	
 	// Agrupar conjugaciones por categoría según JLPT N5
 	const basicForm = conjugations.filter((form) => form.key === 'dictionary');
@@ -130,7 +136,7 @@
 	$effect(() => {
 		if (isExpanded && !hasAutoPlayed) {
 			setTimeout(() => {
-				speak(verb.kanji || verb.kana);
+				speakKana(verb.kana || verb.kanji);
 				hasAutoPlayed = true;
 			}, 300);
 		}
@@ -142,7 +148,7 @@
 	});
 
 	function handleSpeak() {
-		const status = speak(verb.kanji || verb.kana);
+		const status = speakKana(verb.kana || verb.kanji);
 
 		if (status === 'fallback') {
 			window.open('/tts', '_blank');
@@ -236,7 +242,7 @@
 												<p class="text-xs text-slate-400">{form.description}</p>
 											</div>
 											<button
-												onclick={() => speak(form.kana)}
+												onclick={() => speakKana(form.kana)}
 												class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors text-slate-400 hover:text-white flex-shrink-0"
 												aria-label="Escuchar pronunciación"
 											>
@@ -269,7 +275,7 @@
 												<p class="text-xs text-slate-400">{form.description}</p>
 											</div>
 											<button
-												onclick={() => speak(form.kana)}
+												onclick={() => speakKana(form.kana)}
 												class="p-1.5 rounded-lg hover:bg-slate-700 transition-colors text-slate-400 hover:text-white flex-shrink-0"
 												aria-label="Escuchar pronunciación"
 											>
@@ -298,7 +304,7 @@
 										<p class="text-slate-400 text-sm">{example.es}</p>
 									</div>
 									<button
-										onclick={() => speak(example.ja)}
+										onclick={() => speakKana(example.ja)}
 										class="p-1 rounded hover:bg-slate-700 transition-colors text-sm"
 										aria-label="Reproducir ejemplo"
 									>
