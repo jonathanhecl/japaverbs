@@ -737,6 +737,8 @@
 		if (
 			!autoReadVerbs ||
 			!currentVerb ||
+			currentMode === 'menu' ||
+			currentMode === 'config' ||
 			currentMode === 'listening' ||
 			currentMode === 'results' ||
 			currentMode === 'meaning-to-verb' ||
@@ -763,6 +765,17 @@
 		}, 800);
 
 		return () => clearTimeout(timer);
+	});
+
+	// Cuando volvemos al menú, limpiar el verbo actual y estados de audio
+	$effect(() => {
+		if (currentMode === 'menu') {
+			currentVerb = null;
+			showAnswer = false;
+			selectedAnswer = null;
+			autoPlayedExample = false;
+			autoReadTriggered = false;
+		}
 	});
 
 	// Auto-leer verbo en modo conjugación cuando se muestran las conjugaciones
