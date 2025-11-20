@@ -454,31 +454,34 @@
   <meta name="description" content="Aprende a conjugar verbos godan, ichidan e irregulares con ejemplos prácticos." />
 </svelte:head>
 
-<section class="space-y-8 pb-10">
-  <header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10">
-    <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-      <div class="flex items-center gap-4">
-        <div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
-          🈂️
-        </div>
-        <div>
-          <p class="text-xs uppercase tracking-[0.25em] text-indigo-200">Centro de aprendizaje</p>
-          <h1 class="mt-1 text-3xl font-bold text-white">Guía de verbos japonesa</h1>
-          <p class="mt-1 text-sm text-slate-300 max-w-xl">
-            Comprende cómo se clasifican, se conjugan y se aplican los verbos con ejemplos claros y recursos prácticos.
-          </p>
+  <section class="space-y-8 pb-10">
+    <header class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-900/50 via-slate-900 to-slate-900 p-[1px] shadow-2xl">
+      <div class="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+      <div class="relative rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/50 p-8 backdrop-blur-xl">
+        <div class="flex items-center gap-6">
+          <div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-4xl shadow-inner border border-slate-800">
+            🈂️
+          </div>
+          <div class="space-y-2">
+            <div class="inline-flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-1 text-xs font-bold text-green-300 border border-green-500/20">
+              Guía Completa
+            </div>
+            <h1 class="text-3xl font-black text-white tracking-tight">Guía de verbos</h1>
+            <p class="text-slate-400 max-w-lg leading-relaxed">
+              Comprende cómo se clasifican, se conjugan y se aplican los verbos con ejemplos claros y recursos prácticos.
+            </p>
+          </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
 
-  <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
-    <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-      <div>
-        <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Índice interactivo</p>
-        <h2 class="mt-2 text-2xl font-semibold text-white">Aprende sobre verbos japoneses</h2>
-        <p class="mt-2 text-sm text-slate-400 max-w-2xl">Explora cada tema y profundiza en las tarjetas de referencia para dominar las conjugaciones.</p>
-      </div>
+    <div class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 md:p-8 backdrop-blur-sm">
+      <div class="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-400 font-bold">Índice interactivo</p>
+          <h2 class="mt-2 text-2xl font-bold text-white">Aprende sobre verbos japoneses</h2>
+          <p class="mt-2 text-sm text-slate-400 max-w-2xl">Explora cada tema y profundiza en las tarjetas de referencia para dominar las conjugaciones.</p>
+        </div>
       <div class="flex items-center gap-3">
         <button
           onclick={prevSection}

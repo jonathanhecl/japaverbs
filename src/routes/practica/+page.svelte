@@ -327,6 +327,15 @@
 			order: 1
 		},
 		{
+			id: 'conjugation',
+			title: 'Tarjetas de conjugación',
+			description: 'Estudia todas las formas del verbo antes de responder',
+			icon: '🧠',
+			color: 'from-violet-500 to-indigo-500',
+			difficulty: 'Medio',
+			order: 4
+		},
+		{
 			id: 'verb-type-quiz',
 			title: 'Quiz de tipos de verbos',
 			description: 'Identifica si el verbo es Godan, Ichidan o Irregular',
@@ -1200,46 +1209,46 @@
 
 <div class="pb-6">
 	{#if currentMode === 'menu'}
-		<section class="space-y-8">
-			<header class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 md:px-10 sm:px-4">
-				<div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-					<div class="flex items-center gap-4">
-						<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
+		<section class="space-y-8 pb-10">
+			<header class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-900/50 via-slate-900 to-slate-900 p-[1px] shadow-2xl">
+				<div class="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+				<div class="relative rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/50 p-8 backdrop-blur-xl">
+					<div class="flex items-center gap-6">
+						<div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-4xl shadow-inner border border-slate-800">
 							🎮
 						</div>
-						<div>
-							<p class="text-xs uppercase tracking-[0.25em] text-indigo-200">Centro de práctica</p>
-							<h1 class="mt-1 text-3xl font-bold text-white">Diseña tu sesión perfecta</h1>
-							<p class="mt-1 text-sm text-slate-300 max-w-xl">
-								Combina cantidad de preguntas y modos de juego para reforzar conjugaciones, significado y audio según tus objetivos del día.
+						<div class="space-y-2">
+							<p class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Centro de práctica</p>
+							<h1 class="text-3xl font-black text-white tracking-tight">Diseña tu sesión</h1>
+							<p class="text-slate-400 max-w-lg leading-relaxed">
+								Combina modos de juego para reforzar conjugaciones y vocabulario.
 							</p>
 						</div>
 					</div>
 				</div>
 			</header>
 
-			<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8 sm:px-4 sm:py-4">
-				<div class="grid gap-4">
+			<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-950/50 p-6 md:p-8 sm:px-4 sm:py-4 backdrop-blur-sm">
+				<div class="grid gap-4 sm:grid-cols-2">
 					{#each games as game}
 						<button
 							onclick={() => startGame(game.id as GameMode)}
-							class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-gradient-to-br {game.color} text-left p-[1px] transition-all active:scale-95"
+							class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-6 text-left transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] hover:border-indigo-500/30"
 						>
-							<div class="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-slate-950/90 p-5">
-								<div class="flex items-start gap-4">
-									<div class="text-4xl">{game.icon}</div>
-									<div class="flex-1">
-										<div class="flex items-center justify-between mb-1">
-											<h2 class="text-xl font-semibold text-white">{game.title}</h2>
-											<span class="text-xs px-2 py-1 rounded-full bg-slate-800 text-slate-300">
-												{game.difficulty}
-											</span>
-										</div>
-										<p class="text-sm text-slate-400">{game.description}</p>
-										<div class="mt-3 inline-flex items-center text-xs font-semibold uppercase tracking-wider text-indigo-200 group-hover:text-white transition-colors">
-											Jugar ahora →
-										</div>
+							<div class={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+							
+							<div class="relative flex items-start gap-4">
+								<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-950/50 text-2xl shadow-inner border border-slate-800/50 group-hover:scale-110 transition-transform duration-300">
+									{game.icon}
+								</div>
+								<div class="flex-1 min-w-0">
+									<div class="flex items-center justify-between mb-1 gap-2">
+										<h2 class="text-lg font-bold text-white truncate">{game.title}</h2>
+										<span class="shrink-0 text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-bold border border-slate-700">
+											{game.difficulty}
+										</span>
 									</div>
+									<p class="text-sm text-slate-400 line-clamp-2">{game.description}</p>
 								</div>
 							</div>
 						</button>
@@ -1247,58 +1256,71 @@
 				</div>
 			</div>
 
-			<div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 md:p-8">
-				<h2 class="text-base font-semibold text-white mb-4">Opciones de la sesión</h2>
-				<div class="space-y-5">
+			<div class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 md:p-8 backdrop-blur-sm">
+				<h2 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
+					<span class="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-800 text-slate-400 text-xs">⚙️</span>
+					Configuración de la sesión
+				</h2>
+				
+				<div class="space-y-6">
 					<div>
-						<p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Cantidad de preguntas</p>
-						<div class="grid grid-cols-4 gap-2">
+						<div class="flex items-center justify-between mb-3">
+							<p class="text-sm font-bold text-slate-300">Preguntas por sesión</p>
+							<span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">{questionsPerSession}</span>
+						</div>
+						<div class="grid grid-cols-4 gap-3">
 							{#each [10, 20, 30, 40] as amount}
 								<button
 									onclick={() => updateQuestionsPerSession(amount)}
-									class="rounded-xl border-2 p-3 text-center font-semibold transition-all active:scale-95 {
+									class="rounded-xl border p-3 text-center transition-all active:scale-95 {
 										questionsPerSession === amount
-											? 'border-indigo-500 bg-indigo-500/20 text-white'
-											: 'border-slate-800 bg-slate-900 text-slate-400'
+											? 'border-indigo-500 bg-indigo-500/20 text-white shadow-lg shadow-indigo-900/20'
+											: 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-600 hover:bg-slate-800'
 									}"
 								>
-									<div class="text-2xl font-bold">{amount}</div>
+									<div class="text-xl font-black">{amount}</div>
 								</button>
 							{/each}
 						</div>
 					</div>
 
-					<div>
-						<p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Audio</p>
-						<label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-800 bg-slate-900/70 cursor-pointer hover:border-indigo-500 transition-colors">
-							<input
-								type="checkbox"
-								checked={autoReadVerbs}
-								onchange={(event) => updateAutoReadPreference((event.target as HTMLInputElement).checked)}
-								class="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:ring-offset-slate-900"
-							/>
-							<div class="flex-1">
-								<p class="text-white font-medium">Lectura automática de verbos</p>
-								<p class="text-sm text-slate-400">Reproduce automáticamente el audio de los verbos durante la práctica</p>
+					<div class="grid sm:grid-cols-2 gap-4">
+						<label class="group flex items-center gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/30 cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all">
+							<div class="relative flex items-center">
+								<input
+									type="checkbox"
+									checked={autoReadVerbs}
+									onchange={(event) => updateAutoReadPreference((event.target as HTMLInputElement).checked)}
+									class="peer sr-only"
+								/>
+								<div class="w-11 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
 							</div>
-							<span class="text-2xl">🔊</span>
+							<div class="flex-1">
+								<div class="flex items-center gap-2 mb-0.5">
+									<span class="text-lg">🔊</span>
+									<p class="text-white font-bold text-sm">Lectura automática</p>
+								</div>
+								<p class="text-xs text-slate-400">Reproduce audio al mostrar verbos</p>
+							</div>
 						</label>
-					</div>
 
-					<div>
-						<p class="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Visualización</p>
-						<label class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-800 bg-slate-900/70 cursor-pointer hover:border-indigo-500 transition-colors">
-							<input
-								type="checkbox"
-								checked={showTimer}
-								onchange={(event) => updateTimerPreference((event.target as HTMLInputElement).checked)}
-								class="w-5 h-5 rounded border-2 border-slate-600 bg-slate-800 text-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-0 focus:ring-offset-slate-900"
-							/>
-							<div class="flex-1">
-								<p class="text-white font-medium">Mostrar temporizador</p>
-								<p class="text-sm text-slate-400">Muestra el tiempo transcurrido durante la sesión de práctica</p>
+						<label class="group flex items-center gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/30 cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all">
+							<div class="relative flex items-center">
+								<input
+									type="checkbox"
+									checked={showTimer}
+									onchange={(event) => updateTimerPreference((event.target as HTMLInputElement).checked)}
+									class="peer sr-only"
+								/>
+								<div class="w-11 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
 							</div>
-							<span class="text-2xl">⏱️</span>
+							<div class="flex-1">
+								<div class="flex items-center gap-2 mb-0.5">
+									<span class="text-lg">⏱️</span>
+									<p class="text-white font-bold text-sm">Temporizador</p>
+								</div>
+								<p class="text-xs text-slate-400">Muestra el tiempo transcurrido</p>
+							</div>
 						</label>
 					</div>
 				</div>
