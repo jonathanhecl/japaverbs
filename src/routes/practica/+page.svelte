@@ -2129,7 +2129,7 @@
 					onclick={retryGame}
 					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
 				>
-					🔄 Volver a hacer
+					🔄 Repetir práctica
 				</button>
 			</div>
 
