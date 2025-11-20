@@ -1716,45 +1716,46 @@
 				{@const formalityStyles = getFormalityStyles(conjugationType?.formality)}
 				
 				<!-- Verbo a conjugar -->
-				<div class="rounded-3xl border-2 border-slate-700 bg-slate-900/80 p-6 text-center">
-					<p class="text-xs uppercase tracking-wider text-slate-500 mb-3">Verbo a conjugar</p>
-					
-					<div class="flex items-center justify-center gap-4 mb-3">
-						<div>
-							<div class="text-5xl font-bold text-white mb-2">
-								{currentVerb.kanji}
+				<div class="rounded-3xl border-2 border-slate-700 bg-slate-900/80 p-5 sm:p-6">
+					<p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-4 text-center">Verbo a conjugar</p>
+					<div class="flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-8">
+						<div class="flex-1 text-center lg:text-left">
+							<div class="flex items-center justify-center lg:justify-start gap-4 mb-2">
+								<div>
+									<div class="text-5xl font-bold text-white mb-1">
+										{currentVerb.kanji}
+									</div>
+									<div class="text-xl text-slate-300">{currentVerb.kana}</div>
+								</div>
+								<button
+									onclick={() => speak(currentVerb!.kana || currentVerb!.kanji)}
+									class="flex-shrink-0 p-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 text-xl shadow-lg"
+									aria-label="Reproducir pronunciación"
+								>
+									🔊
+								</button>
 							</div>
-							<div class="text-xl text-slate-300">{currentVerb.kana}</div>
+							<p class="text-sm text-slate-400 mb-2">({currentVerb.translation.meaning})</p>
+							<span class="inline-block px-3 py-1 rounded-full text-[10px] font-semibold border border-purple-500/40 bg-purple-500/15 text-purple-200">
+								{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+							</span>
 						</div>
-						
-						<button
-							onclick={() => speak(currentVerb!.kana || currentVerb!.kanji)}
-							class="flex-shrink-0 p-4 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 text-2xl shadow-lg"
-							aria-label="Reproducir pronunciación"
-						>
-							🔊
-						</button>
-					</div>
-					
-					<div class="text-base text-slate-400 mb-3">({currentVerb.translation.meaning})</div>
-					
-					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
-						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
-					</span>
-				</div>
-				
-				<!-- Tipo de conjugación solicitado -->
-				<div class="rounded-3xl border-2 border-indigo-500/50 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 p-6 text-center">
-					<p class="text-xs uppercase tracking-wider text-slate-400 mb-2">Conjugación solicitada</p>
-					<div class={`rounded-xl ${formalityStyles.container} p-4 max-w-md mx-auto`}>
-						<div class={`text-2xl font-bold mb-2 ${formalityStyles.title}`}>
-							{conjugationForm}
-						</div>
-						{#if conjugationType}
-							<div class={`text-sm ${formalityStyles.description}`}>
-								{conjugationType.description}
+
+						<div class="w-full lg:w-auto lg:min-w-[240px]">
+							<div class="rounded-2xl bg-slate-900/60 p-4 h-full flex flex-col">
+								<p class="text-[10px] uppercase tracking-[0.3em] text-indigo-300 mb-2 text-center lg:text-left">Conjugación solicitada</p>
+								<div class={`rounded-xl ${formalityStyles.container.replace('border ', 'border border-dashed ')} p-3 flex-1`}> 
+									<div class={`text-lg font-bold ${formalityStyles.title}`}>
+										{conjugationForm}
+									</div>
+									{#if conjugationType}
+										<p class={`text-xs mt-2 ${formalityStyles.description}`}>
+											{conjugationType.description}
+										</p>
+									{/if}
+								</div>
 							</div>
-						{/if}
+						</div>
 					</div>
 				</div>
 
@@ -1865,15 +1866,12 @@
 					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
 						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
 					</span>
-				</div>
-				
-				<!-- Tipo de conjugación solicitado -->
-				<div class="rounded-3xl border-2 border-indigo-500/50 bg-gradient-to-br from-indigo-900/30 to-purple-900/30 p-6 text-center">
-					<p class="text-xs uppercase tracking-wider text-slate-400 mb-2">¿Qué tipo de conjugación es?</p>
-					<div class="max-w-md mx-auto">
-						<div class="rounded-xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-500/50 p-4">
-							<div class="text-sm font-semibold text-purple-200">
-								Elige el tipo de conjugación correcto
+
+					<div class="w-full lg:w-auto lg:min-w-[220px] mt-4">
+						<div class="rounded-2xl bg-slate-900/60 p-4 h-full flex flex-col gap-2 text-center lg:text-left">
+							<p class="text-[10px] uppercase tracking-[0.25em] text-indigo-300">¿Qué tipo de conjugación es?</p>
+							<div class="rounded-xl bg-slate-900/40 border border-slate-800/60 px-3 py-2">
+								<p class="text-xs font-semibold text-purple-100">Elige el tipo correcto para esta forma</p>
 							</div>
 						</div>
 					</div>
