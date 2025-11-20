@@ -39,7 +39,7 @@
 	const xpForNextLevel = $derived(profile.level * 100);
 	const xpProgress = $derived((profile.xp % 100) / 100);
 
-	// Calcular verbos masterizados (mastery score = 5) vs pendientes
+	// Calcular verbos masterizados (mastery score = 7, 80%) vs pendientes
 	const verbStats = $derived(() => {
 		const verbs = getCurrentVerbs();
 		const totalVerbs = verbs.length;
@@ -65,7 +65,7 @@
 			const progress = profile.studiedVerbs[verb.kanji];
 			if (!progress) {
 				notStartedCount++;
-			} else if (progress.masteryScore >= 4) {
+			} else if (progress.masteryScore >= 7) {
 				masteredCount++;
 			} else {
 				inProgressCount++;
@@ -93,210 +93,327 @@
 		{ id: 'level_5', title: 'Nivel 5', icon: '🏆', description: 'Alcanza el nivel 5', unlocked: profile.level >= 5 },
 		{ id: 'verbs_20', title: 'Explorador', icon: '🗺️', description: 'Estudia 20 verbos diferentes', unlocked: Object.keys(profile.studiedVerbs).length >= 20 }
 	]);
+
 </script>
 
 <svelte:head>
 	<title>Mi Perfil · JapaVerbs</title>
 </svelte:head>
 
-<div class="space-y-6 pb-6">
+<div class="space-y-8 pb-10">
 	<!-- Profile Header -->
-	<section class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-600/20 via-purple-600/20 to-pink-600/20 p-[1px]">
-		<div class="rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/80 p-6">
-			<div class="flex items-start justify-between mb-4">
-				<div class="flex items-center gap-4">
-					<div class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-500 text-3xl">
-						👤
+	<section class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-900/50 via-slate-900 to-slate-900 p-[1px] shadow-2xl">
+		<div class="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
+		<div class="relative rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/50 p-8 backdrop-blur-xl">
+			<div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+				<div class="flex items-center gap-5">
+					<div class="relative group">
+						<div class="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl opacity-75 blur transition duration-200 group-hover:opacity-100"></div>
+						<div class="relative flex h-20 w-20 items-center justify-center rounded-2xl bg-slate-900 text-4xl shadow-inner">
+							👤
+						</div>
 					</div>
 					<div>
 						{#if editingName}
-							<input
-								type="text"
-								bind:value={tempName}
-								onkeydown={(e) => e.key === 'Enter' && saveName()}
-								class="bg-slate-900 border-2 border-indigo-500 rounded-xl px-3 py-2 text-xl font-bold text-white focus:outline-none"
-								placeholder="Tu nombre"
-							/>
-							<div class="flex gap-2 mt-2">
-								<button
-									onclick={saveName}
-									class="px-3 py-1 text-xs bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors"
-								>
-									Guardar
-								</button>
-								<button
-									onclick={cancelEdit}
-									class="px-3 py-1 text-xs bg-slate-700 rounded-lg hover:bg-slate-600 transition-colors"
-								>
-									Cancelar
-								</button>
+							<div class="flex flex-col gap-2">
+								<input
+									type="text"
+									bind:value={tempName}
+									onkeydown={(e) => e.key === 'Enter' && saveName()}
+									class="bg-slate-900/80 border-2 border-indigo-500 rounded-xl px-4 py-2 text-2xl font-bold text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all w-full max-w-xs"
+									placeholder="Tu nombre"
+								/>
+								<div class="flex gap-2">
+									<button
+										onclick={saveName}
+										class="px-4 py-1.5 text-xs font-bold bg-indigo-600 rounded-lg hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-900/20"
+									>
+										Guardar
+									</button>
+									<button
+										onclick={cancelEdit}
+										class="px-4 py-1.5 text-xs font-bold bg-slate-800 rounded-lg hover:bg-slate-700 transition-all text-slate-300"
+									>
+										Cancelar
+									</button>
+								</div>
 							</div>
 						{:else}
-							<h1 class="text-2xl font-bold text-white">
+							<h1 class="text-3xl font-bold text-white tracking-tight">
 								{profile.name || 'Usuario'}
 							</h1>
 							<button
 								onclick={startEditName}
-								class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 mt-1"
+								class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 mt-1 transition-colors font-medium px-2 py-1 -ml-2 rounded-lg hover:bg-indigo-500/10"
 							>
 								✏️ {profile.name ? 'Editar nombre' : 'Añadir nombre'}
 							</button>
 						{/if}
 					</div>
 				</div>
+
+				<!-- Level Badge -->
+				<div class="flex flex-col items-end">
+					<div class="text-sm text-slate-400 font-medium mb-1">Nivel actual</div>
+					<div class="flex items-baseline gap-2">
+						<span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400">
+							{profile.level}
+						</span>
+						<span class="text-slate-500 font-bold text-lg">LVL</span>
+					</div>
+				</div>
 			</div>
 
-			<!-- Level & XP -->
-			<div class="space-y-2">
-				<div class="flex items-center justify-between text-sm">
-					<span class="text-slate-300">Nivel {profile.level}</span>
-					<span class="text-slate-400">{profile.xp % 100} / {xpForNextLevel} XP</span>
+			<!-- XP Progress -->
+			<div class="bg-slate-900/50 rounded-2xl p-4 border border-slate-800/50">
+				<div class="flex items-center justify-between text-sm mb-2">
+					<span class="text-indigo-300 font-medium">Progreso de Nivel</span>
+					<span class="text-slate-400 font-mono">{profile.xp % 100} <span class="text-slate-600">/</span> {xpForNextLevel} XP</span>
 				</div>
-				<div class="h-3 bg-slate-900 rounded-full overflow-hidden">
+				<div class="h-4 bg-slate-800 rounded-full overflow-hidden shadow-inner">
 					<div 
-						class="h-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
+						class="h-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 relative"
 						style="width: {xpProgress * 100}%"
-					></div>
+					>
+						<div class="absolute inset-0 bg-white/20 animate-[pulse_2s_infinite]"></div>
+					</div>
+				</div>
+				<div class="mt-2 text-xs text-right text-slate-500">
+					Faltan {xpForNextLevel - (profile.xp % 100)} XP para el nivel {profile.level + 1}
 				</div>
 			</div>
 		</div>
 	</section>
 
 	<!-- Stats Grid -->
-	<section class="grid grid-cols-2 gap-3">
-		<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-			<div class="text-3xl mb-1">🔥</div>
-			<p class="text-2xl font-bold text-white">{profile.streak}</p>
-			<p class="text-xs text-slate-400">Días de racha</p>
+	<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+		<!-- Racha -->
+		<div class="group relative overflow-hidden rounded-2xl border border-orange-500/20 bg-gradient-to-br from-orange-500/10 to-red-600/5 p-5 hover:border-orange-500/40 transition-all hover:shadow-lg hover:shadow-orange-900/20">
+			<div class="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">🔥</div>
+			<div class="relative">
+				<div class="text-3xl mb-2">🔥</div>
+				<p class="text-3xl font-bold text-white tracking-tight">{profile.streak}</p>
+				<p class="text-xs font-medium text-orange-300 uppercase tracking-wider mt-1">Racha actual</p>
+			</div>
 		</div>
-		<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-			<div class="text-3xl mb-1">🎯</div>
-			<p class="text-2xl font-bold text-white">{accuracy}%</p>
-			<p class="text-xs text-slate-400">Precisión</p>
-		</div>
-		<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-			<div class="text-3xl mb-1">📝</div>
-			<p class="text-2xl font-bold text-white">{profile.totalPractices}</p>
-			<p class="text-xs text-slate-400">Prácticas totales</p>
-		</div>
-		<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4">
-			<div class="text-3xl mb-1">📚</div>
-			<p class="text-2xl font-bold text-white">{Object.keys(profile.studiedVerbs).length}</p>
-			<p class="text-xs text-slate-400">Verbos estudiados</p>
-		</div>
-	</section>
-
-	<!-- Verbos Masterizados -->
-	<section class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-		<h2 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-			<span>🎓</span>
-			<span>Progreso de Verbos</span>
-		</h2>
 		
-		<!-- Resumen visual -->
-		<div class="grid grid-cols-3 gap-3 mb-4">
-			<div class="rounded-xl border border-green-500/30 bg-green-500/10 p-3 text-center">
-				<div class="text-2xl font-bold text-green-400">{verbStats().mastered}</div>
-				<p class="text-xs text-green-300/80">Dominados</p>
-			</div>
-			<div class="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-3 text-center">
-				<div class="text-2xl font-bold text-yellow-400">{verbStats().inProgress}</div>
-				<p class="text-xs text-yellow-300/80">En progreso</p>
-			</div>
-			<div class="rounded-xl border border-slate-700 bg-slate-800/50 p-3 text-center">
-				<div class="text-2xl font-bold text-slate-400">{verbStats().notStarted}</div>
-				<p class="text-xs text-slate-400">Pendientes</p>
+		<!-- Precisión -->
+		<div class="group relative overflow-hidden rounded-2xl border border-blue-500/20 bg-gradient-to-br from-blue-500/10 to-cyan-600/5 p-5 hover:border-blue-500/40 transition-all hover:shadow-lg hover:shadow-blue-900/20">
+			<div class="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">🎯</div>
+			<div class="relative">
+				<div class="text-3xl mb-2">🎯</div>
+				<p class="text-3xl font-bold text-white tracking-tight">{accuracy}%</p>
+				<p class="text-xs font-medium text-blue-300 uppercase tracking-wider mt-1">Precisión</p>
 			</div>
 		</div>
-
-		<!-- Barra de progreso general -->
-		<div class="space-y-2">
-			<div class="flex items-center justify-between text-sm">
-				<span class="text-slate-300">Progreso de verbos</span>
-				<span class="text-indigo-400 font-semibold">{verbStats().masteredPercent + verbStats().inProgressPercent}% completado</span>
-			</div>
-			<div class="h-3 bg-slate-800 rounded-full overflow-hidden flex">
-				<!-- Dominados (verde) -->
-				<div 
-					class="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-500"
-					style="width: {verbStats().masteredPercent}%"
-				></div>
-				<!-- En progreso (amarillo) -->
-				<div 
-					class="h-full bg-gradient-to-r from-yellow-500 to-amber-500 transition-all duration-500"
-					style="width: {verbStats().inProgressPercent}%"
-				></div>
-				<!-- Pendientes (gris - se muestra automáticamente por el fondo) -->
-			</div>
-			<div class="flex items-center justify-between text-xs text-slate-400">
-				<span class="text-green-400">{verbStats().mastered} dominados</span>
-				<span class="text-yellow-400">{verbStats().inProgress} en progreso</span>
-				<span class="text-slate-400">{verbStats().notStarted} pendientes</span>
+		
+		<!-- Prácticas -->
+		<div class="group relative overflow-hidden rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/10 to-pink-600/5 p-5 hover:border-purple-500/40 transition-all hover:shadow-lg hover:shadow-purple-900/20">
+			<div class="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">📝</div>
+			<div class="relative">
+				<div class="text-3xl mb-2">📝</div>
+				<p class="text-3xl font-bold text-white tracking-tight">{profile.totalPractices}</p>
+				<p class="text-xs font-medium text-purple-300 uppercase tracking-wider mt-1">Prácticas</p>
 			</div>
 		</div>
-
-		<!-- Link al diccionario -->
-		<a 
-			href="/diccionario"
-			class="mt-4 flex items-center justify-center gap-2 rounded-xl border-2 border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm font-medium text-indigo-300 hover:border-indigo-500/50 hover:bg-indigo-500/20 transition-colors"
-		>
-			<span>📚</span>
-			<span>Ver todos los verbos en el diccionario</span>
-			<span>→</span>
-		</a>
+		
+		<!-- Verbos -->
+		<div class="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-teal-600/5 p-5 hover:border-emerald-500/40 transition-all hover:shadow-lg hover:shadow-emerald-900/20">
+			<div class="absolute -right-4 -top-4 text-6xl opacity-10 group-hover:scale-110 transition-transform">📚</div>
+			<div class="relative">
+				<div class="text-3xl mb-2">📚</div>
+				<p class="text-3xl font-bold text-white tracking-tight">{Object.keys(profile.studiedVerbs).length}</p>
+				<p class="text-xs font-medium text-emerald-300 uppercase tracking-wider mt-1">Verbos estudiados</p>
+			</div>
+		</div>
 	</section>
 
-	<!-- Backup Manager -->
-	<BackupManager />
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+		<!-- Verbos Masterizados (Main Column) -->
+		<section class="lg:col-span-2 rounded-3xl border border-slate-800 bg-slate-950/50 p-6 backdrop-blur-sm">
+			<h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+				<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-400">🎓</span>
+				<span>Dominio de Verbos</span>
+			</h2>
+			
+			<!-- Resumen visual -->
+			<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+				<div class="relative overflow-hidden rounded-2xl border border-green-500/20 bg-green-500/5 p-4 text-center group hover:bg-green-500/10 transition-colors">
+					<div class="absolute top-0 right-0 p-2 opacity-10 text-4xl">👑</div>
+					<div class="text-4xl font-black text-green-400 mb-1">{verbStats().mastered}</div>
+					<p class="text-xs font-bold uppercase tracking-widest text-green-500/80">Dominados</p>
+					<p class="text-[10px] text-green-500/60 mt-1">Score ≥ 7 (80%)</p>
+				</div>
+				<div class="relative overflow-hidden rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-4 text-center group hover:bg-yellow-500/10 transition-colors">
+					<div class="absolute top-0 right-0 p-2 opacity-10 text-4xl">🚧</div>
+					<div class="text-4xl font-black text-yellow-400 mb-1">{verbStats().inProgress}</div>
+					<p class="text-xs font-bold uppercase tracking-widest text-yellow-500/80">En progreso</p>
+				</div>
+				<div class="relative overflow-hidden rounded-2xl border border-slate-700 bg-slate-800/30 p-4 text-center group hover:bg-slate-800/50 transition-colors">
+					<div class="absolute top-0 right-0 p-2 opacity-10 text-4xl">💤</div>
+					<div class="text-4xl font-black text-slate-400 mb-1">{verbStats().notStarted}</div>
+					<p class="text-xs font-bold uppercase tracking-widest text-slate-500">Pendientes</p>
+				</div>
+			</div>
 
-	<!-- Achievements -->
-	<section class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-		<h2 class="text-lg font-semibold text-white mb-4">Logros</h2>
-		<div class="grid grid-cols-2 gap-3">
-			{#each achievements as achievement}
-				<div 
-					class="rounded-xl border p-3 transition-all {achievement.unlocked 
-						? 'border-indigo-500/50 bg-indigo-500/10' 
-						: 'border-slate-800 bg-slate-900/50 opacity-50'}"
-				>
-					<div class="text-2xl mb-2">{achievement.icon}</div>
-					<h3 class="text-sm font-semibold text-white mb-1">{achievement.title}</h3>
-					<p class="text-xs text-slate-400">{achievement.description}</p>
-					{#if achievement.unlocked}
-						<div class="mt-2 text-xs text-green-400 flex items-center gap-1">
-							✓ Desbloqueado
+			<!-- Barra de progreso general -->
+			<div class="bg-slate-900/50 rounded-2xl p-6 border border-slate-800/50">
+				<div class="flex items-center justify-between text-sm mb-3">
+					<span class="text-slate-300 font-medium">Progreso total del diccionario</span>
+					<span class="text-indigo-400 font-bold text-lg">{verbStats().masteredPercent + verbStats().inProgressPercent}%</span>
+				</div>
+				<div class="h-6 bg-slate-800 rounded-full overflow-hidden flex shadow-inner">
+					<!-- Dominados (verde) -->
+					{#if verbStats().masteredPercent > 0}
+						<div 
+							class="h-full bg-gradient-to-r from-green-600 to-emerald-500 flex items-center justify-center"
+							style="width: {verbStats().masteredPercent}%"
+							title="Dominados"
+						>
+							{#if verbStats().masteredPercent > 10}
+								<span class="text-[10px] font-bold text-slate-900">{verbStats().masteredPercent}%</span>
+							{/if}
 						</div>
 					{/if}
+					<!-- En progreso (amarillo) -->
+					{#if verbStats().inProgressPercent > 0}
+						<div 
+							class="h-full bg-gradient-to-r from-yellow-500 to-amber-500 flex items-center justify-center"
+							style="width: {verbStats().inProgressPercent}%"
+							title="En progreso"
+						>
+							{#if verbStats().inProgressPercent > 10}
+								<span class="text-[10px] font-bold text-slate-900">{verbStats().inProgressPercent}%</span>
+							{/if}
+						</div>
+					{/if}
+				</div>
+				<div class="flex items-center justify-between text-xs mt-3 text-slate-500 px-1">
+					<div class="flex items-center gap-2">
+						<div class="w-3 h-3 rounded-full bg-gradient-to-r from-green-600 to-emerald-500"></div>
+						<span>Dominado (>80%)</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<div class="w-3 h-3 rounded-full bg-gradient-to-r from-yellow-500 to-amber-500"></div>
+						<span>Aprendiendo</span>
+					</div>
+					<div class="flex items-center gap-2">
+						<div class="w-3 h-3 rounded-full bg-slate-800"></div>
+						<span>Por descubrir</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Link al diccionario -->
+			<a 
+				href="/diccionario"
+				class="mt-6 group flex items-center justify-between rounded-xl border border-slate-800 bg-slate-900/50 px-5 py-4 text-sm font-medium text-slate-300 hover:border-indigo-500/50 hover:bg-indigo-500/10 hover:text-indigo-300 transition-all"
+			>
+				<div class="flex items-center gap-2">
+					<span class="text-2xl group-hover:scale-110 transition-transform">📖</span>
+					<span>Explorar el diccionario completo</span>
+				</div>
+				<span class="group-hover:translate-x-1 transition-transform">→</span>
+			</a>
+		</section>
+
+		<!-- Right Column: Actions -->
+		<div class="space-y-8">
+			<section class="space-y-4">
+				<a
+					href="/practica"
+					class="relative group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4 text-base font-bold text-white transition-all hover:shadow-lg hover:shadow-indigo-500/25 active:scale-95 overflow-hidden"
+				>
+					<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+					<span class="text-xl">🎮</span>
+					<span>Continuar Practicando</span>
+				</a>
+				
+				<BackupManager />
+
+				<button
+					onclick={() => {
+						if (confirm('¿Estás seguro de que quieres reiniciar tu progreso? Esta acción no se puede deshacer.')) {
+							userProfile.reset();
+						}
+					}}
+					class="w-full rounded-2xl border border-red-500/20 px-6 py-3 text-xs font-bold text-red-400 transition-colors hover:bg-red-500/10 hover:border-red-500/40 uppercase tracking-wider"
+				>
+					⚠️ Reiniciar progreso
+				</button>
+			</section>
+		</div>
+	</div>
+
+	<!-- Achievements (full width) -->
+	<section class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 backdrop-blur-sm">
+		<h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+			<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 text-purple-400">🏆</span>
+			<span>Logros</span>
+		</h2>
+		<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+			{#each achievements as achievement}
+				<div 
+					class="relative overflow-hidden rounded-2xl border p-4 transition-all {achievement.unlocked 
+						? 'border-indigo-500/30 bg-indigo-500/5' 
+						: 'border-slate-800 bg-slate-900/30 opacity-70'}"
+				>
+					<div class="flex items-start gap-4">
+						<div class="text-3xl filter drop-shadow-lg">{achievement.icon}</div>
+						<div class="space-y-1">
+							<h3 class="text-sm font-bold text-white {achievement.unlocked ? 'text-indigo-200' : 'text-slate-300'}">
+								{achievement.title}
+							</h3>
+							<p class="text-xs text-slate-400 leading-relaxed">{achievement.description}</p>
+							{#if achievement.unlocked}
+								<div class="inline-flex items-center gap-1.5 rounded-full bg-green-500/10 px-2 py-0.5 text-[10px] font-bold text-green-400 border border-green-500/20">
+									<span>✓</span> Completado
+								</div>
+							{/if}
+						</div>
+					</div>
 				</div>
 			{/each}
 		</div>
 	</section>
-
-	<!-- Recent Activity -->
+	
+	<!-- Recent Activity (Full Width) -->
 	{#if profile.dailyHistory.length > 0}
-		<section class="rounded-2xl border border-slate-800 bg-slate-900/70 p-5">
-			<h2 class="text-lg font-semibold text-white mb-4">Historial reciente</h2>
-			<div class="space-y-2">
-				{#each profile.dailyHistory.slice(-5).reverse() as day}
-					<div class="flex items-center justify-between p-3 rounded-xl bg-slate-800/50 border border-slate-700/50">
-						<div>
-							<p class="text-sm font-medium text-white">
+		<section class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 backdrop-blur-sm">
+			<h2 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+				<span class="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-700/30 text-slate-300">📅</span>
+				<span>Historial reciente</span>
+			</h2>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+				{#each profile.dailyHistory.slice(-6).reverse() as day}
+					<div class="group flex flex-col p-4 rounded-2xl bg-slate-900/50 border border-slate-800 hover:border-slate-700 transition-all hover:bg-slate-900">
+						<div class="flex items-center justify-between mb-3">
+							<p class="text-sm font-bold text-white capitalize">
 								{new Date(day.date).toLocaleDateString('es-ES', { 
-									weekday: 'long', 
-									year: 'numeric', 
-									month: 'long', 
-									day: 'numeric' 
+									weekday: 'short', 
+									day: 'numeric',
+									month: 'short'
 								})}
 							</p>
-							<p class="text-xs text-slate-400">
-								{day.verbsReviewed.length} verbos · {day.totalQuestions} preguntas
-							</p>
+							<span class="text-xs font-mono text-slate-500">{day.date}</span>
 						</div>
-						<div class="text-right">
-							<p class="text-sm font-bold text-indigo-400">
-								{day.totalQuestions > 0 ? Math.round((day.correctAnswers / day.totalQuestions) * 100) : 0}%
-							</p>
-							<p class="text-xs text-slate-500">Precisión</p>
+						
+						<div class="flex items-end justify-between mt-auto">
+							<div class="space-y-1">
+								<div class="text-xs text-slate-400 flex items-center gap-1.5">
+									<span class="text-indigo-400">📚</span> {day.verbsReviewed.length} verbos
+								</div>
+								<div class="text-xs text-slate-400 flex items-center gap-1.5">
+									<span class="text-purple-400">📝</span> {day.totalQuestions} preguntas
+								</div>
+							</div>
+							
+							<div class="text-right">
+								<div class="text-2xl font-black {day.totalQuestions > 0 && (day.correctAnswers / day.totalQuestions) >= 0.8 ? 'text-green-400' : 'text-indigo-400'}">
+									{day.totalQuestions > 0 ? Math.round((day.correctAnswers / day.totalQuestions) * 100) : 0}%
+								</div>
+								<div class="text-[10px] font-bold uppercase text-slate-500 tracking-wider">Precisión</div>
+							</div>
 						</div>
 					</div>
 				{/each}
@@ -304,23 +421,4 @@
 		</section>
 	{/if}
 
-	<!-- Actions -->
-	<section class="space-y-3">
-		<a
-			href="/practica"
-			class="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-4 text-sm font-semibold text-white transition-transform active:scale-95"
-		>
-			🎮 Ir a practicar
-		</a>
-		<button
-			onclick={() => {
-				if (confirm('¿Estás seguro de que quieres reiniciar tu progreso? Esta acción no se puede deshacer.')) {
-					userProfile.reset();
-				}
-			}}
-			class="w-full rounded-2xl border border-red-500/50 px-6 py-3 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/10"
-		>
-			⚠️ Reiniciar progreso
-		</button>
-	</section>
 </div>
