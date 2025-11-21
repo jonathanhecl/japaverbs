@@ -37,6 +37,6 @@
 <style>
 	/* Support for safe area on mobile devices */
 	.pb-safe {
-		padding-bottom: env(safe-area-inset-bottom, 1rem);
+		padding-bottom: 1rem;
 	}
 </style>
