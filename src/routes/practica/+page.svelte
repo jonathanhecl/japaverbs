@@ -6,7 +6,18 @@
 	import { getCurrentVerbs } from '$lib/data/verbs';
 	import { languageStore } from '$lib/stores/language';
 
-	type GameMode = 'menu' | 'config' | 'flashcards' | 'multiple-choice' | 'meaning-to-verb' | 'conjugation' | 'listening' | 'conjugation-quiz' | 'inverse-conjugation-quiz' | 'verb-type-quiz' | 'results';
+	type GameMode =
+		| 'menu'
+		| 'config'
+		| 'flashcards'
+		| 'multiple-choice'
+		| 'meaning-to-verb'
+		| 'conjugation'
+		| 'listening'
+		| 'conjugation-quiz'
+		| 'inverse-conjugation-quiz'
+		| 'verb-type-quiz'
+		| 'results';
 
 	interface VerbResult {
 		verb: VerbWithTranslation;
@@ -73,147 +84,147 @@
 	// Lista completa de tipos de conjugaciones con información descriptiva
 	const conjugationTypes: ConjugationType[] = [
 		// Formales (ます形) - Situaciones corteses y formales
-		{ 
-			key: 'masuPresent', 
-			formality: 'formal', 
+		{
+			key: 'masuPresent',
+			formality: 'formal',
 			name: 'Presente formal',
 			shortName: 'Presente formal',
 			description: 'Acción que ocurre ahora o habitualmente (formal)',
 			example: 'する → します (hago)'
 		},
-		{ 
-			key: 'masuPresentNegative', 
-			formality: 'formal', 
+		{
+			key: 'masuPresentNegative',
+			formality: 'formal',
 			name: 'Presente negativo formal',
 			shortName: 'Negativo formal',
 			description: 'Acción que NO ocurre (formal)',
 			example: 'する → しません (no hago)'
 		},
-		{ 
-			key: 'masuPast', 
-			formality: 'formal', 
+		{
+			key: 'masuPast',
+			formality: 'formal',
 			name: 'Pasado formal',
 			shortName: 'Pasado formal',
 			description: 'Acción que ocurrió en el pasado (formal)',
 			example: 'する → しました (hice)'
 		},
-		{ 
-			key: 'masuPastNegative', 
-			formality: 'formal', 
+		{
+			key: 'masuPastNegative',
+			formality: 'formal',
 			name: 'Pasado negativo formal',
 			shortName: 'Pasado negativo formal',
 			description: 'Acción que NO ocurrió en el pasado (formal)',
 			example: 'する → しませんでした (no hice)'
 		},
-		{ 
-			key: 'invitation', 
-			formality: 'formal', 
+		{
+			key: 'invitation',
+			formality: 'formal',
 			name: 'Invitación',
 			shortName: 'Invitación',
 			description: 'Para invitar o sugerir hacer algo juntos',
 			example: 'する → しましょう (hagamos)'
 		},
-		{ 
-			key: 'desireFormal', 
-			formality: 'formal', 
+		{
+			key: 'desireFormal',
+			formality: 'formal',
 			name: 'Deseo formal',
 			shortName: 'Deseo formal',
 			description: 'Expresar que quieres hacer algo (formal)',
 			example: 'する → したいです (quiero hacer)'
 		},
-		{ 
-			key: 'permission', 
-			formality: 'formal', 
+		{
+			key: 'permission',
+			formality: 'formal',
 			name: 'Permiso',
 			shortName: 'Permiso',
 			description: 'Pedir permiso o indicar que está permitido',
 			example: 'する → してもいいです (puedo hacer)'
 		},
-		{ 
-			key: 'prohibition', 
-			formality: 'formal', 
+		{
+			key: 'prohibition',
+			formality: 'formal',
 			name: 'Prohibición',
 			shortName: 'Prohibición',
 			description: 'Indicar que algo está prohibido',
 			example: 'する → してはいけません (no se puede hacer)'
 		},
-		{ 
-			key: 'progressiveFormal', 
-			formality: 'formal', 
+		{
+			key: 'progressiveFormal',
+			formality: 'formal',
 			name: 'Progresivo formal',
 			shortName: 'Progresivo formal',
 			description: 'Acción en progreso o estado continuo (formal)',
 			example: 'する → しています (estoy haciendo)'
 		},
-		
+
 		// Informales (普通形) - Situaciones casuales con amigos/familia
-		{ 
-			key: 'dictionary', 
-			formality: 'informal', 
+		{
+			key: 'dictionary',
+			formality: 'informal',
 			name: 'Forma diccionario',
 			shortName: 'Forma diccionario',
 			description: 'Forma básica del verbo (presente/futuro informal)',
 			example: 'する → する (hacer/haré)'
 		},
-		{ 
-			key: 'plainNegative', 
-			formality: 'informal', 
+		{
+			key: 'plainNegative',
+			formality: 'informal',
 			name: 'Negativo informal',
 			shortName: 'Negativo informal',
 			description: 'Acción que NO ocurre (informal)',
 			example: 'する → しない (no hago)'
 		},
-		{ 
-			key: 'plainPast', 
-			formality: 'informal', 
+		{
+			key: 'plainPast',
+			formality: 'informal',
 			name: 'Pasado informal',
 			shortName: 'Pasado informal',
 			description: 'Acción que ocurrió en el pasado (informal)',
 			example: 'する → した (hice)'
 		},
-		{ 
-			key: 'plainPastNegative', 
-			formality: 'informal', 
+		{
+			key: 'plainPastNegative',
+			formality: 'informal',
 			name: 'Pasado negativo informal',
 			shortName: 'Pasado negativo informal',
 			description: 'Acción que NO ocurrió en el pasado (informal)',
 			example: 'する → しなかった (no hice)'
 		},
-		{ 
-			key: 'desireInformal', 
-			formality: 'informal', 
+		{
+			key: 'desireInformal',
+			formality: 'informal',
 			name: 'Deseo informal',
 			shortName: 'Deseo informal',
 			description: 'Expresar que quieres hacer algo (informal)',
 			example: 'する → したい (quiero hacer)'
 		},
-		{ 
-			key: 'invitationInformal', 
-			formality: 'informal', 
+		{
+			key: 'invitationInformal',
+			formality: 'informal',
 			name: 'Invitación informal',
 			shortName: 'Invitación informal',
 			description: 'Sugerir hacer algo juntos (informal)',
 			example: 'する → しよう (hagamos)'
 		},
-		{ 
-			key: 'request', 
-			formality: 'informal', 
+		{
+			key: 'request',
+			formality: 'informal',
 			name: 'Forma て',
 			shortName: 'Forma て',
 			description: 'Para pedir, conectar acciones o dar órdenes suaves',
 			example: 'する → して (haz/haciendo)'
 		},
-		{ 
-			key: 'negativeRequest', 
-			formality: 'informal', 
+		{
+			key: 'negativeRequest',
+			formality: 'informal',
 			name: 'Negación de acción',
 			shortName: 'No hagas',
 			description: 'Pedir que no se haga algo',
 			example: 'する → しないで (no hagas)'
 		},
-		{ 
-			key: 'progressiveInformal', 
-			formality: 'informal', 
+		{
+			key: 'progressiveInformal',
+			formality: 'informal',
 			name: 'Progresivo informal',
 			shortName: 'Progresivo informal',
 			description: 'Acción en progreso o estado continuo (informal)',
@@ -228,21 +239,23 @@
 	const verbStats = $derived(() => getVerbStats());
 
 	// Reactive derived value for current session errors
-	const currentSessionErrors = $derived(() => sessionResults.filter(r => !r.correct).map(r => r.verb.kanji));
+	const currentSessionErrors = $derived(() =>
+		sessionResults.filter((r) => !r.correct).map((r) => r.verb.kanji)
+	);
 
 	// Helper function to aggregate verb statistics
 	function getVerbStats(): VerbStats[] {
 		const statsMap = new Map<string, VerbStats>();
-		
+
 		// Only process verbs from current session
 		for (const result of sessionResults) {
 			const verbKey = result.verb.kanji;
-			
+
 			// Get historical data from userProfile if exists
 			const historicalData = $userProfile.studiedVerbs[verbKey];
 			const historicalCorrect = historicalData?.correctCount || 0;
 			const historicalIncorrect = historicalData?.incorrectCount || 0;
-			
+
 			// Create stats with historical data
 			statsMap.set(verbKey, {
 				verb: result.verb,
@@ -252,44 +265,76 @@
 				newMastery: result.newMastery
 			});
 		}
-		
+
 		return Array.from(statsMap.values());
 	}
 
 	// Función para obtener colores según el tipo de forma (actualizado JLPT N5)
 	function getFormColor(key: string) {
-		switch(key) {
+		switch (key) {
 			// Diccionario (gris)
-			case 'dictionary': return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: 'Diccionario' };
-			
+			case 'dictionary':
+				return {
+					bg: 'bg-slate-500/10',
+					border: 'border-slate-500/40',
+					text: 'text-slate-200',
+					label: 'Diccionario'
+				};
+
 			// Formales (azul)
-			case 'masuPresent': 
-			case 'masuPresentNegative': 
-			case 'masuPast': 
-			case 'masuPastNegative': 
-			case 'invitation': 
-			case 'desireFormal': 
-			case 'permission': 
-			case 'prohibition': 
-			case 'progressiveFormal': 
-				return { bg: 'bg-blue-500/10', border: 'border-blue-500/40', text: 'text-blue-200', label: 'Formal' };
-			
+			case 'masuPresent':
+			case 'masuPresentNegative':
+			case 'masuPast':
+			case 'masuPastNegative':
+			case 'invitation':
+			case 'desireFormal':
+			case 'permission':
+			case 'prohibition':
+			case 'progressiveFormal':
+				return {
+					bg: 'bg-blue-500/10',
+					border: 'border-blue-500/40',
+					text: 'text-blue-200',
+					label: 'Formal'
+				};
+
 			// Pasado (naranja)
-			case 'plainPast': 
-			case 'plainPastNegative': 
-				return { bg: 'bg-orange-500/10', border: 'border-orange-500/40', text: 'text-orange-200', label: 'Pasado' };
-			
+			case 'plainPast':
+			case 'plainPastNegative':
+				return {
+					bg: 'bg-orange-500/10',
+					border: 'border-orange-500/40',
+					text: 'text-orange-200',
+					label: 'Pasado'
+				};
+
 			// Versátil (púrpura)
-			case 'request': 
-			case 'progressiveInformal': 
-				return { bg: 'bg-purple-500/10', border: 'border-purple-500/40', text: 'text-purple-200', label: 'Versátil' };
-			
+			case 'request':
+			case 'progressiveInformal':
+				return {
+					bg: 'bg-purple-500/10',
+					border: 'border-purple-500/40',
+					text: 'text-purple-200',
+					label: 'Versátil'
+				};
+
 			// Negativa (rojo)
-			case 'plainNegative': 
-			case 'negativeRequest': 
-				return { bg: 'bg-red-500/10', border: 'border-red-500/40', text: 'text-red-200', label: 'Negativa' };
-			
-			default: return { bg: 'bg-slate-500/10', border: 'border-slate-500/40', text: 'text-slate-200', label: '' };
+			case 'plainNegative':
+			case 'negativeRequest':
+				return {
+					bg: 'bg-red-500/10',
+					border: 'border-red-500/40',
+					text: 'text-red-200',
+					label: 'Negativa'
+				};
+
+			default:
+				return {
+					bg: 'bg-slate-500/10',
+					border: 'border-slate-500/40',
+					text: 'text-slate-200',
+					label: ''
+				};
 		}
 	}
 
@@ -309,7 +354,8 @@
 				};
 			default:
 				return {
-					container: 'border border-indigo-500/50 bg-gradient-to-r from-indigo-500/20 to-purple-500/20',
+					container:
+						'border border-indigo-500/50 bg-gradient-to-r from-indigo-500/20 to-purple-500/20',
 					title: 'text-white',
 					description: 'text-indigo-300'
 				};
@@ -365,7 +411,8 @@
 		{
 			id: 'conjugation-quiz',
 			title: 'Quiz de conjugación',
-			description: 'Elige la conjugación correcta desde el verbo diccionario (verbo -> conjugación)',
+			description:
+				'Elige la conjugación correcta desde el verbo diccionario (verbo -> conjugación)',
 			icon: '🎯',
 			color: 'from-indigo-500 to-purple-500',
 			difficulty: 'Difícil',
@@ -374,7 +421,8 @@
 		{
 			id: 'inverse-conjugation-quiz',
 			title: 'Quiz de conjugación inversa',
-			description: 'Identifica el tipo de conjugación desde el verbo conjugado (conjugación -> verbo)',
+			description:
+				'Identifica el tipo de conjugación desde el verbo conjugado (conjugación -> verbo)',
 			icon: '🔄',
 			color: 'from-purple-500 to-pink-500',
 			difficulty: 'Difícil',
@@ -443,32 +491,32 @@
 		completedGameMode = mode;
 		sessionResults = []; // Reiniciar resultados de la sesión
 		isRetrySession = isRetry; // Guardar si es una sesión de reintento
-		
+
 		// Iniciar timer si está habilitado
 		startTimer();
-		
+
 		// Implementar algoritmo de repetición espaciada
 		const today = getLocalDateString();
-		
+
 		// Calcular prioridad de cada verbo
-		const verbsWithPriority = verbs.map(verb => {
+		const verbsWithPriority = verbs.map((verb) => {
 			const progress = $userProfile.studiedVerbs[verb.kanji];
-			
+
 			if (!progress) {
 				// Verbos nuevos tienen prioridad alta
 				return { verb, priority: 1000 };
 			}
-			
+
 			const masteryScore = progress.masteryScore;
 			const nextReviewDate = progress.nextReviewDate;
 			const isReady = nextReviewDate <= today;
-			
+
 			// Calcular prioridad:
 			// - Verbos listos para revisión: prioridad alta
 			// - Verbos difíciles (masteryScore bajo): prioridad más alta
 			// - Verbos dominados (masteryScore alto): prioridad más baja
 			let priority = 0;
-			
+
 			if (isReady) {
 				// Listo para revisión: base de 500
 				priority = 500;
@@ -479,23 +527,23 @@
 				// No es momento de revisión, pero verbos difíciles aún tienen prioridad
 				priority = Math.max(0, (10 - masteryScore) * 15); // -5 score = +225, +10 score = +0
 			}
-			
+
 			return { verb, priority };
 		});
-		
+
 		// Ordenar por prioridad (mayor primero) y agregar algo de aleatoriedad
 		verbsWithPriority.sort((a, b) => {
 			// Agregar factor aleatorio pequeño para no ser completamente determinista
 			const randomFactor = (Math.random() - 0.5) * 50;
-			return (b.priority - a.priority) + randomFactor;
+			return b.priority - a.priority + randomFactor;
 		});
-		
+
 		// Seleccionar los primeros N verbos según prioridad
-		gameVerbs = verbsWithPriority.slice(0, questionsPerSession).map(v => v.verb);
-		
+		gameVerbs = verbsWithPriority.slice(0, questionsPerSession).map((v) => v.verb);
+
 		// Mezclar el orden de los verbos seleccionados
 		gameVerbs = shuffleArray(gameVerbs);
-		
+
 		currentIndex = 0;
 		questionCount = 0;
 		correctCount = 0;
@@ -532,9 +580,9 @@
 		feedbackHint = '';
 		autoPlayedExample = false;
 		autoReadTriggered = false;
-		
+
 		questionCount++;
-		
+
 		// Update conjugations when verb changes
 		if (currentVerb) {
 			currentConjugations = conjugateVerb(currentVerb);
@@ -555,79 +603,85 @@
 
 	function generateOptions() {
 		if (!currentVerb) return;
-		
+
 		const correctAnswer = currentVerb.translation.meaning;
-		const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
+		const otherVerbs = verbs.filter((v) => v.kanji !== currentVerb!.kanji);
 		const wrongAnswers = shuffleArray(otherVerbs)
 			.slice(0, 3)
-			.map(v => v.translation.meaning);
-		
+			.map((v) => v.translation.meaning);
+
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
 
 	function generateMeaningToVerbOptions() {
 		if (!currentVerb) return;
-		
+
 		// The correct answer is the verb itself (kanji + kana)
 		const correctAnswer = `${currentVerb.kanji} (${currentVerb.kana})`;
-		const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
+		const otherVerbs = verbs.filter((v) => v.kanji !== currentVerb!.kanji);
 		const wrongAnswers = shuffleArray(otherVerbs)
 			.slice(0, 3)
-			.map(v => `${v.kanji} (${v.kana})`);
-		
+			.map((v) => `${v.kanji} (${v.kana})`);
+
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
 
 	function generateConjugationQuiz() {
 		if (!currentVerb) return;
-		
+
 		// Seleccionar un tipo de conjugación aleatorio
 		const selected = conjugationTypes[Math.floor(Math.random() * conjugationTypes.length)];
 		conjugationForm = selected.name;
 		conjugationFormality = selected.formality;
-		
+
 		// Buscar la conjugación correcta por key (no por label)
-		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
-		
+		const selectedConjugation = currentConjugations.find((c) => c.key === selected.key);
+
 		// Validación: si no encontramos la conjugación, hay un error grave
 		if (!selectedConjugation) {
-			console.error(`No se encontró conjugación para key: ${selected.key}, verb: ${currentVerb.kanji}`);
+			console.error(
+				`No se encontró conjugación para key: ${selected.key}, verb: ${currentVerb.kanji}`
+			);
 			return;
 		}
-		
+
 		const correctConjugation = selectedConjugation.kana;
-		
+
 		// Guardar la traducción de la forma seleccionada
 		conjugationTranslation = selectedConjugation.translation || currentVerb.translation.meaning;
-		
+
 		// Generar opciones incorrectas usando OTRAS CONJUGACIONES DEL MISMO VERBO
-		const otherForms = conjugationTypes.filter(f => f.key !== selected.key);
+		const otherForms = conjugationTypes.filter((f) => f.key !== selected.key);
 		const wrongAnswers: string[] = [];
-		
+
 		for (const formObj of otherForms) {
-			const conj = currentConjugations.find(c => c.key === formObj.key);
+			const conj = currentConjugations.find((c) => c.key === formObj.key);
 			if (conj && conj.kana !== correctConjugation && !wrongAnswers.includes(conj.kana)) {
 				wrongAnswers.push(conj.kana);
 			}
 			if (wrongAnswers.length >= 3) break;
 		}
-		
+
 		// Si no hay suficientes conjugaciones diferentes, completar con formas de otros verbos
 		if (wrongAnswers.length < 3) {
-			const otherVerbs = verbs.filter(v => v.kanji !== currentVerb!.kanji);
+			const otherVerbs = verbs.filter((v) => v.kanji !== currentVerb!.kanji);
 			for (const verb of otherVerbs) {
 				if (wrongAnswers.length >= 3) break;
 				// Generar conjugaciones en tiempo real para el otro verbo
 				const verbConjugations = conjugateVerb(verb);
-				const verbConj = verbConjugations.find(c => c.key === selected.key);
-				if (verbConj && verbConj.kana !== correctConjugation && !wrongAnswers.includes(verbConj.kana)) {
+				const verbConj = verbConjugations.find((c) => c.key === selected.key);
+				if (
+					verbConj &&
+					verbConj.kana !== correctConjugation &&
+					!wrongAnswers.includes(verbConj.kana)
+				) {
 					wrongAnswers.push(verbConj.kana);
 				}
 			}
 		}
-		
+
 		options = shuffleArray([correctConjugation, ...wrongAnswers]);
-		
+
 		// Auto-reproducir audio del verbo al cargar la pregunta
 		setTimeout(() => {
 			speak(currentVerb!.kana || currentVerb!.kanji);
@@ -636,41 +690,45 @@
 
 	function generateInverseConjugationQuiz() {
 		if (!currentVerb) return;
-		
+
 		// Seleccionar un tipo de conjugación aleatorio
 		const selected = conjugationTypes[Math.floor(Math.random() * conjugationTypes.length)];
 		conjugationForm = selected.name;
 		conjugationFormality = selected.formality;
-		
+
 		// Buscar la conjugación correcta por key (no por label)
-		const selectedConjugation = currentConjugations.find(c => c.key === selected.key);
-		
+		const selectedConjugation = currentConjugations.find((c) => c.key === selected.key);
+
 		// Validación: si no encontramos la conjugación, hay un error grave
 		if (!selectedConjugation) {
-			console.error(`No se encontró conjugación para key: ${selected.key}, verb: ${currentVerb.kanji}`);
+			console.error(
+				`No se encontró conjugación para key: ${selected.key}, verb: ${currentVerb.kanji}`
+			);
 			return;
 		}
-		
+
 		const correctConjugation = selectedConjugation.kana;
-		
+
 		// Guardar la traducción de la forma seleccionada para mostrar información adicional
 		conjugationTranslation = selectedConjugation.translation || currentVerb.translation.meaning;
-		
+
 		// La respuesta correcta es el NOMBRE del tipo de conjugación
 		const correctAnswer = selected.name;
-		
+
 		// Generar opciones incorrectas usando NOMBRES de OTRAS CONJUGACIONES
-		const otherForms = conjugationTypes.filter(f => f.key !== selected.key && (selected.key === 'dictionary' || f.key !== 'dictionary'));
+		const otherForms = conjugationTypes.filter(
+			(f) => f.key !== selected.key && (selected.key === 'dictionary' || f.key !== 'dictionary')
+		);
 		const wrongAnswers: string[] = [];
-		
+
 		// Mezclar y seleccionar 3 opciones incorrectas
 		const shuffledOtherForms = shuffleArray(otherForms);
 		for (let i = 0; i < Math.min(3, shuffledOtherForms.length); i++) {
 			wrongAnswers.push(shuffledOtherForms[i].name);
 		}
-		
+
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
-		
+
 		// Auto-reproducir audio del verbo conjugado al cargar la pregunta
 		setTimeout(() => {
 			speak(correctConjugation);
@@ -679,24 +737,24 @@
 
 	function generateVerbTypeQuiz() {
 		if (!currentVerb) return;
-		
+
 		// Obtener el tipo correcto del verbo actual
 		const correctType = currentVerb.type;
-		
+
 		// Generar opciones incorrectas usando otros tipos de verbos
 		const allTypes = ['godan', 'ichidan', 'irregular'];
-		const wrongTypes = allTypes.filter(type => type !== correctType);
-		
+		const wrongTypes = allTypes.filter((type) => type !== correctType);
+
 		// Crear las opciones con nombres en español
 		const typeNames: { [key: string]: string } = {
-			'godan': 'Godan (Grupo 1)',
-			'ichidan': 'Ichidan (Grupo 2)',
-			'irregular': 'Irregular (Grupo 3)'
+			godan: 'Godan (Grupo 1)',
+			ichidan: 'Ichidan (Grupo 2)',
+			irregular: 'Irregular (Grupo 3)'
 		};
-		
+
 		const correctAnswer = typeNames[correctType];
-		const wrongAnswers = wrongTypes.map(type => typeNames[type]);
-		
+		const wrongAnswers = wrongTypes.map((type) => typeNames[type]);
+
 		options = shuffleArray([correctAnswer, ...wrongAnswers]);
 	}
 
@@ -711,7 +769,7 @@
 					autoPlayedExample = true;
 				}, 500);
 			}
-			
+
 			// Auto-leer verbo si está habilitado (además del ejemplo)
 			if (autoReadVerbs && !hasExamples) {
 				setTimeout(() => {
@@ -780,7 +838,13 @@
 
 	// Auto-leer verbo en modo conjugación cuando se muestran las conjugaciones
 	$effect(() => {
-		if (autoReadVerbs && showAnswer && currentVerb && currentMode === 'conjugation' && !autoPlayedExample) {
+		if (
+			autoReadVerbs &&
+			showAnswer &&
+			currentVerb &&
+			currentMode === 'conjugation' &&
+			!autoPlayedExample
+		) {
 			setTimeout(() => {
 				speakVerb(currentVerb);
 				autoPlayedExample = true;
@@ -790,18 +854,18 @@
 
 	function handleFlashcardAnswer(knew: boolean) {
 		if (!currentVerb) return;
-		
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
+
 		if (knew) {
 			correctCount++;
 			userProfile.addXP(5);
 		}
-		
+
 		// Flashcards básicas: multiplicador 0.5 (fácil)
 		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession, 0.5);
-		
+
 		// Guardar resultado
 		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 		sessionResults.push({
@@ -810,20 +874,20 @@
 			previousMastery,
 			newMastery
 		});
-		
+
 		currentIndex++;
 		loadNextQuestion();
 	}
 
 	function handleMultipleChoiceAnswer(answer: string) {
 		if (!currentVerb || selectedAnswer) return;
-		
+
 		selectedAnswer = answer;
 		const correct = answer === currentVerb.translation.meaning;
-		
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
+
 		if (correct) {
 			feedbackHint = '';
 			correctCount++;
@@ -868,11 +932,11 @@
 
 	function handleMeaningToVerbAnswer(answer: string) {
 		if (!currentVerb || selectedAnswer) return;
-		
+
 		selectedAnswer = answer;
 		const correctAnswer = `${currentVerb.kanji} (${currentVerb.kana})`;
 		const correct = answer === correctAnswer;
-		
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 		const queueSpeakAnswer = () => {
@@ -880,7 +944,7 @@
 				speakVerb(currentVerb);
 			}, 300);
 		};
-		
+
 		if (correct) {
 			feedbackHint = '';
 			correctCount++;
@@ -921,33 +985,35 @@
 
 	function handleConjugationQuizAnswer(answer: string) {
 		if (!currentVerb || selectedAnswer) return;
-		
+
 		selectedAnswer = answer;
 		// Buscar la respuesta correcta por key (no por label)
-		const selectedType = conjugationTypes.find(t => t.name === conjugationForm);
-		const selectedConjugation = currentConjugations.find(c => c.key === selectedType?.key);
-		
+		const selectedType = conjugationTypes.find((t) => t.name === conjugationForm);
+		const selectedConjugation = currentConjugations.find((c) => c.key === selectedType?.key);
+
 		// Validación: si no encontramos la conjugación, hay un error grave
 		if (!selectedConjugation) {
-			console.error(`No se encontró conjugación para key: ${selectedType?.key}, verb: ${currentVerb.kanji}`);
+			console.error(
+				`No se encontró conjugación para key: ${selectedType?.key}, verb: ${currentVerb.kanji}`
+			);
 			return;
 		}
-		
+
 		const correctAnswer = selectedConjugation.kana;
 		const correct = answer === correctAnswer;
-		
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
+
 		if (correct) {
 			correctCount++;
 			userProfile.addXP(20);
 			// Conjugation Quiz: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
-			
+
 			// Reproducir la conjugación correcta antes de pasar al siguiente
 			speak(correctAnswer);
-			
+
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -956,7 +1022,7 @@
 				previousMastery,
 				newMastery
 			});
-			
+
 			// Mostrar botón verde por 1.5 segundos antes de pasar al siguiente
 			setTimeout(() => {
 				currentIndex++;
@@ -964,19 +1030,21 @@
 			}, 1500);
 		} else {
 			// Preparar feedback con la conjugación correcta
-			const selectedConjugation = currentConjugations.find(c => c.label === conjugationForm);
+			const selectedConjugation = currentConjugations.find((c) => c.label === conjugationForm);
 			feedback = `La conjugación correcta es: ${correctAnswer}`;
-			feedbackHint = selectedConjugation ? `${conjugationForm}: ${selectedConjugation.description}` : '';
+			feedbackHint = selectedConjugation
+				? `${conjugationForm}: ${selectedConjugation.description}`
+				: '';
 			showErrorOverlay = true;
-			
+
 			// Reproducir la conjugación correcta inmediatamente
 			setTimeout(() => {
 				speak(correctAnswer);
 			}, 200);
-			
+
 			// Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
-			
+
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -991,31 +1059,33 @@
 
 	function handleInverseConjugationQuizAnswer(answer: string) {
 		if (!currentVerb || selectedAnswer) return;
-		
+
 		selectedAnswer = answer;
-		
+
 		// La respuesta correcta es el NOMBRE de la conjugación (no la traducción)
 		const correctAnswer = conjugationForm;
 		const correct = answer === correctAnswer;
-		
+
 		// Obtener info adicional de la conjugación seleccionada
-		const selectedConjugation = currentConjugations.find(c => c.key === conjugationTypes.find(t => t.name === conjugationForm)?.key);
-		const conjugationType = conjugationTypes.find(t => t.name === conjugationForm);
-		
+		const selectedConjugation = currentConjugations.find(
+			(c) => c.key === conjugationTypes.find((t) => t.name === conjugationForm)?.key
+		);
+		const conjugationType = conjugationTypes.find((t) => t.name === conjugationForm);
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
+
 		if (correct) {
 			correctCount++;
 			userProfile.addXP(20);
 			// Inverse Conjugation Quiz: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 2.0);
-			
+
 			// Reproducir la conjugación correcta antes de pasar al siguiente
 			if (selectedConjugation) {
 				speak(selectedConjugation.kana);
 			}
-			
+
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -1024,7 +1094,7 @@
 				previousMastery,
 				newMastery
 			});
-			
+
 			// Mostrar botón verde por 1.5 segundos antes de pasar al siguiente
 			setTimeout(() => {
 				currentIndex++;
@@ -1036,17 +1106,17 @@
 				feedbackHint = conjugationType.description;
 			}
 			showErrorOverlay = true;
-			
+
 			// Reproducir la conjugación correcta inmediatamente
 			if (selectedConjugation) {
 				setTimeout(() => {
 					speak(selectedConjugation.kana);
 				}, 200);
 			}
-			
+
 			// Inverse Conjugation Quiz error: multiplicador 2.0 (difícil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 2.0);
-			
+
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -1061,44 +1131,46 @@
 
 	function handleVerbTypeQuizAnswer(answer: string) {
 		if (!currentVerb || selectedAnswer) return;
-		
+
 		selectedAnswer = answer;
-		
+
 		// Obtener el tipo correcto del verbo actual
 		const typeNames: { [key: string]: string } = {
-			'godan': 'Godan (Grupo 1)',
-			'ichidan': 'Ichidan (Grupo 2)',
-			'irregular': 'Irregular (Grupo 3)'
+			godan: 'Godan (Grupo 1)',
+			ichidan: 'Ichidan (Grupo 2)',
+			irregular: 'Irregular (Grupo 3)'
 		};
-		
+
 		// Explicaciones para cada tipo de verbo
 		const typeExplanations: { [key: string]: string } = {
-			'godan': 'Los verbos Godan (Grupo 1) terminan en -u, -ku, -gu, -su, -tsu, -nu, -bu, -mu, -ru. Cambian la vocal final al conjugar.',
-			'ichidan': 'Los verbos Ichidan (Grupo 2) siempre terminan en -ru. Simplemente se quita el -ru para conjugar.',
-			'irregular': 'Solo hay 2 verbos irregulares: する (hacer) y 来る (venir). Deben memorizarse.'
+			godan:
+				'Los verbos Godan (Grupo 1) terminan en -u, -ku, -gu, -su, -tsu, -nu, -bu, -mu, -ru. Cambian la vocal final al conjugar.',
+			ichidan:
+				'Los verbos Ichidan (Grupo 2) siempre terminan en -ru. Simplemente se quita el -ru para conjugar.',
+			irregular: 'Solo hay 2 verbos irregulares: する (hacer) y 来る (venir). Deben memorizarse.'
 		};
-		
+
 		const correctAnswer = typeNames[currentVerb.type];
 		const correctExplanation = typeExplanations[currentVerb.type];
 		const correct = answer === correctAnswer;
-		
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
+
 		// Leer la respuesta correcta siempre que está habilitada la auto-lectura
 		if (autoReadVerbs) {
 			setTimeout(() => {
 				currentVerb && speakVerb(currentVerb);
 			}, 300);
 		}
-		
+
 		if (correct) {
 			correctCount++;
 			feedback = '¡Correcto!';
 			userProfile.addXP(8);
 			// Verb Type Quiz: multiplicador 0.75 (medio-fácil)
 			userProfile.recordPractice(currentVerb.kanji, true, !isRetrySession, 0.75);
-			
+
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -1107,7 +1179,7 @@
 				previousMastery,
 				newMastery
 			});
-			
+
 			// Avanzar a la siguiente pregunta después de un breve retraso
 			setTimeout(() => {
 				currentIndex++;
@@ -1117,10 +1189,10 @@
 			feedback = `Incorrecto. La respuesta correcta es: ${correctAnswer}`;
 			feedbackHint = correctExplanation;
 			showErrorOverlay = true;
-			
+
 			// Verb Type Quiz error: multiplicador 0.75 (medio-fácil)
 			userProfile.recordPractice(currentVerb.kanji, false, !isRetrySession, 0.75);
-			
+
 			// Guardar resultado
 			const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 			sessionResults.push({
@@ -1139,14 +1211,14 @@
 
 	function handleConjugationAnswer(knew: boolean) {
 		if (!currentVerb) return;
-		
+
 		// Guardar mastery score previo
 		const previousMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
-		
+
 		if (knew) {
 			correctCount++;
 			userProfile.addXP(15);
-			
+
 			// Auto-leer verbo si está habilitado
 			if (autoReadVerbs) {
 				setTimeout(() => {
@@ -1154,10 +1226,10 @@
 				}, 300);
 			}
 		}
-		
+
 		// Conjugation Flashcards: multiplicador 1.5 (medio-alto)
 		userProfile.recordPractice(currentVerb.kanji, knew, !isRetrySession, 1.5);
-		
+
 		// Guardar resultado
 		const newMastery = $userProfile.studiedVerbs[currentVerb.kanji]?.masteryScore ?? 0;
 		sessionResults.push({
@@ -1166,7 +1238,7 @@
 			previousMastery,
 			newMastery
 		});
-		
+
 		currentIndex++;
 		loadNextQuestion();
 	}
@@ -1174,26 +1246,26 @@
 	function finishGame() {
 		// Detener timer
 		stopTimer();
-		
+
 		const accuracy = Math.round((correctCount / questionCount) * 100);
-		
+
 		// Actualizar estadísticas globales de la sesión
-		userProfile.update(profile => ({
+		userProfile.update((profile) => ({
 			...profile,
 			totalPractices: profile.totalPractices + 1,
 			totalCorrect: profile.totalCorrect + correctCount,
 			totalQuestions: profile.totalQuestions + questionCount
 		}));
-		
+
 		// Check for achievements
 		if (questionCount >= 10 && accuracy === 100) {
 			userProfile.addAchievement('perfect_game');
 		}
-		
+
 		// Ir a la pantalla de resultados
 		currentMode = 'results';
 	}
-	
+
 	function retryGame() {
 		startGame(completedGameMode, true);
 	}
@@ -1201,11 +1273,11 @@
 	function exitGame() {
 		// Detener timer
 		stopTimer();
-		
+
 		// Resetear estados de audio para evitar reproducción después de salir
 		autoPlayedExample = true;
 		autoReadTriggered = true;
-		
+
 		if (confirm('¿Seguro que quieres salir? Se perderá el progreso actual.')) {
 			currentMode = 'menu';
 		} else {
@@ -1223,17 +1295,25 @@
 <div class="pb-6">
 	{#if currentMode === 'menu'}
 		<section class="space-y-8 pb-10">
-			<header class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-900/50 via-slate-900 to-slate-900 p-[1px] shadow-2xl">
+			<header
+				class="relative overflow-hidden rounded-3xl border border-slate-800 bg-gradient-to-br from-indigo-900/50 via-slate-900 to-slate-900 p-[1px] shadow-2xl"
+			>
 				<div class="absolute inset-0 bg-[url('/grid.svg')] opacity-10"></div>
-				<div class="relative rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/50 p-8 backdrop-blur-xl">
+				<div
+					class="relative rounded-[calc(theme(borderRadius.3xl)-1px)] bg-slate-950/50 p-8 backdrop-blur-xl"
+				>
 					<div class="flex items-center gap-6">
-						<div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-slate-900 text-4xl shadow-inner border border-slate-800">
+						<div
+							class="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 text-4xl shadow-inner"
+						>
 							🎮
 						</div>
 						<div class="space-y-2">
-							<p class="text-xs font-bold text-indigo-300 uppercase tracking-wider">Centro de práctica</p>
-							<h1 class="text-3xl font-black text-white tracking-tight">Diseña tu sesión</h1>
-							<p class="text-slate-400 max-w-lg leading-relaxed">
+							<p class="text-xs font-bold tracking-wider text-indigo-300 uppercase">
+								Centro de práctica
+							</p>
+							<h1 class="text-3xl font-black tracking-tight text-white">Diseña tu sesión</h1>
+							<p class="max-w-lg leading-relaxed text-slate-400">
 								Combina modos de juego para reforzar conjugaciones y vocabulario.
 							</p>
 						</div>
@@ -1241,27 +1321,35 @@
 				</div>
 			</header>
 
-			<div class="space-y-6 rounded-3xl border border-slate-800 bg-slate-950/50 p-6 md:p-8 sm:px-4 sm:py-4 backdrop-blur-sm">
+			<div
+				class="space-y-6 rounded-3xl border border-slate-800 bg-slate-950/50 p-6 backdrop-blur-sm sm:px-4 sm:py-4 md:p-8"
+			>
 				<div class="grid gap-4 sm:grid-cols-2">
 					{#each games as game}
 						<button
 							onclick={() => startGame(game.id as GameMode)}
-							class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-6 text-left transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98] hover:border-indigo-500/30"
+							class="group relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40 p-6 text-left transition-all hover:scale-[1.02] hover:border-indigo-500/30 hover:shadow-xl active:scale-[0.98]"
 						>
-							<div class={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
-							
+							<div
+								class={`absolute inset-0 bg-gradient-to-br ${game.color} opacity-0 transition-opacity duration-500 group-hover:opacity-10`}
+							></div>
+
 							<div class="relative flex items-start gap-4">
-								<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-950/50 text-2xl shadow-inner border border-slate-800/50 group-hover:scale-110 transition-transform duration-300">
+								<div
+									class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-800/50 bg-slate-950/50 text-2xl shadow-inner transition-transform duration-300 group-hover:scale-110"
+								>
 									{game.icon}
 								</div>
-								<div class="flex-1 min-w-0">
-									<div class="flex items-center justify-between mb-1 gap-2">
-										<h2 class="text-lg font-bold text-white truncate">{game.title}</h2>
-										<span class="shrink-0 text-[10px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 font-bold border border-slate-700">
+								<div class="min-w-0 flex-1">
+									<div class="mb-1 flex items-center justify-between gap-2">
+										<h2 class="truncate text-lg font-bold text-white">{game.title}</h2>
+										<span
+											class="shrink-0 rounded-full border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] font-bold text-slate-400"
+										>
 											{game.difficulty}
 										</span>
 									</div>
-									<p class="text-sm text-slate-400 line-clamp-2">{game.description}</p>
+									<p class="line-clamp-2 text-sm text-slate-400">{game.description}</p>
 								</div>
 							</div>
 						</button>
@@ -1269,27 +1357,31 @@
 				</div>
 			</div>
 
-			<div class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 md:p-8 backdrop-blur-sm">
-				<h2 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
-					<span class="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-800 text-slate-400 text-xs">⚙️</span>
+			<div class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 backdrop-blur-sm md:p-8">
+				<h2 class="mb-6 flex items-center gap-2 text-lg font-bold text-white">
+					<span
+						class="flex h-6 w-6 items-center justify-center rounded-lg bg-slate-800 text-xs text-slate-400"
+						>⚙️</span
+					>
 					Configuración de la sesión
 				</h2>
-				
+
 				<div class="space-y-6">
 					<div>
-						<div class="flex items-center justify-between mb-3">
+						<div class="mb-3 flex items-center justify-between">
 							<p class="text-sm font-bold text-slate-300">Preguntas por sesión</p>
-							<span class="text-xs font-mono text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">{questionsPerSession}</span>
+							<span class="rounded bg-indigo-500/10 px-2 py-0.5 font-mono text-xs text-indigo-400"
+								>{questionsPerSession}</span
+							>
 						</div>
 						<div class="grid grid-cols-4 gap-3">
 							{#each [10, 20, 30, 40] as amount}
 								<button
 									onclick={() => updateQuestionsPerSession(amount)}
-									class="rounded-xl border p-3 text-center transition-all active:scale-95 {
-										questionsPerSession === amount
-											? 'border-indigo-500 bg-indigo-500/20 text-white shadow-lg shadow-indigo-900/20'
-											: 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-600 hover:bg-slate-800'
-									}"
+									class="rounded-xl border p-3 text-center transition-all active:scale-95 {questionsPerSession ===
+									amount
+										? 'border-indigo-500 bg-indigo-500/20 text-white shadow-lg shadow-indigo-900/20'
+										: 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-600 hover:bg-slate-800'}"
 								>
 									<div class="text-xl font-black">{amount}</div>
 								</button>
@@ -1297,40 +1389,50 @@
 						</div>
 					</div>
 
-					<div class="grid sm:grid-cols-2 gap-4">
-						<label class="group flex items-center gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/30 cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all">
+					<div class="grid gap-4 sm:grid-cols-2">
+						<label
+							class="group flex cursor-pointer items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-all hover:border-indigo-500/50 hover:bg-indigo-500/5"
+						>
 							<div class="relative flex items-center">
 								<input
 									type="checkbox"
 									checked={autoReadVerbs}
-									onchange={(event) => updateAutoReadPreference((event.target as HTMLInputElement).checked)}
+									onchange={(event) =>
+										updateAutoReadPreference((event.target as HTMLInputElement).checked)}
 									class="peer sr-only"
 								/>
-								<div class="w-11 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+								<div
+									class="peer h-6 w-11 rounded-full bg-slate-800 peer-checked:bg-indigo-600 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"
+								></div>
 							</div>
 							<div class="flex-1">
-								<div class="flex items-center gap-2 mb-0.5">
+								<div class="mb-0.5 flex items-center gap-2">
 									<span class="text-lg">🔊</span>
-									<p class="text-white font-bold text-sm">Lectura automática</p>
+									<p class="text-sm font-bold text-white">Lectura automática</p>
 								</div>
 								<p class="text-xs text-slate-400">Reproduce audio al mostrar verbos</p>
 							</div>
 						</label>
 
-						<label class="group flex items-center gap-4 p-4 rounded-xl border border-slate-800 bg-slate-900/30 cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all">
+						<label
+							class="group flex cursor-pointer items-center gap-4 rounded-xl border border-slate-800 bg-slate-900/30 p-4 transition-all hover:border-indigo-500/50 hover:bg-indigo-500/5"
+						>
 							<div class="relative flex items-center">
 								<input
 									type="checkbox"
 									checked={showTimer}
-									onchange={(event) => updateTimerPreference((event.target as HTMLInputElement).checked)}
+									onchange={(event) =>
+										updateTimerPreference((event.target as HTMLInputElement).checked)}
 									class="peer sr-only"
 								/>
-								<div class="w-11 h-6 bg-slate-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+								<div
+									class="peer h-6 w-11 rounded-full bg-slate-800 peer-checked:bg-indigo-600 after:absolute after:start-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white rtl:peer-checked:after:-translate-x-full"
+								></div>
 							</div>
 							<div class="flex-1">
-								<div class="flex items-center gap-2 mb-0.5">
+								<div class="mb-0.5 flex items-center gap-2">
 									<span class="text-lg">⏱️</span>
-									<p class="text-white font-bold text-sm">Temporizador</p>
+									<p class="text-sm font-bold text-white">Temporizador</p>
 								</div>
 								<p class="text-xs text-slate-400">Muestra el tiempo transcurrido</p>
 							</div>
@@ -1339,21 +1441,17 @@
 				</div>
 			</div>
 		</section>
-
 	{:else if currentMode === 'flashcards'}
 		<!-- Flashcards Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1365,8 +1463,8 @@
 
 			{#if currentVerb}
 				<!-- Flashcard -->
-				<div 
-					class="relative h-96 w-full cursor-pointer perspective-1000"
+				<div
+					class="perspective-1000 relative h-96 w-full cursor-pointer"
 					onclick={(e) => {
 						const target = e.target as HTMLElement;
 						if (!target.closest('button')) {
@@ -1382,23 +1480,35 @@
 						}
 					}}
 				>
-					<div class="absolute inset-0 transition-transform duration-500 preserve-3d {showAnswer ? 'rotate-y-180' : ''}">
+					<div
+						class="preserve-3d absolute inset-0 transition-transform duration-500 {showAnswer
+							? 'rotate-y-180'
+							: ''}"
+					>
 						<!-- Front -->
-						<div class="absolute inset-0 backface-hidden rounded-3xl border-2 border-indigo-500 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 p-8 flex flex-col items-center justify-center text-center">
-							<div class="text-6xl font-bold text-white mb-4">
+						<div
+							class="absolute inset-0 flex flex-col items-center justify-center rounded-3xl border-2 border-indigo-500 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 p-8 text-center backface-hidden"
+						>
+							<div class="mb-4 text-6xl font-bold text-white">
 								{currentVerb.kanji}
 							</div>
-							<div class="text-2xl text-slate-300 mb-2">{currentVerb.kana}</div>
+							<div class="mb-2 text-2xl text-slate-300">{currentVerb.kana}</div>
 							<div class="text-lg text-slate-400">{currentVerb.romaji}</div>
-							<span class="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold border border-purple-500/50 bg-purple-500/20 text-purple-300">
-								{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+							<span
+								class="mt-4 inline-block rounded-full border border-purple-500/50 bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-300"
+							>
+								{currentVerb.type === 'godan'
+									? 'Godan (Grupo 1)'
+									: currentVerb.type === 'ichidan'
+										? 'Ichidan (Grupo 2)'
+										: 'Irregular (Grupo 3)'}
 							</span>
 							<button
 								onclick={(e) => {
 									e.stopPropagation();
 									speakVerb(currentVerb);
 								}}
-								class="mt-6 p-3 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-2xl"
+								class="mt-6 rounded-full bg-slate-800 p-3 text-2xl transition-colors hover:bg-slate-700"
 								type="button"
 							>
 								🔊
@@ -1407,24 +1517,34 @@
 						</div>
 
 						<!-- Back -->
-						<div class="absolute inset-0 backface-hidden rotate-y-180 rounded-3xl border-2 border-green-500 bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-8 flex flex-col items-center justify-center text-center">
-							<div class="text-4xl font-bold text-white mb-4">
+						<div
+							class="absolute inset-0 flex rotate-y-180 flex-col items-center justify-center rounded-3xl border-2 border-green-500 bg-gradient-to-br from-green-600/20 to-emerald-600/20 p-8 text-center backface-hidden"
+						>
+							<div class="mb-4 text-4xl font-bold text-white">
 								{currentVerb.translation.meaning}
 							</div>
-							<span class="mb-4 inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-400">
-								{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+							<span
+								class="mb-4 inline-block rounded-full border border-purple-500/50 bg-purple-500/20 px-3 py-1 text-xs font-medium text-purple-400"
+							>
+								{currentVerb.type === 'godan'
+									? 'Godan (Grupo 1)'
+									: currentVerb.type === 'ichidan'
+										? 'Ichidan (Grupo 2)'
+										: 'Irregular (Grupo 3)'}
 							</span>
 							{#if currentVerb.translation.examples.length > 0}
-								<div class="space-y-3 w-full">
-									<div class="relative text-sm text-slate-300 bg-slate-900/50 rounded-xl p-4 border border-slate-800">
+								<div class="w-full space-y-3">
+									<div
+										class="relative rounded-xl border border-slate-800 bg-slate-900/50 p-4 text-sm text-slate-300"
+									>
 										<p class="font-japanese mb-2">{currentVerb.translation.examples[0].ja}</p>
-										<p class="text-slate-400 mb-3">{currentVerb.translation.examples[0].es}</p>
+										<p class="mb-3 text-slate-400">{currentVerb.translation.examples[0].es}</p>
 										<button
 											onclick={(e) => {
 												e.stopPropagation();
 												speakVerb(currentVerb);
 											}}
-											class="absolute top-3 right-3 p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg"
+											class="absolute top-3 right-3 rounded-lg p-2 text-lg transition-colors hover:bg-slate-800"
 											type="button"
 										>
 											🔊
@@ -1455,14 +1575,16 @@
 					</div>
 				{/if}
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -1470,21 +1592,17 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'multiple-choice'}
 		<!-- Multiple Choice Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1497,18 +1615,24 @@
 			{#if currentVerb}
 				<!-- Question -->
 				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
-					<p class="text-sm text-slate-400 mb-4">¿Qué significa?</p>
-					<div class="text-5xl font-bold text-white mb-3">
+					<p class="mb-4 text-sm text-slate-400">¿Qué significa?</p>
+					<div class="mb-3 text-5xl font-bold text-white">
 						{currentVerb.kanji}
 					</div>
-					<div class="text-2xl text-slate-300 mb-2">{currentVerb.kana}</div>
+					<div class="mb-2 text-2xl text-slate-300">{currentVerb.kana}</div>
 					<div class="text-lg text-slate-400">{currentVerb.romaji}</div>
-					<span class="mt-4 inline-block px-3 py-1 rounded-full text-xs font-semibold border border-purple-500/50 bg-purple-500/20 text-purple-300">
-						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					<span
+						class="mt-4 inline-block rounded-full border border-purple-500/50 bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-300"
+					>
+						{currentVerb.type === 'godan'
+							? 'Godan (Grupo 1)'
+							: currentVerb.type === 'ichidan'
+								? 'Ichidan (Grupo 2)'
+								: 'Irregular (Grupo 3)'}
 					</span>
 					<button
 						onclick={() => speakVerb(currentVerb)}
-						class="mt-4 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
+						class="mt-4 rounded-full bg-slate-800 p-2 text-xl transition-colors hover:bg-slate-700"
 					>
 						🔊
 					</button>
@@ -1520,8 +1644,8 @@
 						<button
 							onclick={() => handleMultipleChoiceAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
-								selectedAnswer === null
+							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {selectedAnswer ===
+							null
 								? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500'
 								: selectedAnswer === option
 									? option === currentVerb.translation.meaning
@@ -1529,22 +1653,23 @@
 										: 'border-red-500 bg-red-500/20 text-red-400'
 									: option === currentVerb.translation.meaning
 										? 'border-green-500 bg-green-500/20 text-green-400'
-										: 'border-slate-800 bg-slate-900/50 text-slate-500'
-							}"
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'}"
 						>
 							{option}
 						</button>
 					{/each}
 				</div>
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -1552,21 +1677,17 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'meaning-to-verb'}
 		<!-- Meaning to Verb Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1579,8 +1700,8 @@
 			{#if currentVerb}
 				<!-- Question -->
 				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
-					<p class="text-sm text-slate-400 mb-4">¿Qué verbo significa?</p>
-					<div class="text-3xl font-bold text-white mb-4">
+					<p class="mb-4 text-sm text-slate-400">¿Qué verbo significa?</p>
+					<div class="mb-4 text-3xl font-bold text-white">
 						{currentVerb.translation.meaning}
 					</div>
 				</div>
@@ -1592,8 +1713,8 @@
 						<button
 							onclick={() => handleMeaningToVerbAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-4 text-lg font-medium transition-all active:scale-95 {
-								selectedAnswer === null
+							class="rounded-2xl border-2 p-4 text-lg font-medium transition-all active:scale-95 {selectedAnswer ===
+							null
 								? 'border-slate-800 bg-slate-900/70 text-white hover:border-cyan-500'
 								: selectedAnswer === option
 									? option === correctAnswer
@@ -1601,22 +1722,23 @@
 										: 'border-red-500 bg-red-500/20 text-red-400'
 									: option === correctAnswer
 										? 'border-green-500 bg-green-500/20 text-green-400'
-										: 'border-slate-800 bg-slate-900/50 text-slate-500'
-							}"
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'}"
 						>
 							<div class="text-xl font-medium">{option}</div>
 						</button>
 					{/each}
 				</div>
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -1624,21 +1746,17 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'listening'}
 		<!-- Listening Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1650,15 +1768,15 @@
 
 			{#if currentVerb}
 				<!-- Audio Player -->
-				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-12 text-center">
-					<p class="text-sm text-slate-400 mb-6">Escucha el audio y elige la respuesta correcta</p>
+				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 text-center sm:p-12">
+					<p class="mb-6 text-sm text-slate-400">Escucha el audio y elige la respuesta correcta</p>
 					<button
 						onclick={handleListeningPlay}
-						class="inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-5xl hover:scale-110 transition-transform active:scale-95 shadow-lg shadow-orange-500/30"
+						class="inline-flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-orange-500 to-red-500 text-5xl shadow-lg shadow-orange-500/30 transition-transform hover:scale-110 active:scale-95"
 					>
 						🔊
 					</button>
-					<p class="text-xs text-slate-500 mt-6">Toca para reproducir</p>
+					<p class="mt-6 text-xs text-slate-500">Toca para reproducir</p>
 				</div>
 
 				<!-- Options -->
@@ -1667,8 +1785,8 @@
 						<button
 							onclick={() => handleMultipleChoiceAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {
-								selectedAnswer === null
+							class="rounded-2xl border-2 p-3 text-lg font-medium transition-all active:scale-95 {selectedAnswer ===
+							null
 								? 'border-slate-800 bg-slate-900/70 text-white hover:border-orange-500'
 								: selectedAnswer === option
 									? option === currentVerb.translation.meaning
@@ -1676,22 +1794,23 @@
 										: 'border-red-500 bg-red-500/20 text-red-400'
 									: option === currentVerb.translation.meaning
 										? 'border-green-500 bg-green-500/20 text-green-400'
-										: 'border-slate-800 bg-slate-900/50 text-slate-500'
-							}"
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'}"
 						>
 							{option}
 						</button>
 					{/each}
 				</div>
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -1700,21 +1819,17 @@
 			{/if}
 		</section>
 		<!-- End of Listening Game -->
-
 	{:else if currentMode === 'conjugation-quiz'}
 		<!-- Conjugation Quiz Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1725,44 +1840,58 @@
 			</div>
 
 			{#if currentVerb}
-				{@const conjugationType = conjugationTypes.find(t => t.name === conjugationForm)}
+				{@const conjugationType = conjugationTypes.find((t) => t.name === conjugationForm)}
 				{@const formalityStyles = getFormalityStyles(conjugationType?.formality)}
-				
+
 				<!-- Verbo a conjugar -->
-				<div class="rounded-3xl border-2 border-slate-700 bg-slate-900/80 p-5 sm:p-6">
-					<p class="text-xs uppercase tracking-[0.3em] text-slate-500 mb-4 text-center">Verbo a conjugar</p>
+				<div class="rounded-3xl border-2 border-slate-700 bg-slate-900/80 p-4 sm:p-6">
+					<p class="mb-4 text-center text-xs tracking-widest text-slate-500 uppercase">
+						Verbo a conjugar
+					</p>
 					<div class="flex flex-col gap-4 lg:flex-row lg:items-stretch lg:gap-8">
 						<div class="flex-1 text-center lg:text-left">
-							<div class="flex items-center justify-center lg:justify-start gap-4 mb-2">
+							<div class="mb-2 flex items-center justify-center gap-4 lg:justify-start">
 								<div>
-									<div class="text-5xl font-bold text-white mb-1">
+									<div class="mb-1 text-4xl font-bold text-white sm:text-5xl">
 										{currentVerb.kanji}
 									</div>
 									<div class="text-xl text-slate-300">{currentVerb.kana}</div>
 								</div>
 								<button
 									onclick={() => speak(currentVerb!.kana || currentVerb!.kanji)}
-									class="flex-shrink-0 p-3.5 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 text-xl shadow-lg"
+									class="flex-shrink-0 rounded-full bg-indigo-600 p-3.5 text-xl shadow-lg transition-all hover:bg-indigo-500 active:scale-95"
 									aria-label="Reproducir pronunciación"
 								>
 									🔊
 								</button>
 							</div>
-							<p class="text-sm text-slate-400 mb-2">({currentVerb.translation.meaning})</p>
-							<span class="inline-block px-3 py-1 rounded-full text-[10px] font-semibold border border-purple-500/40 bg-purple-500/15 text-purple-200">
-								{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+							<p class="mb-2 text-sm text-slate-400">({currentVerb.translation.meaning})</p>
+							<span
+								class="inline-block rounded-full border border-purple-500/40 bg-purple-500/15 px-3 py-1 text-[10px] font-semibold text-purple-200"
+							>
+								{currentVerb.type === 'godan'
+									? 'Godan (Grupo 1)'
+									: currentVerb.type === 'ichidan'
+										? 'Ichidan (Grupo 2)'
+										: 'Irregular (Grupo 3)'}
 							</span>
 						</div>
 
 						<div class="w-full lg:w-auto lg:min-w-[240px]">
-							<div class="rounded-2xl bg-slate-900/60 p-4 h-full flex flex-col">
-								<p class="text-[10px] uppercase tracking-[0.3em] text-indigo-300 mb-2 text-center lg:text-left">Conjugación solicitada</p>
-								<div class={`rounded-xl ${formalityStyles.container.replace('border ', 'border border-dashed ')} p-3 flex-1`}> 
+							<div class="flex h-full flex-col rounded-2xl bg-slate-900/60 p-4">
+								<p
+									class="mb-2 text-center text-[10px] tracking-widest text-indigo-300 uppercase lg:text-left"
+								>
+									Conjugación solicitada
+								</p>
+								<div
+									class={`rounded-xl ${formalityStyles.container.replace('border ', 'border border-dashed ')} flex-1 p-3`}
+								>
 									<div class={`text-lg font-bold ${formalityStyles.title}`}>
 										{conjugationForm}
 									</div>
 									{#if conjugationType}
-										<p class={`text-xs mt-2 ${formalityStyles.description}`}>
+										<p class={`mt-2 text-xs ${formalityStyles.description}`}>
 											{conjugationType.description}
 										</p>
 									{/if}
@@ -1773,20 +1902,22 @@
 				</div>
 
 				<!-- Opciones de respuesta -->
-				<div>
-					<p class="text-sm text-slate-400 mb-3 text-center">Elige la conjugación correcta:</p>
-					<div class="grid gap-3">
+				<div class="mt-4">
+					<p class="mb-2 text-center text-sm text-slate-400">Elige la conjugación correcta:</p>
+					<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 						{#each options as option}
-							{@const selectedType = conjugationTypes.find(t => t.name === conjugationForm)}
-							{@const selectedConjugation = currentConjugations.find(c => c.key === selectedType?.key)}
+							{@const selectedType = conjugationTypes.find((t) => t.name === conjugationForm)}
+							{@const selectedConjugation = currentConjugations.find(
+								(c) => c.key === selectedType?.key
+							)}
 							{@const correctAnswer = selectedConjugation?.kana}
 							{@const isCorrect = option === correctAnswer}
 							{@const isSelected = selectedAnswer === option}
 							<button
 								onclick={() => handleConjugationQuizAnswer(option)}
 								disabled={selectedAnswer !== null}
-								class="rounded-2xl border-2 p-5 transition-all active:scale-95 {
-									selectedAnswer === null
+								class="rounded-xl border-2 p-3 transition-all active:scale-95 {selectedAnswer ===
+								null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500 hover:bg-slate-800'
 									: isSelected
 										? isCorrect
@@ -1794,26 +1925,27 @@
 											: 'border-red-500 bg-red-500/20 text-red-300 shadow-lg shadow-red-500/20'
 										: isCorrect
 											? 'border-green-500 bg-green-500/20 text-green-300 shadow-lg shadow-green-500/20'
-											: 'border-slate-800 bg-slate-900/30 text-slate-600'
-								}"
+											: 'border-slate-800 bg-slate-900/30 text-slate-600'}"
 							>
-								<div class="text-3xl font-bold">{option}</div>
+								<div class="text-xl font-bold">{option}</div>
 								{#if selectedAnswer !== null && isCorrect}
-									<div class="text-xs text-green-400 mt-2">✓ Respuesta correcta</div>
+									<div class="mt-1 text-[10px] text-green-400">✓ Correcta</div>
 								{/if}
 							</button>
 						{/each}
 					</div>
 				</div>
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -1821,21 +1953,17 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'inverse-conjugation-quiz'}
 		<!-- Inverse Conjugation Quiz Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1846,54 +1974,70 @@
 			</div>
 
 			{#if currentVerb}
-				{@const selectedConjugation = currentConjugations.find(c => c.key === conjugationTypes.find(t => t.name === conjugationForm)?.key)}
-				{@const conjugationType = conjugationTypes.find(t => t.name === conjugationForm)}
+				{@const selectedConjugation = currentConjugations.find(
+					(c) => c.key === conjugationTypes.find((t) => t.name === conjugationForm)?.key
+				)}
+				{@const conjugationType = conjugationTypes.find((t) => t.name === conjugationForm)}
 				{@const formalityStyles = getFormalityStyles(conjugationType?.formality)}
-				
+
 				<!-- Verbo conjugado mostrado -->
 				<div class="rounded-3xl border-2 border-slate-700 bg-slate-900/80 p-6 text-center">
-					<p class="text-xs uppercase tracking-wider text-slate-500 mb-3">Verbo conjugado</p>
-					
-					<div class="flex items-center justify-center gap-4 mb-3">
+					<p class="mb-3 text-xs tracking-wider text-slate-500 uppercase">Verbo conjugado</p>
+
+					<div class="mb-3 flex items-center justify-center gap-4">
 						<div>
-							<div class="text-5xl font-bold text-white mb-2">
+							<div class="mb-2 text-5xl font-bold text-white">
 								{selectedConjugation?.kana || currentVerb.kana}
 							</div>
 						</div>
-						
+
 						<button
 							onclick={() => speak(selectedConjugation?.kana || currentVerb!.kana)}
-							class="flex-shrink-0 p-4 rounded-full bg-indigo-600 hover:bg-indigo-500 transition-all active:scale-95 text-2xl shadow-lg"
+							class="flex-shrink-0 rounded-full bg-indigo-600 p-4 text-2xl shadow-lg transition-all hover:bg-indigo-500 active:scale-95"
 							aria-label="Reproducir pronunciación"
 						>
 							🔊
 						</button>
 					</div>
-					
+
 					<!-- Info del verbo base y significado -->
-					<div class="text-base text-slate-400 mb-3">
-						Verbo base: <span class="text-slate-300">{currentVerb.kanji}</span> 
+					<div class="mb-3 text-base text-slate-400">
+						Verbo base: <span class="text-slate-300">{currentVerb.kanji}</span>
 						<span class="text-slate-500">({currentVerb.translation.meaning})</span>
 					</div>
-					
-					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border border-purple-500/50 bg-purple-500/20 text-purple-300">
-						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+
+					<span
+						class="inline-block rounded-full border border-purple-500/50 bg-purple-500/20 px-3 py-1 text-xs font-medium text-purple-300"
+					>
+						{currentVerb.type === 'godan'
+							? 'Godan (Grupo 1)'
+							: currentVerb.type === 'ichidan'
+								? 'Ichidan (Grupo 2)'
+								: 'Irregular (Grupo 3)'}
 					</span>
 
-					<div class="w-full lg:w-auto lg:min-w-[220px] mt-4">
-						<div class="rounded-2xl bg-slate-900/60 p-4 h-full flex flex-col gap-2 text-center lg:text-left">
-							<p class="text-[10px] uppercase tracking-[0.25em] text-indigo-300">¿Qué tipo de conjugación es?</p>
-							<div class="rounded-xl bg-slate-900/40 border border-slate-800/60 px-3 py-2">
-								<p class="text-xs font-semibold text-purple-100">Elige el tipo correcto para esta forma</p>
+					<div class="mt-4 w-full lg:w-auto lg:min-w-[220px]">
+						<div
+							class="flex h-full flex-col gap-2 rounded-2xl bg-slate-900/60 p-4 text-center lg:text-left"
+						>
+							<p class="text-[10px] tracking-[0.25em] text-indigo-300 uppercase">
+								¿Qué tipo de conjugación es?
+							</p>
+							<div class="rounded-xl border border-slate-800/60 bg-slate-900/40 px-3 py-2">
+								<p class="text-xs font-semibold text-purple-100">
+									Elige el tipo correcto para esta forma
+								</p>
 							</div>
 						</div>
 					</div>
 				</div>
 
 				<!-- Opciones de respuesta -->
-				<div>
-					<p class="text-sm text-slate-400 mb-3 text-center">Elige el tipo de conjugación correcto:</p>
-					<div class="grid gap-3">
+				<div class="mt-4">
+					<p class="mb-2 text-center text-sm text-slate-400">
+						Elige el tipo de conjugación correcto:
+					</p>
+					<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
 						{#each options as option}
 							{@const correctAnswer = conjugationForm}
 							{@const isCorrect = option === correctAnswer}
@@ -1901,8 +2045,8 @@
 							<button
 								onclick={() => handleInverseConjugationQuizAnswer(option)}
 								disabled={selectedAnswer !== null}
-								class="rounded-2xl border-2 p-5 transition-all active:scale-95 {
-									selectedAnswer === null
+								class="rounded-xl border-2 p-3 transition-all active:scale-95 {selectedAnswer ===
+								null
 									? 'border-slate-800 bg-slate-900/70 text-white hover:border-indigo-500 hover:bg-slate-800'
 									: isSelected
 										? isCorrect
@@ -1910,26 +2054,27 @@
 											: 'border-red-500 bg-red-500/20 text-red-300 shadow-lg shadow-red-500/20'
 										: isCorrect
 											? 'border-green-500 bg-green-500/20 text-green-300 shadow-lg shadow-green-500/20'
-											: 'border-slate-800 bg-slate-900/30 text-slate-600'
-								}"
+											: 'border-slate-800 bg-slate-900/30 text-slate-600'}"
 							>
-								<div class="text-xl font-bold">{option}</div>
+								<div class="text-base font-bold">{option}</div>
 								{#if selectedAnswer !== null && isCorrect}
-									<div class="text-xs text-green-400 mt-2">✓ Respuesta correcta</div>
+									<div class="mt-1 text-[10px] text-green-400">✓ Correcta</div>
 								{/if}
 							</button>
 						{/each}
 					</div>
 				</div>
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -1937,21 +2082,17 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'verb-type-quiz'}
 		<!-- Verb Type Quiz Game -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -1964,15 +2105,15 @@
 			{#if currentVerb}
 				<!-- Question -->
 				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-8 text-center">
-					<p class="text-sm text-slate-400 mb-4">¿Qué tipo de verbo es?</p>
-					<div class="text-5xl font-bold text-white mb-3">
+					<p class="mb-4 text-sm text-slate-400">¿Qué tipo de verbo es?</p>
+					<div class="mb-3 text-5xl font-bold text-white">
 						{currentVerb.kanji}
 					</div>
-					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}</div>
+					<div class="mb-2 text-xl text-slate-300">{currentVerb.kana}</div>
+					<div class="mb-2 text-lg text-indigo-400">{currentVerb.translation.meaning}</div>
 					<button
 						onclick={() => speakVerb(currentVerb)}
-						class="mt-2 p-2 rounded-full bg-slate-800 hover:bg-slate-700 transition-colors text-xl"
+						class="mt-2 rounded-full bg-slate-800 p-2 text-xl transition-colors hover:bg-slate-700"
 					>
 						🔊
 					</button>
@@ -1990,8 +2131,8 @@
 						<button
 							onclick={() => handleVerbTypeQuizAnswer(option)}
 							disabled={selectedAnswer !== null}
-							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {
-								selectedAnswer === null
+							class="rounded-2xl border-2 p-4 transition-all active:scale-95 {selectedAnswer ===
+							null
 								? 'border-slate-800 bg-slate-900/70 text-white hover:border-amber-500'
 								: selectedAnswer === option
 									? option === correctAnswer
@@ -1999,19 +2140,20 @@
 										: 'border-red-500 bg-red-500/20 text-red-400'
 									: option === correctAnswer
 										? 'border-green-500 bg-green-500/20 text-green-400'
-										: 'border-slate-800 bg-slate-900/50 text-slate-500'
-							}"
+										: 'border-slate-800 bg-slate-900/50 text-slate-500'}"
 						>
 							<div class="text-2xl font-medium">{option}</div>
 						</button>
 					{/each}
 				</div>
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
 						onclick={exitGame}
@@ -2022,21 +2164,17 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'conjugation'}
 		<!-- Conjugation Study Mode -->
 		<section class="space-y-6">
 			<!-- Header -->
 			<div class="flex items-center justify-between">
-				<button
-					onclick={exitGame}
-					class="text-slate-400 hover:text-white transition-colors"
-				>
+				<button onclick={exitGame} class="text-slate-400 transition-colors hover:text-white">
 					← Salir
 				</button>
 				<div class="flex items-center gap-4">
 					{#if showTimer}
-						<div class="text-sm text-slate-400 font-mono">
+						<div class="font-mono text-sm text-slate-400">
 							⏱️ {formatTime(timerSeconds)}
 						</div>
 					{/if}
@@ -2049,25 +2187,29 @@
 			{#if currentVerb}
 				<!-- Question -->
 				<div class="rounded-3xl border border-slate-800 bg-slate-900/70 p-6 text-center">
-					<p class="text-sm text-slate-400 mb-4">Conjuga este verbo</p>
-					<div class="text-4xl font-bold text-white mb-3">
+					<p class="mb-4 text-sm text-slate-400">Conjuga este verbo</p>
+					<div class="mb-3 text-4xl font-bold text-white">
 						{currentVerb.kanji}
 					</div>
-					<div class="text-xl text-slate-300 mb-2">{currentVerb.kana}</div>
-					<div class="text-lg text-indigo-400 mb-2">{currentVerb.translation.meaning}</div>
-					<span class="inline-block px-3 py-1 rounded-full text-xs font-medium border bg-purple-500/20 text-purple-400 border-purple-500/50">
-						{currentVerb.type === 'godan' ? 'Godan (Grupo 1)' : currentVerb.type === 'ichidan' ? 'Ichidan (Grupo 2)' : 'Irregular (Grupo 3)'}
+					<div class="mb-2 text-xl text-slate-300">{currentVerb.kana}</div>
+					<div class="mb-2 text-lg text-indigo-400">{currentVerb.translation.meaning}</div>
+					<span
+						class="inline-block rounded-full border border-purple-500/50 bg-purple-500/20 px-3 py-1 text-xs font-medium text-purple-400"
+					>
+						{currentVerb.type === 'godan'
+							? 'Godan (Grupo 1)'
+							: currentVerb.type === 'ichidan'
+								? 'Ichidan (Grupo 2)'
+								: 'Irregular (Grupo 3)'}
 					</span>
 				</div>
 
 				{#if !showAnswer}
 					<div class="rounded-2xl border border-slate-800 bg-slate-900/50 p-8 text-center">
-						<p class="text-slate-300 mb-8">
-							Piensa en las conjugaciones de este verbo
-						</p>
+						<p class="mb-8 text-slate-300">Piensa en las conjugaciones de este verbo</p>
 						<button
-							onclick={() => showAnswer = true}
-							class="rounded-2xl bg-indigo-600 hover:bg-indigo-700 px-8 py-3 font-semibold text-white"
+							onclick={() => (showAnswer = true)}
+							class="rounded-2xl bg-indigo-600 px-8 py-3 font-semibold text-white hover:bg-indigo-700"
 						>
 							Ver conjugaciones
 						</button>
@@ -2078,25 +2220,25 @@
 						<div class="grid gap-2">
 							{#each currentConjugations.slice(1) as form}
 								{@const colors = getFormColor(form.key)}
-								{@const conjugationType = conjugationTypes.find(t => t.key === form.key)}
+								{@const conjugationType = conjugationTypes.find((t) => t.key === form.key)}
 								<div class="rounded-xl border {colors.border} {colors.bg} p-4">
-									<div class="flex items-start justify-between mb-2">
+									<div class="mb-2 flex items-start justify-between">
 										<div class="flex-1">
 											<p class="text-sm font-semibold {colors.text} mb-1">
 												{conjugationType?.name || form.label}
 											</p>
-											<p class="text-xl font-medium text-white mb-1">{form.kana}</p>
+											<p class="mb-1 text-xl font-medium text-white">{form.kana}</p>
 											<p class="text-sm text-emerald-400">→ {form.translation}</p>
 										</div>
 										<button
 											onclick={() => speakVerb(currentVerb)}
-											class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-base flex-shrink-0"
+											class="flex-shrink-0 rounded-lg p-2 text-base transition-colors hover:bg-slate-800"
 											aria-label="Reproducir"
 										>
 											🔊
 										</button>
 									</div>
-									<p class="text-xs text-slate-400 mt-2">
+									<p class="mt-2 text-xs text-slate-400">
 										{conjugationType?.description || form.description}
 									</p>
 								</div>
@@ -2120,14 +2262,16 @@
 					</div>
 				{/if}
 			{:else}
-				<div class="text-center py-20">
-					<div class="text-6xl mb-4">🎉</div>
-					<h2 class="text-2xl font-bold text-white mb-2">¡Sesión completada!</h2>
-					<p class="text-slate-400 mb-6">
-						{correctCount} de {questionCount} correctas ({Math.round((correctCount / questionCount) * 100)}%)
+				<div class="py-20 text-center">
+					<div class="mb-4 text-6xl">🎉</div>
+					<h2 class="mb-2 text-2xl font-bold text-white">¡Sesión completada!</h2>
+					<p class="mb-6 text-slate-400">
+						{correctCount} de {questionCount} correctas ({Math.round(
+							(correctCount / questionCount) * 100
+						)}%)
 					</p>
 					<button
-						onclick={() => currentMode = 'menu'}
+						onclick={() => (currentMode = 'menu')}
 						class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white"
 					>
 						Volver al menú
@@ -2135,32 +2279,33 @@
 				</div>
 			{/if}
 		</section>
-
 	{:else if currentMode === 'results'}
 		<!-- Results Screen -->
 		<section class="space-y-6">
 			<!-- Header con estadísticas generales -->
 			<div class="text-center">
-				<div class="inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-green-500 to-emerald-500 text-4xl mb-4">
+				<div
+					class="mb-4 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-green-500 to-emerald-500 text-4xl"
+				>
 					🎉
 				</div>
-				<h1 class="text-3xl font-bold text-white mb-2">¡Sesión completada!</h1>
-				<p class="text-slate-400 mb-4">
-					{games.find(g => g.id === completedGameMode)?.title || 'Práctica'}
+				<h1 class="mb-2 text-3xl font-bold text-white">¡Sesión completada!</h1>
+				<p class="mb-4 text-slate-400">
+					{games.find((g) => g.id === completedGameMode)?.title || 'Práctica'}
 				</p>
 			</div>
 
 			<!-- Botones de acción -->
 			<div class="grid grid-cols-2 gap-3">
 				<button
-					onclick={() => currentMode = 'menu'}
-					class="rounded-2xl border-2 border-slate-800 bg-slate-900 px-6 py-3 font-semibold text-white hover:border-indigo-500 transition-colors"
+					onclick={() => (currentMode = 'menu')}
+					class="rounded-2xl border-2 border-slate-800 bg-slate-900 px-6 py-3 font-semibold text-white transition-colors hover:border-indigo-500"
 				>
 					← Menú
 				</button>
 				<button
 					onclick={retryGame}
-					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white hover:shadow-lg hover:shadow-indigo-500/50 transition-all"
+					class="rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-500 px-6 py-3 font-semibold text-white transition-all hover:shadow-lg hover:shadow-indigo-500/50"
 				>
 					🔄 Repetir práctica
 				</button>
@@ -2169,99 +2314,105 @@
 			<!-- Estadísticas principales -->
 			<div class="grid {showTimer ? 'grid-cols-3' : 'grid-cols-2'} gap-3">
 				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
-					<div class="text-3xl font-bold text-white mb-1">{correctCount}/{questionCount}</div>
-					<p class="text-xs text-slate-400 uppercase tracking-wide">Correctas</p>
+					<div class="mb-1 text-3xl font-bold text-white">{correctCount}/{questionCount}</div>
+					<p class="text-xs tracking-wide text-slate-400 uppercase">Correctas</p>
 				</div>
 				<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
-					<div class="text-3xl font-bold text-indigo-400 mb-1">
+					<div class="mb-1 text-3xl font-bold text-indigo-400">
 						{Math.round((correctCount / questionCount) * 100)}%
 					</div>
-					<p class="text-xs text-slate-400 uppercase tracking-wide">Precisión</p>
+					<p class="text-xs tracking-wide text-slate-400 uppercase">Precisión</p>
 				</div>
 				{#if showTimer}
 					<div class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 text-center">
-						<div class="text-3xl font-bold text-emerald-400 mb-1">
+						<div class="mb-1 text-3xl font-bold text-emerald-400">
 							{formatTime(timerSeconds)}
 						</div>
-						<p class="text-xs text-slate-400 uppercase tracking-wide">Tiempo</p>
+						<p class="text-xs tracking-wide text-slate-400 uppercase">Tiempo</p>
 					</div>
 				{/if}
 			</div>
 
 			<!-- Resumen por verbo -->
 			<div>
-				<h2 class="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+				<h2 class="mb-3 flex items-center gap-2 text-lg font-semibold text-white">
 					<span>📊</span>
 					<span>Detalle por verbo</span>
 				</h2>
-				
+
 				{#if currentSessionErrors().length > 0}
-					<div class="mb-4 p-3 rounded-xl border border-orange-500/30 bg-orange-500/10">
-						<p class="text-sm text-orange-300 flex items-center gap-2">
+					<div class="mb-4 rounded-xl border border-orange-500/30 bg-orange-500/10 p-3">
+						<p class="flex items-center gap-2 text-sm text-orange-300">
 							<span>⚠️</span>
 							<span>Verbos para repasar: {currentSessionErrors().length}</span>
 						</p>
 					</div>
 				{/if}
-				
+
 				<div class="space-y-2">
 					{#each verbStats() as stats}
 						{@const hasCurrentSessionError = currentSessionErrors().includes(stats.verb.kanji)}
-						<div class="rounded-xl border {
-							!hasCurrentSessionError 
-								? 'border-green-500/20 bg-green-500/5' 
-								: 'border-orange-500/30 bg-orange-500/10'
-						} p-4 transition-all hover:scale-[1.02]">
+						<div
+							class="rounded-xl border {!hasCurrentSessionError
+								? 'border-green-500/20 bg-green-500/5'
+								: 'border-orange-500/30 bg-orange-500/10'} p-4 transition-all hover:scale-[1.02]"
+						>
 							<div class="flex items-start justify-between gap-3">
 								<div class="flex-1">
-									<div class="flex items-center gap-2 mb-1">
+									<div class="mb-1 flex items-center gap-2">
 										<span class="text-xl font-bold text-white">{stats.verb.kanji}</span>
 										<span class="text-base text-slate-400">{stats.verb.kana}</span>
 										{#if !hasCurrentSessionError}
-											<span class="text-green-400 text-lg">✓</span>
+											<span class="text-lg text-green-400">✓</span>
 										{:else}
-											<span class="text-orange-400 text-lg">⚠️</span>
+											<span class="text-lg text-orange-400">⚠️</span>
 										{/if}
 									</div>
 									<p class="text-sm text-indigo-300">{stats.verb.translation.meaning}</p>
-									
+
 									{#if hasCurrentSessionError}
-										<p class="text-xs text-orange-400 mt-1 flex items-center gap-1">
+										<p class="mt-1 flex items-center gap-1 text-xs text-orange-400">
 											<span>🔄</span>
 											<span>Necesita repaso</span>
 										</p>
 									{/if}
 								</div>
 								<button
-							onclick={() => speakVerb(stats.verb)}
-							class="p-2 rounded-lg hover:bg-slate-800 transition-colors text-lg flex-shrink-0"
-							aria-label="Reproducir"
-						>
+									onclick={() => speakVerb(stats.verb)}
+									class="flex-shrink-0 rounded-lg p-2 text-lg transition-colors hover:bg-slate-800"
+									aria-label="Reproducir"
+								>
 									🔊
 								</button>
 							</div>
-							
+
 							<!-- Progreso de mastery simplificado -->
 							<div class="mt-3">
-								<div class="flex items-center justify-between text-xs text-slate-400 mb-1">
-									<span>Nivel de dominio 
+								<div class="mb-1 flex items-center justify-between text-xs text-slate-400">
+									<span
+										>Nivel de dominio
 										{#if stats.incorrectCount > 0}
-											(<span class="text-red-400">{stats.incorrectCount}</span>/<span class="text-green-400">{stats.correctCount}</span>)
+											(<span class="text-red-400">{stats.incorrectCount}</span>/<span
+												class="text-green-400">{stats.correctCount}</span
+											>)
 										{:else}
 											(<span class="text-green-400">{stats.correctCount}</span>)
 										{/if}
 									</span>
 								</div>
-								<div class="h-2 bg-slate-800 rounded-full overflow-hidden">
-									<div 
-										class="h-full transition-all duration-500 {
-											stats.newMastery <= -3 ? 'bg-red-500' :
-											stats.newMastery <= -1 ? 'bg-orange-500' :
-											stats.newMastery === 0 ? 'bg-slate-500' :
-											stats.newMastery <= 2 ? 'bg-yellow-500' :
-											stats.newMastery === 3 ? 'bg-blue-500' :
-											'bg-green-500'
-										}"
+								<div class="h-2 overflow-hidden rounded-full bg-slate-800">
+									<div
+										class="h-full transition-all duration-500 {stats.newMastery <= -3
+											? 'bg-red-500'
+											: stats.newMastery <= -1
+												? 'bg-orange-500'
+												: stats.newMastery === 0
+													? 'bg-slate-500'
+													: stats.newMastery <= 2
+														? 'bg-yellow-500'
+														: stats.newMastery === 3
+															? 'bg-blue-500'
+															: 'bg-green-500'}"
 										style="width: {((stats.newMastery + 5) / 10) * 100}%"
 									></div>
 								</div>
@@ -2276,8 +2427,8 @@
 
 <!-- Error Overlay -->
 {#if showErrorOverlay}
-	<div 
-		class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 cursor-pointer"
+	<div
+		class="fixed inset-0 z-50 flex cursor-pointer items-center justify-center bg-black/50"
 		onclick={() => {
 			showErrorOverlay = false;
 			currentIndex++;
@@ -2294,17 +2445,21 @@
 			}
 		}}
 	>
-		<div class="rounded-3xl border-2 border-red-500 bg-slate-900/95 backdrop-blur-md p-8 text-center shadow-2xl shadow-red-500/50 max-w-md mx-4">
-			<div class="text-5xl mb-4">❌</div>
-			<p class="text-xl font-bold text-red-400 mb-2">Incorrecto</p>
+		<div
+			class="mx-4 max-w-md rounded-3xl border-2 border-red-500 bg-slate-900/95 p-6 text-center shadow-2xl shadow-red-500/50 backdrop-blur-md sm:p-8"
+		>
+			<div class="mb-4 text-5xl">❌</div>
+			<p class="mb-2 text-xl font-bold text-red-400">Incorrecto</p>
 			<p class="text-lg font-medium text-white">{feedback}</p>
 			{#if feedbackHint}
 				<div class="mt-4 rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-3 text-left">
-					<p class="text-sm font-semibold text-red-200 uppercase tracking-wide mb-1">Cómo identificarlo</p>
-					<p class="text-sm text-slate-200 leading-relaxed">{feedbackHint}</p>
+					<p class="mb-1 text-sm font-semibold tracking-wide text-red-200 uppercase">
+						Cómo identificarlo
+					</p>
+					<p class="text-sm leading-relaxed text-slate-200">{feedbackHint}</p>
 				</div>
 			{/if}
-			<p class="text-sm text-slate-400 mt-5">Toca para continuar</p>
+			<p class="mt-5 text-sm text-slate-400">Toca para continuar</p>
 		</div>
 	</div>
 {/if}

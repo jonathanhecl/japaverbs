@@ -17,7 +17,7 @@
 
 <div class="min-h-screen bg-[#020617] text-white flex flex-col selection:bg-indigo-500/30 selection:text-indigo-200">
 	<!-- Content -->
-	<main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-32 pt-6 sm:px-6 sm:pb-36">
+	<main class="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4 pb-32 pt-6 sm:px-6 sm:pb-36 pt-[env(safe-area-inset-top)]">
 		{@render children?.()}
 	</main>
 
