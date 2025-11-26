@@ -304,7 +304,7 @@
 										<p class="text-slate-400 text-sm">{example.es}</p>
 									</div>
 									<button
-										onclick={() => speakKana(example.ja)}
+										onclick={() => speakKana(example.kana || example.ja)}
 										class="p-1 rounded hover:bg-slate-700 transition-colors text-sm"
 										aria-label="Reproducir ejemplo"
 									>

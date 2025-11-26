@@ -1,5 +1,6 @@
 export interface VerbExample {
 	ja: string;
+	kana?: string;
 	es: string;
 }
 

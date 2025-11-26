@@ -22,6 +22,7 @@
 
   interface SentenceExample {
     text: string;
+    kana?: string;
     translation: string;
   }
 
@@ -141,7 +142,7 @@
           badge: 'Básica',
           explanation: 'Es la forma base del verbo. Se usa en contextos informales y es la forma que aparece en los diccionarios.',
           sentenceExamples: [
-            { text: '明日、映画を見る。', translation: 'Mañana veré una película.' }
+            { text: '明日、映画を見る。', kana: 'あした、えいがをみる。', translation: 'Mañana veré una película.' }
           ]
         },
         {
@@ -155,8 +156,8 @@
             { kanji: '食べませんでした', kana: 'たべませんでした', romaji: 'tabemasen deshita', meaning: 'no comí' }
           ],
           sentenceExamples: [
-            { text: '日本語を勉強します。', translation: 'Estudio japonés.' },
-            { text: '昨日、本を読みませんでした。', translation: 'Ayer no leí un libro.' }
+            { text: '日本語を勉強します。', kana: 'にほんごをべんきょうします。', translation: 'Estudio japonés.' },
+            { text: '昨日、本を読みませんでした。', kana: 'きのう、ほんをよみませんでした。', translation: 'Ayer no leí un libro.' }
           ]
         },
         {
@@ -169,8 +170,8 @@
             { kanji: '食べています', kana: 'たべています', romaji: 'tabete imasu', meaning: 'estoy comiendo' }
           ],
           sentenceExamples: [
-            { text: '一緒に映画を見ましょう。', translation: 'Vamos a ver una película juntos.' },
-            { text: '今、ご飯を食べています。', translation: 'Ahora estoy comiendo.' }
+            { text: '一緒に映画を見ましょう。', kana: 'いっしょにえいがをみましょう。', translation: 'Vamos a ver una película juntos.' },
+            { text: '今、ご飯を食べています。', kana: 'いま、ごはんをたべています。', translation: 'Ahora estoy comiendo.' }
           ]
         },
         {
@@ -184,8 +185,8 @@
             { kanji: '食べなかった', kana: 'たべなかった', romaji: 'tabenakatta', meaning: 'no comí' }
           ],
           sentenceExamples: [
-            { text: '今日、映画を見る。', translation: 'Hoy veo una película.' },
-            { text: '昨日、本を読まなかった。', translation: 'Ayer no leí un libro.' }
+            { text: '今日、映画を見る。', kana: 'きょう、えいがをみる。', translation: 'Hoy veo una película.' },
+            { text: '昨日、本を読まなかった。', kana: 'きのう、ほんをよまなかった。', translation: 'Ayer no leí un libro.' }
           ]
         },
         {
@@ -199,8 +200,8 @@
             { kanji: '食べている', kana: 'たべている', romaji: 'tabete iru', meaning: 'estoy comiendo' }
           ],
           sentenceExamples: [
-            { text: 'ご飯を食べて、寝る。', translation: 'Como y luego duermo.' },
-            { text: '今、ご飯を食べている。', translation: 'Ahora estoy comiendo.' }
+            { text: 'ご飯を食べて、寝る。', kana: 'ごはんをたべて、ねる。', translation: 'Como y luego duermo.' },
+            { text: '今、ご飯を食べている。', kana: 'いま、ごはんをたべている。', translation: 'Ahora estoy comiendo.' }
           ]
         }
       ]
@@ -559,7 +560,7 @@
                                   <p class="text-xs text-slate-400">{example.meaning}</p>
                                 </div>
                                 <button
-                                  onclick={() => speak(example.kanji)}
+                                  onclick={() => speak(example.kana)}
                                   class="rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-300 transition-colors hover:border-indigo-400 hover:text-indigo-200"
                                   type="button"
                                 >
@@ -577,7 +578,7 @@
                                 <div class="flex items-start justify-between gap-3">
                                   <p class="text-sm text-white font-japanese">{example.text}</p>
                                   <button
-                                    onclick={() => speak(example.text)}
+                                    onclick={() => speak(example.kana || example.text)}
                                     class="rounded-lg border border-slate-700 px-3 py-1 text-sm text-slate-300 transition-colors hover:border-indigo-400 hover:text-indigo-200"
                                     type="button"
                                   >
