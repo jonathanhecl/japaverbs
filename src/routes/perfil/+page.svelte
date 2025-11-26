@@ -4,6 +4,7 @@
 	import type { Verb } from '$lib/types/verb';
 	import { getCurrentVerbs } from '$lib/data/verbs';
 	import BackupManager from '$lib/components/BackupManager.svelte';
+	import ProgressChart from '$lib/components/ProgressChart.svelte';
 
 	let profile = $state($userProfile);
 	let editingName = $state(false);
@@ -499,6 +500,20 @@
 			{/each}
 		</div>
 	</section>
+
+	<!-- Progress Chart -->
+	{#if profile.dailyHistory.length > 0}
+		<section class="rounded-3xl border border-slate-800 bg-slate-950/50 p-6 backdrop-blur-sm">
+			<h2 class="mb-6 flex items-center gap-3 text-xl font-bold text-white">
+				<span
+					class="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400"
+					>📈</span
+				>
+				<span>Tendencia de aprendizaje</span>
+			</h2>
+			<ProgressChart history={profile.dailyHistory} />
+		</section>
+	{/if}
 
 	<!-- Recent Activity (Full Width) -->
 	{#if profile.dailyHistory.length > 0}
